@@ -1,0 +1,55 @@
+# CMakeLists.txt for GnuCashew
+
+cmake_minimum_required (VERSION 3.10)
+if (CMAKE_VERSION VERSION_GREATER_EQUAL 3.14.0)
+  cmake_policy(SET CMP0082 NEW)
+endif()
+
+project (gnucashew-bin
+    VERSION 1.0
+)
+
+set ( CMAKE_CXX_FLAGS "-std=c++17 -Wfatal-errors -Wbuiltin-macro-redefined -g" )
+
+set (PACKAGE_NAME GnuCashew)
+#set (PACKAGE_BUGREPORT "https://bugs.gnucash.org")
+set (PACKAGE_STRING "${PACKAGE_NAME} ${PROJECT_VERSION}")
+set (PACKAGE_URL "https://www.gnucashew.org/")
+
+# Change this in development versions when changing anything that
+# affects stored data structures. Reset to zero when bumping version.
+
+set (GNUCASHEW_RESAVE_VERSION "19920")
+
+# Clear cache variables that will be filled later during the cmake run
+unset(dist_generated CACHE)
+unset(dist_generated_depends CACHE)
+
+add_subdirectory( Dbo )
+
+include_directories(
+  /opt/Wt4/include
+)
+
+link_directories(/opt/Wt4/lib)
+
+add_executable (
+  gnucashew-bin
+  main.cpp
+  GnuCashew.cpp
+  AccountsWidget.cpp
+  ${GCW_FILES}
+  )
+
+target_link_libraries(
+  gnucashew-bin
+  wt
+  wthttp
+  wtdbo
+  wtdbosqlite3
+  boost_system
+  hpdf
+  pthread
+  xml2
+)
+
