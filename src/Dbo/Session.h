@@ -387,20 +387,71 @@ class Session
 {
   public:
 
-    Session();
+    Session() {}
 
     /*!
-    ** \brief Open SqLite3 file
+    ** \brief Open a database
     **
     */
-    bool open_sqlite3( const std::string & _path );
-    bool open_gnucash( const std::string & _path );
+    bool open( const std::string & _path );
+
+    bool isOpen() const { return m_isOpen; }
+
+  protected:
+
+    std::string m_path;
+    bool m_isOpen = false;
+
+  private:
+
+}; // endclass Session
+
+namespace GnuCash {
+
+class Session
+: public GCW::Dbo::Session
+{
+  public:
+
+    Session() {}
+
+    /*!
+    ** \brief Open a database
+    **
+    */
+    bool open( const std::string & _path );
 
   private:
 
     void init();
 
-}; // endclass Session
+};
+
+} // endnamespace GnuCash {
+
+namespace GnuCashew {
+
+class Session
+: public GCW::Dbo::Session
+{
+  public:
+
+    Session() {}
+
+    /*!
+    ** \brief Open a database
+    **
+    */
+    bool open( const std::string & _path );
+
+  private:
+
+    void init();
+
+};
+
+} // endnamespace GnuCashew {
+
 
   } // endnamespace Dbo {
 } // endnamespace GCW {

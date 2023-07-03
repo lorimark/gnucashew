@@ -7,40 +7,41 @@
 #include "Session.h"
 #include "Account.h"
 
-class TestClass
-: public Wt::Dbo::ptr< TestClass >
+bool GCW::Dbo::Session::open( const std::string & _path )
 {
-  public:
+  /*
+  ** Clear this so that is we don't get opened, then we don't
+  **  accidently indicate that we are open.
+  **
+  */
+  m_isOpen = false;
 
-    TestClass() {};
+  /*
+  ** Remember the path
+  **
+  */
+  m_path = _path;
 
-    template< class Action > void persist( Action & action )
-    {
-      Wt::Dbo::field( action, m_data, "dataField" );
-    }
+  /*
+  ** This never opens true
+  **
+  */
+  return false;
 
-    std::string m_data;
-};
+} // endbool GCW::Dbo::Session::open( const std::string & _path )
 
-
-GCW::Dbo::Session::Session()
-: Wt::Dbo::Session()
+bool GCW::Dbo::GnuCash::Session::open( const std::string & _path )
 {
-}
+  /*
+  ** Call the base class.
+  **
+  */
+  GCW::Dbo::Session::open( _path );
 
-bool GCW::Dbo::Session::open_sqlite3( const std::string & _path )
-{
-  auto connection = std::make_unique< Wt::Dbo::backend::Sqlite3 >( _path + ".gnucashew" );
-
-  setConnection( std::move( connection ) );
-
-  init();
-
-  return true;
-}
-
-bool GCW::Dbo::Session::open_gnucash( const std::string & _path )
-{
+  /*
+  ** Try to get the sqlite3 file open
+  **
+  */
   try
   {
     auto connection = std::make_unique< Wt::Dbo::backend::Sqlite3 >( _path );
@@ -49,21 +50,34 @@ bool GCW::Dbo::Session::open_gnucash( const std::string & _path )
 
     init();
 
-    return true;
+    return isOpen();
   }
+
+  /*
+  ** Handle the error
+  **
+  */
   catch( std::exception & e )
   {
     std::cout << __FILE__ << ":" << __LINE__ << " " << e.what() << std::endl;
   }
 
-  return false;
+  return isOpen();
 
 } // endbool GCW::Dbo::Session::open_gnucash( const std::string & _path )
 
-void GCW::Dbo::Session::init()
+void GCW::Dbo::GnuCash::Session::init()
 {
   mapClass< Account >( "accounts" );
 
-//  createTables();
-}
+  m_isOpen = true;
+
+} // endvoid GCW::Dbo::Session::GnuCash::init()
+
+bool GCW::Dbo::GnuCashew::Session::open( const std::string & _path )
+{
+  return false;
+
+} // endbool GCW::Dbo::GnuCashew::Session::open( const std::string & _path )
+
 

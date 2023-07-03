@@ -36,8 +36,11 @@ link_directories(/opt/Wt4/lib)
 add_executable (
   gnucashew-bin
   main.cpp
-  GnuCashew.cpp
   AccountsWidget.cpp
+  App.cpp
+  CentralWidget.cpp
+  GnuCashew.cpp
+  MainWidget.cpp
   ${GCW_FILES}
   )
 

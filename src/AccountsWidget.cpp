@@ -3,6 +3,7 @@
 #include <Wt/WText.h>
 #include <Wt/WTreeTableNode.h>
 
+#include "define.h"
 #include "GnuCashew.h"
 #include "AccountsWidget.h"
 
@@ -158,6 +159,13 @@ void GCW::AccountsWidget::setModel()
 void GCW::AccountsWidget::Model::load()
 {
   /*
+  ** If the session isn't open then there's nothing to load.
+  **
+  */
+  if( !GCW::app()-> gnucash_session().isOpen() )
+    return;
+
+  /*
   ** Get a handle on the root account.  The root account is the only
   **  account that has no parent, and has a name == "Root Account".
   **  There should only be one of these.
@@ -165,10 +173,10 @@ void GCW::AccountsWidget::Model::load()
   */
   GCW::Dbo::Account::Ptr rootAccount;
   {
-    Wt::Dbo::Transaction t( GCW::app()-> session() );
+    Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
 
     auto results =
-      GCW::app()-> session().find< GCW::Dbo::Account >()
+      GCW::app()-> gnucash_session().find< GCW::Dbo::Account >()
       .where( "(parent_guid = '' OR parent_guid IS NULL) AND name = 'Root Account'" )
       .resultList()
       ;
@@ -195,7 +203,7 @@ void GCW::AccountsWidget::Model::load()
 
 void GCW::AccountsWidget::Model::load( Wt::WStandardItem * _treeItem, GCW::Dbo::Account::Ptr _parentAccount )
 {
-  Wt::Dbo::Transaction t( GCW::app()-> session() );
+  Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
 
   auto _append = [=]( Wt::WStandardItem * _item, GCW::Dbo::Account::Ptr _account )
   {
@@ -216,7 +224,7 @@ void GCW::AccountsWidget::Model::load( Wt::WStandardItem * _treeItem, GCW::Dbo::
   };
 
   auto accounts =
-    GCW::app()-> session().find< GCW::Dbo::Account >()
+    GCW::app()-> gnucash_session().find< GCW::Dbo::Account >()
     .where( "parent_guid = ?" )
     .bind( _parentAccount-> m_guid )
     .resultList()
