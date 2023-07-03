@@ -16,7 +16,6 @@
 
 #include "GnuCashew.h"
 
-#include "AccountsWidget.h"
 
 
 

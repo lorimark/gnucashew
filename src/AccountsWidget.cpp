@@ -1,4 +1,4 @@
-
+#line 2 "src/AccountsWidget.cpp"
 
 #include <Wt/WText.h>
 #include <Wt/WTreeTableNode.h>
@@ -7,104 +7,6 @@
 #include "GnuCashew.h"
 #include "AccountsWidget.h"
 
-
-#ifdef TREETABLE_BASED_WIDGET
-
-GCW::AccountsWidget::AccountsWidget()
-: m_treeTable( addNew< Wt::WTreeTable >() )
-{
-  loadData();
-
-} // endGCW::AccountsWidget::AccountsWidget()
-
-void GCW::AccountsWidget::loadData()
-{
-  std::cout << __FILE__ << ":" << __LINE__ << " " << std::endl;
-
-  treeTable()-> addColumn( "Account Code"         , 125 );
-  treeTable()-> addColumn( "Description"          , 125 );
-  treeTable()-> addColumn( "Tax Info"             , 125 );
-  treeTable()-> addColumn( "Notes"                , 125 );
-  treeTable()-> addColumn( "Future Minimum (USD)" , 125 );
-  treeTable()-> addColumn( "Total"                , 125 );
-
-  std::cout << __FILE__ << ":" << __LINE__ << " " << std::endl;
-
-  Wt::WTreeTableNode * rootNode = nullptr;
-  {
-    auto node = std::make_unique< Wt::WTreeTableNode >( "All" );
-    rootNode = node.get();
-    treeTable()-> setTreeRoot( std::move( node ), "Account Name" );
-  }
-
-  std::cout << __FILE__ << ":" << __LINE__ << " " << std::endl;
-
-  /*
-  ** Get a handle on the root account.  The root account is the only
-  **  account that has no parent, and has a name == "Root Account".
-  **  There should only be one of these.
-  **
-  */
-  GCW::Dbo::Account::Ptr rootAccount;
-  {
-    Wt::Dbo::Transaction t( GCW::app()-> session() );
-
-    auto results =
-      GCW::app()-> session().find< GCW::Dbo::Account >()
-      .where( "(parent_guid = '' OR parent_guid IS NULL) AND name = 'Root Account'" )
-      .resultList()
-      ;
-
-    if( results.size() == 1 )
-    {
-      rootAccount = *results.begin();
-    }
-
-  } // endWt::Dbo::ptr< Account > rootAccount;
-
-  load( rootNode, rootAccount );
-
-} // endvoid GCW::AccountsWidget::load()
-
-void GCW::AccountsWidget::load( Wt::WTreeTableNode * _treeNode, GCW::Dbo::Account::Ptr _parentAccount )
-{
-  Wt::Dbo::Transaction t( GCW::app()-> session() );
-
-  auto _append = [=]( Wt::WTreeTableNode * _item, GCW::Dbo::Account::Ptr _account )
-  {
-    auto node = std::make_unique< Wt::WTreeTableNode >( _account-> m_name );
-    auto retVal = node.get();
-
-    int col = 1;
-    node-> setColumnWidget( col++, std::make_unique< Wt::WText >( _account-> m_code        ) );
-    node-> setColumnWidget( col++, std::make_unique< Wt::WText >( _account-> m_description ) );
-    node-> setColumnWidget( col++, std::make_unique< Wt::WText >() );
-    node-> setColumnWidget( col++, std::make_unique< Wt::WText >() );
-    node-> setColumnWidget( col++, std::make_unique< Wt::WText >() );
-    node-> setColumnWidget( col++, std::make_unique< Wt::WText >() );
-    _item-> addChildNode( std::move( node ) );
-
-    return retVal;
-  };
-
-  auto accounts =
-    GCW::app()-> session().find< GCW::Dbo::Account >()
-    .where( "parent_guid = ?" )
-    .bind( _parentAccount-> m_guid )
-    .resultList()
-    ;
-
-  for( auto account : accounts )
-  {
-    auto ti = _append( _treeNode, account );
-    load( ti, account );
-  }
-
-} // endvoid load( Wt::WStandardItem * _treeItem, Account::Ptr _parentAccount )
-
-#endif // TREETABLE_BASED_WIDGET
-
-#ifdef TREEVIEW_BASED_WIDGET
 
 GCW::AccountsWidget::AccountsWidget()
 : m_treeView( addNew< Wt::WTreeView >() )
@@ -237,8 +139,5 @@ void GCW::AccountsWidget::Model::load( Wt::WStandardItem * _treeItem, GCW::Dbo::
   }
 
 } // endvoid load( Wt::WStandardItem * _treeItem, Account::Ptr _parentAccount )
-
-#endif
-
 
 
