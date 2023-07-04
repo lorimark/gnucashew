@@ -1,11 +1,10 @@
 
-
+#include <Wt/WMenuItem.h>
 #include <Wt/WTabWidget.h>
 #include <Wt/WText.h>
 #include <Wt/WVBoxLayout.h>
 
 #include "CentralWidget.h"
-#include "AccountsWidget.h"
 
 /*!
 ** \brief Central Widget
@@ -21,14 +20,86 @@
 */
 GCW::CentralWidget::CentralWidget()
 {
+  /*
+  ** Always use a layout
+  **
+  */
   auto lw = setLayout( std::make_unique< Wt::WVBoxLayout >() );
 
+  /*
+  ** Build the tab-widget
+  **
+  */
   m_tabWidget = lw-> addWidget( std::make_unique< Wt::WTabWidget >() );
 
-  tabWidget()-> addTab( std::make_unique< GCW::AccountsWidget >(), "Accounts" );
-  tabWidget()-> addTab( std::make_unique< Wt::WText >( "The Wine Depot" ), "Wine" );
+  /*
+  ** Attach the accounts widget as a non-closeable-tab, so that the
+  **  user can navigate around the accounts.
+  **
+  */
+  {
+    auto widget = std::make_unique< GCW::AccountsWidget >();
+    m_accountsWidget = widget.get();
+    tabWidget()-> addTab( std::move( widget ), "Accounts" );
+
+    accountsWidget()-> doubleClicked().connect( this, &GCW::CentralWidget::openAccountRegister );
+  }
 
 } // endGCW::CentralWidget::CentralWidget()
 
+int GCW::CentralWidget::tabIndex( const std::string & _text )
+{
+  for( int i=0; i< tabWidget()-> count(); i++ )
+    if( tabWidget()-> tabText( i ) == _text )
+      return i;
 
+  return -1;
+}
+
+void GCW::CentralWidget::openAccountRegister( const std::string & _accountGuid )
+{
+  /*
+  ** Grab the account so we can fetch things from it.
+  **
+  */
+  auto accountItem = GCW::Dbo::Account::byGuid( _accountGuid );
+
+  /*
+  ** If we didn't get an account (this shouldn't happen) then
+  **  there's nothing for us to do... perhaps pop an error dialog
+  **  or something.
+  **
+  */
+  if( !accountItem )
+    return;
+
+  /*
+  ** See if this tab exists, if not, then add it.
+  **
+  */
+  if( tabIndex( accountItem-> name() ) == -1 )
+  {
+    /*
+    ** Open a new RegisterWidget tab that is connected to the account
+    **
+    */
+    auto tab =
+      tabWidget()->
+        insertTab
+        ( 1,
+          std::make_unique< GCW::RegisterWidget >( _accountGuid ),
+          accountItem-> name()
+        );
+
+    tab-> setCloseable( true );
+
+  } // endif( tabIndex( _account-> name() ) == -1 )
+
+  /*
+  ** Go straight to the tab.
+  **
+  */
+  tabWidget()-> setCurrentIndex( tabIndex( accountItem-> name() ) );
+
+} // endvoid GCW::CentralWidget::openAccountRegister( const std::string & _accountGuid )
 

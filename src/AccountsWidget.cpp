@@ -1,5 +1,7 @@
 #line 2 "src/AccountsWidget.cpp"
 
+#include <any>
+
 #include <Wt/WText.h>
 #include <Wt/WTreeTableNode.h>
 
@@ -14,6 +16,7 @@ GCW::AccountsWidget::AccountsWidget()
   treeView()-> setSelectionBehavior( Wt::SelectionBehavior::Rows );
   treeView()-> setSelectionMode(     Wt::SelectionMode::Single   );
   treeView()-> setAlternatingRowColors( true );
+  treeView()-> doubleClicked().connect( this, &GCW::AccountsWidget::doubleClicked );
 
   m_columns.push_back( TR8( "gcw.accountswidget.column.accountcode"       ) );
   m_columns.push_back( TR8( "gcw.accountswidget.column.accountcolor"      ) );
@@ -50,11 +53,13 @@ GCW::AccountsWidget::AccountsWidget()
 
 void GCW::AccountsWidget::setModel()
 {
-  auto model = std::make_shared< Model >();
+  m_model = std::make_shared< Model >();
 
-  model-> load();
+  m_model-> load();
 
-  treeView()-> setModel( model );
+  treeView()-> setModel( m_model );
+
+  treeView()-> sortByColumn( 0, Wt::SortOrder::Ascending );
 
 } // endvoid GCW::AccountsWidget::setModel()
 
@@ -73,12 +78,12 @@ void GCW::AccountsWidget::Model::load()
   **  There should only be one of these.
   **
   */
-  GCW::Dbo::Account::Ptr rootAccount;
+  GCW::Dbo::Account::Item::Ptr rootAccount;
   {
     Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
 
     auto results =
-      GCW::app()-> gnucash_session().find< GCW::Dbo::Account >()
+      GCW::app()-> gnucash_session().find< GCW::Dbo::Account::Item >()
       .where( "(parent_guid = '' OR parent_guid IS NULL) AND name = 'Root Account'" )
       .resultList()
       ;
@@ -103,15 +108,16 @@ void GCW::AccountsWidget::Model::load()
 
 } // endvoid GCW::AccountsWidget::Model::load()
 
-void GCW::AccountsWidget::Model::load( Wt::WStandardItem * _treeItem, GCW::Dbo::Account::Ptr _parentAccount )
+void GCW::AccountsWidget::Model::load( Wt::WStandardItem * _treeItem, GCW::Dbo::Account::Item::Ptr _parentAccount )
 {
   Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
 
-  auto _append = [=]( Wt::WStandardItem * _item, GCW::Dbo::Account::Ptr _account )
+  auto _append = [=]( Wt::WStandardItem * _item, GCW::Dbo::Account::Item::Ptr _account )
   {
     std::vector< std::unique_ptr< Wt::WStandardItem > > columns;
 
     auto accountName = std::make_unique< Wt::WStandardItem >( _account-> m_name );
+    accountName-> setData( _account-> m_guid, Wt::ItemDataRole::User );
     auto retVal = accountName.get();
     columns.push_back( std::move( accountName ) );
     columns.push_back( std::make_unique< Wt::WStandardItem >( _account-> m_code        ) );
@@ -126,7 +132,7 @@ void GCW::AccountsWidget::Model::load( Wt::WStandardItem * _treeItem, GCW::Dbo::
   };
 
   auto accounts =
-    GCW::app()-> gnucash_session().find< GCW::Dbo::Account >()
+    GCW::app()-> gnucash_session().find< GCW::Dbo::Account::Item >()
     .where( "parent_guid = ?" )
     .bind( _parentAccount-> m_guid )
     .resultList()
@@ -139,5 +145,20 @@ void GCW::AccountsWidget::Model::load( Wt::WStandardItem * _treeItem, GCW::Dbo::
   }
 
 } // endvoid load( Wt::WStandardItem * _treeItem, Account::Ptr _parentAccount )
+
+void GCW::AccountsWidget::doubleClicked( const Wt::WModelIndex & index, const Wt::WMouseEvent & event )
+{
+#ifdef NEVER
+  std::cout << std::endl << std::endl << __FILE__ << ":" << __LINE__
+    << " " << "doubleClicked:"
+    << " " << index.row()
+    << " " << Wt::asString( m_model-> data( index, Wt::ItemDataRole::User ) )
+    << std::endl << std::endl
+    << std::endl;
+#endif
+
+  m_doubleClicked.emit( Wt::asString( m_model-> data( index, Wt::ItemDataRole::User ) ).toUTF8() );
+
+} // endvoid GCW::AccountsWidget::doubleClicked( const Wt::WModelIndex & index, const Wt::WMouseEvent & event )
 
 

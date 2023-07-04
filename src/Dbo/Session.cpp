@@ -68,7 +68,7 @@ bool GCW::Dbo::GnuCash::Session::open( const std::string & _path )
 
 void GCW::Dbo::GnuCash::Session::init()
 {
-  mapClass< Account >( "accounts" );
+  mapClass< Account::Item >( "accounts" );
 
   m_isOpen = true;
 

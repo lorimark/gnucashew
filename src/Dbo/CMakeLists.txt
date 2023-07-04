@@ -1,5 +1,6 @@
 
 set( GCW_FILES ${GCW_FILES}
+  ${CMAKE_CURRENT_SOURCE_DIR}/Account.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/Session.cpp
   PARENT_SCOPE
 )

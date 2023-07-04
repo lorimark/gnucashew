@@ -11,7 +11,9 @@
 */
 namespace GCW {
   namespace Dbo {
-    class Account;
+    namespace Account {
+      class Item;
+    }
   }
 }
 
@@ -22,7 +24,7 @@ namespace GCW {
 **  as the primary key.
 **
 */
-template<> struct Wt::Dbo::dbo_traits< GCW::Dbo::Account >
+template<> struct Wt::Dbo::dbo_traits< GCW::Dbo::Account::Item >
 : public Wt::Dbo::dbo_default_traits
 {
   using IdType = std::string;
@@ -31,7 +33,7 @@ template<> struct Wt::Dbo::dbo_traits< GCW::Dbo::Account >
   static const char * versionField()     { return nullptr; }
 };
 
-template<> struct Wt::Dbo::dbo_traits< const GCW::Dbo::Account > : Wt::Dbo::dbo_traits< GCW::Dbo::Account > {};
+template<> struct Wt::Dbo::dbo_traits< const GCW::Dbo::Account::Item > : Wt::Dbo::dbo_traits< GCW::Dbo::Account::Item > {};
 
 /*
 ** Now we can start building our class!
@@ -39,17 +41,20 @@ template<> struct Wt::Dbo::dbo_traits< const GCW::Dbo::Account > : Wt::Dbo::dbo_
 */
 namespace GCW {
   namespace Dbo {
+    namespace Account {
 
-class Account
-: public Wt::Dbo::Dbo< Account >
+class Item
+: public Wt::Dbo::Dbo< Item >
 {
   public:
 
-    using Ptr = Wt::Dbo::ptr< Account >;
+    using Ptr = Wt::Dbo::ptr< Item >;
     using Collection = Wt::Dbo::collection< Ptr >;
     using Vector = std::vector< Ptr >;
 
-    Account() {};
+    Item() {};
+
+    const std::string & name() const { return m_name; }
 
     template< class Action > void persist( Action & action )
     {
@@ -78,8 +83,22 @@ class Account
     int         m_hidden         ;
     int         m_placeholder    ;
 
-}; // endclass Account
+}; // endclass Item
 
+/*!
+** \brief Load Root Account
+**
+**
+*/
+Item::Ptr root();
+
+/*!
+** \brief Load Account by Guid
+**
+*/
+Item::Ptr byGuid( const std::string & _guid );
+
+    } // endnamespace Account {
   } // endnamespace Dbo {
 } // endnamespace GCW {
 

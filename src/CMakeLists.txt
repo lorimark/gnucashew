@@ -41,6 +41,7 @@ add_executable (
   CentralWidget.cpp
   GnuCashew.cpp
   MainWidget.cpp
+  RegisterWidget.cpp
   ${GCW_FILES}
   )
 

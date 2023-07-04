@@ -3,21 +3,15 @@
 #define __ACCOUNTSWIDGET_H___
 
 #include <Wt/WContainerWidget.h>
-#include <Wt/WTreeTable.h>
+#include <Wt/WTreeView.h>
 #include <Wt/WStandardItem.h>
 #include <Wt/WStandardItemModel.h>
+//#include <Wt/WModelIndex.h>
 
 #include "Dbo/Session.h"
 #include "Dbo/Account.h"
 
 namespace GCW {
-
-/*
-**  this view uses the model based 'WTreeView'.  While the view works,
-**   the 'header' in the view will 'scroll away' when scrolling vertically.
-**   so, we're dumping this widget and are going to try the 'WTreeTable'
-**   widget.
-*/
 
 /*!
 ** \brief AccountsWidget
@@ -50,7 +44,7 @@ class AccountsWidget
 
     private:
 
-      void load( Wt::WStandardItem * _treeItem, GCW::Dbo::Account::Ptr _parentAccount );
+      void load( Wt::WStandardItem * _treeItem, GCW::Dbo::Account::Item::Ptr _parentAccount );
   };
 
   public:
@@ -59,12 +53,17 @@ class AccountsWidget
 
     Wt::WTreeView * treeView() { return m_treeView; }
 
+    Wt::Signal< std::string > & doubleClicked() { return m_doubleClicked; }
+
   private:
 
     void setModel();
+    void doubleClicked( const Wt::WModelIndex & index, const Wt::WMouseEvent & event );
 
-    Wt::WTreeView * m_treeView = nullptr;
+    Wt::WTreeView            * m_treeView = nullptr;
+    std::shared_ptr< Model >   m_model;
     std::vector< std::string > m_columns;
+    Wt::Signal< std::string >  m_doubleClicked;
 
 };  // endclass AccountsWidget
 
