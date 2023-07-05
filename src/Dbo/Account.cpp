@@ -2,6 +2,7 @@
 #include "../App.h"
 
 #include "Account.h"
+#include "Transaction.h"
 
 GCW::Dbo::Account::Item::Ptr GCW::Dbo::Account::root()
 {
@@ -61,6 +62,16 @@ GCW::Dbo::Account::Item::Ptr GCW::Dbo::Account::byGuid( const std::string & _gui
   return retVal;
 
 } // endGCW::Dbo::Account::Item::Ptr GCW::Dbo::Account::byGuid( const std::string & _guid )
+
+
+GCW::Dbo::Account::Item::Vector GCW::Dbo::Account::Children::vector( const std::string & _parentGuid )
+{
+  GCW::Dbo::Account::Item::Vector retVal;
+
+
+  return retVal;
+
+} // endGCW::Dbo::Account::Item::Vector GCW::Dbo::Account::Children::vector( const std::string & _parentGuid )
 
 
 

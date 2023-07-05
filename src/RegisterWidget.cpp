@@ -6,27 +6,38 @@
 #include "define.h"
 #include "App.h"
 #include "RegisterWidget.h"
+#include "Dbo/Split.h"
 
 
-GCW::RegisterWidget::RegisterWidget( const std::string & _accountGuid )
+GCW::RegisterWidget::
+RegisterWidget( const std::string & _accountGuid )
 : m_tableView( addNew< Wt::WTableView >() )
 {
-  std::cout << __FILE__ << ":" << __LINE__ << " " << _accountGuid << std::endl;
-
+  setModel( _accountGuid );
 
 } // endGCW::RegisterWidget::RegisterWidget()
 
-void GCW::RegisterWidget::setModel()
+GCW::RegisterWidget::
+~RegisterWidget()
+{
+  std::cout << __FILE__ << ":" << __LINE__ << " " << std::endl;
+
+}
+
+
+void GCW::RegisterWidget::
+setModel( const std::string & _accountGuid )
 {
   auto model = std::make_shared< Model >();
 
-  model-> load();
+  model-> load( _accountGuid );
 
   tableView()-> setModel( model );
 
 } // endvoid GCW::RegisterWidget::setModel()
 
-void GCW::RegisterWidget::Model::load()
+void GCW::RegisterWidget::Model::
+load( const std::string & _accountGuid )
 {
   /*
   ** If the session isn't open then there's nothing to load.
@@ -35,8 +46,14 @@ void GCW::RegisterWidget::Model::load()
   if( !GCW::app()-> gnucash_session().isOpen() )
     return;
 
-  load( invisibleRootItem(), GCW::Dbo::Account::root() );
 
+  auto splits = GCW::Dbo::Split::byAccount( _accountGuid );
+
+  std::cout << __FILE__ << ":" << __LINE__ << " " << splits.size() << std::endl;
+
+
+
+#ifdef NEVER
   int col = 0;
   setHeaderData( col++, "Account Name"         );
   setHeaderData( col++, "Account Code"         );
@@ -45,44 +62,8 @@ void GCW::RegisterWidget::Model::load()
   setHeaderData( col++, "Notes"                );
   setHeaderData( col++, "Future Minimum (USD)" );
   setHeaderData( col++, "Total"                );
+#endif
 
 } // endvoid GCW::RegisterWidget::Model::load()
-
-void GCW::RegisterWidget::Model::load( Wt::WStandardItem * _treeItem, GCW::Dbo::Account::Item::Ptr _parentAccount )
-{
-  Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
-
-  auto _append = [=]( Wt::WStandardItem * _item, GCW::Dbo::Account::Item::Ptr _account )
-  {
-    std::vector< std::unique_ptr< Wt::WStandardItem > > columns;
-
-    auto accountName = std::make_unique< Wt::WStandardItem >( _account-> m_name );
-    auto retVal = accountName.get();
-    columns.push_back( std::move( accountName ) );
-    columns.push_back( std::make_unique< Wt::WStandardItem >( _account-> m_code        ) );
-    columns.push_back( std::make_unique< Wt::WStandardItem >( _account-> m_description ) );
-    columns.push_back( std::make_unique< Wt::WStandardItem >() );
-    columns.push_back( std::make_unique< Wt::WStandardItem >() );
-    columns.push_back( std::make_unique< Wt::WStandardItem >() );
-    columns.push_back( std::make_unique< Wt::WStandardItem >() );
-    _item-> appendRow( std::move( columns ) );
-
-    return retVal;
-  };
-
-  auto accounts =
-    GCW::app()-> gnucash_session().find< GCW::Dbo::Account::Item >()
-    .where( "parent_guid = ?" )
-    .bind( _parentAccount-> m_guid )
-    .resultList()
-    ;
-
-  for( auto account : accounts )
-  {
-    auto ti = _append( _treeItem, account );
-    load( ti, account );
-  }
-
-} // endvoid load( Wt::WStandardItem * _treeItem, Account::Ptr _parentAccount )
 
 

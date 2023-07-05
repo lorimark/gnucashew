@@ -1,3 +1,4 @@
+#line 2 "src/CentralWidget.cpp"
 
 #include <Wt/WMenuItem.h>
 #include <Wt/WTabWidget.h>
@@ -33,6 +34,19 @@ GCW::CentralWidget::CentralWidget()
   m_tabWidget = lw-> addWidget( std::make_unique< Wt::WTabWidget >() );
 
   /*
+  ** This procedure will ~delete~ the tab and its contents when the tab
+  **  is closed.  Normally, on 'close' the tab is only 'hidden' and not
+  **  actually deleted.  This prevents the widgets from remaining in
+  **  memory when the tabs are closed.
+  **
+  */
+  tabWidget()->
+    tabClosed().connect( [=]( int tabIndex )
+    {
+      tabWidget()-> removeTab( tabWidget()-> widget( tabIndex ) );
+    });
+
+  /*
   ** Attach the accounts widget as a non-closeable-tab, so that the
   **  user can navigate around the accounts.
   **
@@ -54,7 +68,8 @@ int GCW::CentralWidget::tabIndex( const std::string & _text )
       return i;
 
   return -1;
-}
+
+} // endint GCW::CentralWidget::tabIndex( const std::string & _text )
 
 void GCW::CentralWidget::openAccountRegister( const std::string & _accountGuid )
 {

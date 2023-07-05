@@ -31,22 +31,22 @@ class RegisterWidget
   {
     public:
 
-      void load();
+      void load( const std::string & _accountGuid );
 
     private:
 
-      void load( Wt::WStandardItem * _treeItem, GCW::Dbo::Account::Item::Ptr _parentAccount );
   };
 
   public:
 
     RegisterWidget( const std::string & _accountGuid );
+    ~RegisterWidget();
 
     Wt::WTableView * tableView() { return m_tableView; }
 
   private:
 
-    void setModel();
+    void setModel( const std::string & _accountGuid );
 
     Wt::WTableView * m_tableView = nullptr;
     std::vector< std::string > m_columns;

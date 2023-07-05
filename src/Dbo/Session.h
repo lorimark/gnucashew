@@ -42,29 +42,6 @@ CREATE TABLE commodities
  quote_tz text(2048)
 );
 
-CREATE TABLE accounts
-(
- guid           text(32) PRIMARY KEY NOT NULL,
- name           text(2048) NOT NULL,
- account_type   text(2048) NOT NULL,
- commodity_guid text(32),
- commodity_scu  integer NOT NULL,
- non_std_scu    integer NOT NULL,
- parent_guid    text(32),
- code           text(2048),
- description    text(2048),
- hidden         integer,
- placeholder    integer
-);
-sqlite> select * from accounts;
-guid                             name         type commodity                        scu 
-aa283385e0cf4f57b3360ca5a843bde5|Root Account|ROOT|10b24d11b4b94b8789d1830da2695bbb|100|0||||0|0
-6e5313b77b4247039f0240ca79e4d871|Assets|ASSET|10b24d11b4b94b8789d1830da2695bbb|100|0|aa283385e0cf4f57b3360ca5a843bde5||Assets|0|1
-b61b07c024fc463489f5db031135a29e|Current Assets|ASSET|10b24d11b4b94b8789d1830da2695bbb|100|0|6e5313b77b4247039f0240ca79e4d871||Current Assets|0|1
-822a857c5f484affa5a6a3e62f4b700f|Checking Account|BANK|10b24d11b4b94b8789d1830da2695bbb|100|0|b61b07c024fc463489f5db031135a29e||Checking Account|0|0
-9e851f524a6a44ef8c93a6b52b004cae|Savings Account|BANK|10b24d11b4b94b8789d1830da2695bbb|100|0|b61b07c024fc463489f5db031135a29e||Savings Account|0|0
-
-
 
 CREATE TABLE budgets
 (
@@ -101,36 +78,6 @@ CREATE TABLE prices
  value_num bigint NOT NULL,
  value_denom bigint NOT NULL
 );
-
-CREATE TABLE transactions
-(
- guid text(32) PRIMARY KEY NOT NULL,
- currency_guid text(32) NOT NULL,
- num text(2048) NOT NULL,
- post_date text(19),
- enter_date text(19),
- description text(2048)
-);
-CREATE INDEX tx_post_date_index ON transactions(post_date);
-
-CREATE TABLE splits
-(
- guid text(32) PRIMARY KEY NOT NULL,
- tx_guid text(32) NOT NULL,
- account_guid text(32) NOT NULL,
- memo text(2048) NOT NULL,
- action text(2048) NOT NULL,
- reconcile_state text(1) NOT NULL,
- reconcile_date text(19),
- value_num bigint NOT NULL,
- value_denom bigint NOT NULL,
- quantity_num bigint NOT NULL,
- quantity_denom bigint NOT NULL,
- lot_guid text(32)
-);
-
-CREATE INDEX splits_tx_guid_index ON splits(tx_guid);
-CREATE INDEX splits_account_guid_index ON splits(account_guid);
 
 CREATE TABLE slots
 (

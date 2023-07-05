@@ -72,30 +72,7 @@ void GCW::AccountsWidget::Model::load()
   if( !GCW::app()-> gnucash_session().isOpen() )
     return;
 
-  /*
-  ** Get a handle on the root account.  The root account is the only
-  **  account that has no parent, and has a name == "Root Account".
-  **  There should only be one of these.
-  **
-  */
-  GCW::Dbo::Account::Item::Ptr rootAccount;
-  {
-    Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
-
-    auto results =
-      GCW::app()-> gnucash_session().find< GCW::Dbo::Account::Item >()
-      .where( "(parent_guid = '' OR parent_guid IS NULL) AND name = 'Root Account'" )
-      .resultList()
-      ;
-
-    if( results.size() == 1 )
-    {
-      rootAccount = *results.begin();
-    }
-
-  } // endWt::Dbo::ptr< Account > rootAccount;
-
-  load( invisibleRootItem(), rootAccount );
+  load( invisibleRootItem(), GCW::Dbo::Account::root() );
 
   int col = 0;
   setHeaderData( col++, "Account Name"         );
@@ -112,16 +89,22 @@ void GCW::AccountsWidget::Model::load( Wt::WStandardItem * _treeItem, GCW::Dbo::
 {
   Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
 
-  auto _append = [=]( Wt::WStandardItem * _item, GCW::Dbo::Account::Item::Ptr _account )
+  auto _append = [=]( Wt::WStandardItem * _item, GCW::Dbo::Account::Item::Ptr _accountItem )
   {
     std::vector< std::unique_ptr< Wt::WStandardItem > > columns;
 
-    auto accountName = std::make_unique< Wt::WStandardItem >( _account-> m_name );
-    accountName-> setData( _account-> m_guid, Wt::ItemDataRole::User );
+    auto accountName = std::make_unique< Wt::WStandardItem >( _accountItem-> name() );
+
+    /*
+    ** set the 'model->data::User' element to contain the guid of the account, so
+    **  we can recover it later.
+    **
+    */
+    accountName-> setData( _accountItem-> guid(), Wt::ItemDataRole::User );
     auto retVal = accountName.get();
     columns.push_back( std::move( accountName ) );
-    columns.push_back( std::make_unique< Wt::WStandardItem >( _account-> m_code        ) );
-    columns.push_back( std::make_unique< Wt::WStandardItem >( _account-> m_description ) );
+    columns.push_back( std::make_unique< Wt::WStandardItem >( _accountItem-> code        () ) );
+    columns.push_back( std::make_unique< Wt::WStandardItem >( _accountItem-> description () ) );
     columns.push_back( std::make_unique< Wt::WStandardItem >() );
     columns.push_back( std::make_unique< Wt::WStandardItem >() );
     columns.push_back( std::make_unique< Wt::WStandardItem >() );
@@ -134,7 +117,7 @@ void GCW::AccountsWidget::Model::load( Wt::WStandardItem * _treeItem, GCW::Dbo::
   auto accounts =
     GCW::app()-> gnucash_session().find< GCW::Dbo::Account::Item >()
     .where( "parent_guid = ?" )
-    .bind( _parentAccount-> m_guid )
+    .bind( _parentAccount-> guid() )
     .resultList()
     ;
 
@@ -157,6 +140,10 @@ void GCW::AccountsWidget::doubleClicked( const Wt::WModelIndex & index, const Wt
     << std::endl;
 #endif
 
+  /*
+  ** The 'model->data::User' element should return the guid of the account
+  **
+  */
   m_doubleClicked.emit( Wt::asString( m_model-> data( index, Wt::ItemDataRole::User ) ).toUTF8() );
 
 } // endvoid GCW::AccountsWidget::doubleClicked( const Wt::WModelIndex & index, const Wt::WMouseEvent & event )

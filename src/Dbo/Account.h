@@ -43,6 +43,36 @@ namespace GCW {
   namespace Dbo {
     namespace Account {
 
+/*!
+** \brief Account Item Class
+**
+** This class represents an 'account' within gnucash
+**
+** \code
+**  CREATE TABLE accounts
+**  (
+**   guid           text(32) PRIMARY KEY NOT NULL,
+**   name           text(2048) NOT NULL,
+**   account_type   text(2048) NOT NULL,
+**   commodity_guid text(32),
+**   commodity_scu  integer NOT NULL,
+**   non_std_scu    integer NOT NULL,
+**   parent_guid    text(32),
+**   code           text(2048),
+**   description    text(2048),
+**   hidden         integer,
+**   placeholder    integer
+**  );
+**  sqlite> select * from accounts;
+**  guid                             name         type commodity                        scu 
+**  aa283385e0cf4f57b3360ca5a843bde5|Root Account|ROOT|10b24d11b4b94b8789d1830da2695bbb|100|0||||0|0
+**  6e5313b77b4247039f0240ca79e4d871|Assets|ASSET|10b24d11b4b94b8789d1830da2695bbb|100|0|aa283385e0cf4f57b3360ca5a843bde5||Assets|0|1
+**  b61b07c024fc463489f5db031135a29e|Current Assets|ASSET|10b24d11b4b94b8789d1830da2695bbb|100|0|6e5313b77b4247039f0240ca79e4d871||Current Assets|0|1
+**  822a857c5f484affa5a6a3e62f4b700f|Checking Account|BANK|10b24d11b4b94b8789d1830da2695bbb|100|0|b61b07c024fc463489f5db031135a29e||Checking Account|0|0
+**  9e851f524a6a44ef8c93a6b52b004cae|Savings Account|BANK|10b24d11b4b94b8789d1830da2695bbb|100|0|b61b07c024fc463489f5db031135a29e||Savings Account|0|0
+** \endcode
+**
+*/
 class Item
 : public Wt::Dbo::Dbo< Item >
 {
@@ -54,7 +84,16 @@ class Item
 
     Item() {};
 
-    const std::string & name() const { return m_name; }
+    const std::string & guid           () const { return m_guid           ; }
+    const std::string & name           () const { return m_name           ; }
+    const std::string & accountType    () const { return m_account_type   ; }
+    const std::string & commodity_guid () const { return m_commodity_guid ; }
+    const int           commodity_scu  () const { return m_commodity_scu  ; }
+    const std::string & parent_guid    () const { return m_parent_guid    ; }
+    const std::string & code           () const { return m_code           ; }
+    const std::string & description    () const { return m_description    ; }
+    const int           hidden         () const { return m_hidden         ; }
+    const int           placeHolder    () const { return m_placeHolder    ; }
 
     template< class Action > void persist( Action & action )
     {
@@ -68,8 +107,10 @@ class Item
       Wt::Dbo::field( action, m_code           , "code"           , 2048 ); // text(2048)
       Wt::Dbo::field( action, m_description    , "description"    , 2048 ); // text(2048)
       Wt::Dbo::field( action, m_hidden         , "hidden"                ); // integer
-      Wt::Dbo::field( action, m_placeholder    , "placeholder"           ); // integer
+      Wt::Dbo::field( action, m_placeHolder    , "placeholder"           ); // integer
     }
+
+  private:
 
     std::string m_guid           ;
     std::string m_name           ;
@@ -81,7 +122,7 @@ class Item
     std::string m_code           ;
     std::string m_description    ;
     int         m_hidden         ;
-    int         m_placeholder    ;
+    int         m_placeHolder    ;
 
 }; // endclass Item
 
@@ -97,6 +138,10 @@ Item::Ptr root();
 **
 */
 Item::Ptr byGuid( const std::string & _guid );
+
+namespace Children {
+  Item::Vector vector( const std::string & _parentGuid );
+}
 
     } // endnamespace Account {
   } // endnamespace Dbo {
