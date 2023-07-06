@@ -3,12 +3,12 @@
 #define __REGISTERWIDGET_H___
 
 #include <Wt/WContainerWidget.h>
-#include <Wt/WTableView.h>
 #include <Wt/WStandardItem.h>
 #include <Wt/WStandardItemModel.h>
 
 #include "Dbo/Session.h"
 #include "Dbo/Accounts.h"
+#include "TableView.h"
 
 namespace GCW {
 
@@ -47,7 +47,7 @@ class RegisterWidget
 
     RegisterWidget( const std::string & _accountGuid );
 
-    Wt::WTableView           * tableView () { return m_tableView; }
+    GCW::TableView           * tableView () { return m_tableView; }
     std::shared_ptr< Model >   model     () { return m_model;     }
 
   private:
@@ -55,7 +55,7 @@ class RegisterWidget
     void loadData( const std::string & _accountGuid );
 
     std::shared_ptr< Model > m_model;
-    Wt::WTableView * m_tableView = nullptr;
+    GCW::TableView * m_tableView = nullptr;
 
 };  // endclass RegisterWidget
 

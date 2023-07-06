@@ -19,9 +19,10 @@ RegisterWidget( const std::string & _accountGuid )
 
   auto lw = setLayout( std::make_unique< Wt::WVBoxLayout >() );
 
-  auto w = std::make_unique< Wt::WTableView >();
+  auto w = std::make_unique< GCW::TableView >();
   m_tableView = w.get();
   lw-> addWidget( std::move( w ), 1 );
+  tableView()-> addStyleClass( "TableView" );
 
 #ifdef NEVER
   int col = 0;
@@ -48,6 +49,23 @@ loadData( const std::string & _accountGuid )
   m_model = std::make_shared< Model >( _accountGuid );
 
   tableView()-> setModel( m_model );
+  tableView()-> setSortingEnabled( false );
+
+  /*
+  ** Prefer to set these in gcw.css but having trouble getting the
+  **  css to behave
+  **
+  */
+  int col = 0;
+  tableView()-> setColumnWidth( col++, "150px" ); // 1 Date
+  tableView()-> setColumnWidth( col++,  "50px" ); // 2 Action/Num
+  tableView()-> setColumnWidth( col++,   "99%" ); // 3 Memo/Description
+  tableView()-> setColumnWidth( col++, "200px" ); // 4 Account
+  tableView()-> setColumnWidth( col++,  "25px" ); // 5 Reconciliation
+  tableView()-> setColumnWidth( col++, "100px" ); // 6 Deposit
+  tableView()-> setColumnWidth( col++, "100px" ); // 7 Withdrawal
+  tableView()-> setColumnWidth( col++, "100px" ); // 8 Balance
+
 
 #ifdef NEVER
   int row = 1;
@@ -83,8 +101,6 @@ refreshFromDisk()
   auto accountItem = GCW::Dbo::Accounts::byGuid   ( m_accountGuid );
   auto splitItems  = GCW::Dbo::Splits  ::byAccount( m_accountGuid );
 
-  std::cout << __FILE__ << ":" << __LINE__ << " " << accountItem << " " << splitItems.size() << std::endl;
-
   for( auto splitItem : splitItems )
   {
     auto transactionItem = GCW::Dbo::Transactions::byGuid( splitItem-> tx_guid() );
@@ -97,12 +113,22 @@ refreshFromDisk()
     };
 
     _addColumn( transactionItem-> post_date   ( "MM/dd/yyyy" ) );
-    _addColumn( transactionItem-> num         (                    ) );
-    _addColumn( transactionItem-> description (            ) );
+    _addColumn( transactionItem-> num         (              ) );
+    _addColumn( transactionItem-> description (              ) );
     _addColumn( "" );
 
     appendRow( std::move( columns ) );
   }
+
+  int col = 0;
+  setHeaderData( col, "Date"       ); col++;
+  setHeaderData( col, "Num"        ); col++;
+  setHeaderData( col, "Memo"       ); col++;
+  setHeaderData( col, "Account"    ); col++;
+  setHeaderData( col, "R"          ); col++;
+  setHeaderData( col, "Deposit"    ); col++;
+  setHeaderData( col, "Withdrawal" ); col++;
+  setHeaderData( col, "Balance"    ); col++;
 
 } // endvoid GCW::RegisterWidget::Model::refreshFromDisk()
 

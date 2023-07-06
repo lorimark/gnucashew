@@ -42,6 +42,7 @@ add_executable (
   GnuCashew.cpp
   MainWidget.cpp
   RegisterWidget.cpp
+  TableView.cpp
   ${GCW_FILES}
   )
 

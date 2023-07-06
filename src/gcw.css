@@ -3,64 +3,116 @@
   width:100%;
 }
 
-.RegisterWidget table thead tr {
+/*
+** Background and big fat line on the bottom border
+*/
+.RegisterWidget table thead tr,
+.RegisterWidget .Wt-header
+{
   background-color: #96b183;
   border-bottom:2px solid black;
 }
 
-.RegisterWidget table th {
+/*
+** Black border around each header cell
+**  (doesn't work on WTableView)
+*/
+.RegisterWidget table th
+/*.RegisterWidget .Wt-tv-c*/
+{
   border:1px solid black;
 }
 
-.RegisterWidget table th, td {
+/*
+** Little extra padding around the header
+**  labels on the regular WTable
+*/
+.RegisterWidget table th, td
+{
   padding-left:10px;
   padding-right:10px;
   font-weight:normal;
 }
 
+
 /* Date */
-.RegisterWidget table th:nth-child(1), td:nth-child(1) {
+.RegisterWidget table th:nth-child(1),
+.RegisterWidget table td:nth-child(1),
+.RegisterWidget .Wt-tv-c1
+{
   text-align:right;
   width:150px;
 }
 
 /* Action/Num */
-.RegisterWidget table th:nth-child(2), td:nth-child(2) {
+.RegisterWidget table th:nth-child(2),
+.RegisterWidget table td:nth-child(2),
+.RegisterWidget .Wt-tv-c2
+{
   text-align:left;
   width:50px;
 }
 
 /* Memo/Description */
-.RegisterWidget table th:nth-child(3), td:nth-child(3) {
+.RegisterWidget table th:nth-child(3),
+.RegisterWidget table td:nth-child(3),
+.RegisterWidget .Wt-header .Wt-tv-c3,
+.RegisterWidget .Wt-tv-contents .Wt-tv-c3
+{
   text-align:left;
 }
 
 /* Account */
-.RegisterWidget table th:nth-child(4), td:nth-child(4) {
+.RegisterWidget table th:nth-child(4),
+.RegisterWidget table td:nth-child(4),
+.RegisterWidget .Wt-header .Wt-tv-c4,
+.RegisterWidget .Wt-tv-contents .Wt-tv-c4
+
+{
   text-align:right;
   width:200px;
 }
 
 /* Reconciliation */
-.RegisterWidget table th:nth-child(5), td:nth-child(5) {
+.RegisterWidget table th:nth-child(5),
+.RegisterWidget table td:nth-child(5),
+.RegisterWidget .Wt-header .Wt-tv-c5,
+.RegisterWidget .Wt-tv-contents .Wt-tv-c5
+
+{
   text-align:center;
   width:50px;
 }
 
 /* Deposit */
-.RegisterWidget table th:nth-child(6), td:nth-child(6) {
+.RegisterWidget table th:nth-child(6),
+.RegisterWidget table td:nth-child(6),
+.RegisterWidget .Wt-header .Wt-tv-c6,
+.RegisterWidget .Wt-tv-contents .Wt-tv-c6
+
+{
   text-align:right;
   width:50px;
 }
 
 /* Withdrawal */
-.RegisterWidget table th:nth-child(7), td:nth-child(7) {
+.RegisterWidget table th:nth-child(7),
+.RegisterWidget table td:nth-child(7),
+.RegisterWidget .Wt-header .Wt-tv-c7,
+.RegisterWidget .Wt-tv-contents .Wt-tv-c7
+
+{
   text-align:right;
   width:100px;
 }
 
 /* Balance */
-.RegisterWidget table th:nth-child(7), td:nth-child(8) {
+.RegisterWidget table th:nth-child(8),
+.RegisterWidget table td:nth-child(8),
+.RegisterWidget .Wt-header .Wt-tv-c8,
+.RegisterWidget .Wt-tv-contents .Wt-tv-c8
+
+{
   text-align:right;
   width:100px;
 }
