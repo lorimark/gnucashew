@@ -4,6 +4,7 @@
 #define __TRANSACTIONS_H___
 
 #include <Wt/Dbo/Dbo.h>
+#include <Wt/WDate.h>
 #include <Wt/WDateTime.h>
 
 /*
@@ -87,6 +88,12 @@ class Item
     {
       auto d = Wt::WDateTime::fromString( post_date(), "yyyy-MM-dd hh:mm:ss" );
       return d.toString( _format ).toUTF8();
+    }
+
+    Wt::WDate post_date_as_date() const
+    {
+      auto d = Wt::WDateTime::fromString( post_date(), "yyyy-MM-dd hh:mm:ss" );
+      return d.date();
     }
 
     template< class Action > void persist( Action & action )

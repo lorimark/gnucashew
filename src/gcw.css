@@ -49,7 +49,7 @@
 .RegisterWidget table td:nth-child(2),
 .RegisterWidget .Wt-tv-c2
 {
-  text-align:left;
+  text-align:center;
   width:50px;
 }
 

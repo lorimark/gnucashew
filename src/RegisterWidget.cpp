@@ -17,12 +17,22 @@ RegisterWidget( const std::string & _accountGuid )
 {
   addStyleClass( "RegisterWidget" );
 
+  /*
+  ** use a layout manager to install the table view into, so
+  **  that the widget will fit and scroll properly
+  **
+  */
   auto lw = setLayout( std::make_unique< Wt::WVBoxLayout >() );
-
   auto w = std::make_unique< GCW::TableView >();
   m_tableView = w.get();
   lw-> addWidget( std::move( w ), 1 );
   tableView()-> addStyleClass( "TableView" );
+
+  tableView()-> setSortingEnabled       ( false                          );
+  tableView()-> setAlternatingRowColors ( true                           );
+  tableView()-> setSelectionBehavior    ( Wt::SelectionBehavior::Rows    );
+  tableView()-> setSelectionMode        ( Wt::SelectionMode::Single      );
+  tableView()-> setEditTriggers         ( Wt::EditTrigger::SingleClicked );
 
 #ifdef NEVER
   int col = 0;
@@ -49,7 +59,7 @@ loadData( const std::string & _accountGuid )
   m_model = std::make_shared< Model >( _accountGuid );
 
   tableView()-> setModel( m_model );
-  tableView()-> setSortingEnabled( false );
+  tableView()-> sortByColumn( 0, Wt::SortOrder::Ascending );
 
   /*
   ** Prefer to set these in gcw.css but having trouble getting the
@@ -65,7 +75,6 @@ loadData( const std::string & _accountGuid )
   tableView()-> setColumnWidth( col++, "100px" ); // 6 Deposit
   tableView()-> setColumnWidth( col++, "100px" ); // 7 Withdrawal
   tableView()-> setColumnWidth( col++, "100px" ); // 8 Balance
-
 
 #ifdef NEVER
   int row = 1;
@@ -107,18 +116,34 @@ refreshFromDisk()
 
     std::vector< std::unique_ptr< Wt::WStandardItem > > columns;
 
-    auto _addColumn = [&]( const std::string & _text )
+    auto _addColumn = [&]( auto _value )
     {
-      columns.push_back( std::make_unique< Wt::WStandardItem >( _text ) );
+      auto item = std::make_unique< Wt::WStandardItem >( _value );
+      item-> setToolTip( _value );
+      auto retVal = item.get();
+      columns.push_back( std::move( item ) );
+      return retVal;
     };
 
-    _addColumn( transactionItem-> post_date   ( "MM/dd/yyyy" ) );
-    _addColumn( transactionItem-> num         (              ) );
-    _addColumn( transactionItem-> description (              ) );
-    _addColumn( "" );
+    auto post_date = _addColumn( transactionItem-> post_date( "yyyy-MM-dd" ) );
+
+    post_date-> setData( transactionItem-> post_date_as_date() );
+    post_date-> setFlags( Wt::ItemFlag::Editable );
+
+    std::cout << __FILE__ << ":" << __LINE__ << " " << transactionItem-> post_date_as_date().toString() << std::endl;
+
+
+    _addColumn( transactionItem-> num( ) );
+
+    auto description = _addColumn( transactionItem-> description (              ) );
+    description-> setFlags( Wt::ItemFlag::Editable );
+
+    _addColumn( "" ); // account
+    _addColumn( "n" ); // Reconciled
 
     appendRow( std::move( columns ) );
-  }
+
+  } // endfor( auto splitItem : splitItems )
 
   int col = 0;
   setHeaderData( col, "Date"       ); col++;
