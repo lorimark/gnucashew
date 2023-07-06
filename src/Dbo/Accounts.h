@@ -1,9 +1,9 @@
 
 
-#ifndef __ACCOUNT_H___
-#define __ACCOUNT_H___
+#ifndef __ACCOUNTS_H___
+#define __ACCOUNTS_H___
 
-#include <Wt/Dbo/Dbo.h>
+#include "BaseItem.h"
 
 /*
 ** Predefine the Account class that fixin to come up.
@@ -11,7 +11,7 @@
 */
 namespace GCW {
   namespace Dbo {
-    namespace Account {
+    namespace Accounts {
       class Item;
     }
   }
@@ -24,7 +24,7 @@ namespace GCW {
 **  as the primary key.
 **
 */
-template<> struct Wt::Dbo::dbo_traits< GCW::Dbo::Account::Item >
+template<> struct Wt::Dbo::dbo_traits< GCW::Dbo::Accounts::Item >
 : public Wt::Dbo::dbo_default_traits
 {
   using IdType = std::string;
@@ -33,7 +33,7 @@ template<> struct Wt::Dbo::dbo_traits< GCW::Dbo::Account::Item >
   static const char * versionField()     { return nullptr; }
 };
 
-template<> struct Wt::Dbo::dbo_traits< const GCW::Dbo::Account::Item > : Wt::Dbo::dbo_traits< GCW::Dbo::Account::Item > {};
+template<> struct Wt::Dbo::dbo_traits< const GCW::Dbo::Accounts::Item > : Wt::Dbo::dbo_traits< GCW::Dbo::Accounts::Item > {};
 
 /*
 ** Now we can start building our class!
@@ -41,7 +41,7 @@ template<> struct Wt::Dbo::dbo_traits< const GCW::Dbo::Account::Item > : Wt::Dbo
 */
 namespace GCW {
   namespace Dbo {
-    namespace Account {
+    namespace Accounts {
 
 /*!
 ** \brief Account Item Class
@@ -74,15 +74,9 @@ namespace GCW {
 **
 */
 class Item
-: public Wt::Dbo::Dbo< Item >
+: public GCW::Dbo::BaseItem< Item >
 {
   public:
-
-    using Ptr = Wt::Dbo::ptr< Item >;
-    using Collection = Wt::Dbo::collection< Ptr >;
-    using Vector = std::vector< Ptr >;
-
-    Item() {};
 
     const std::string & guid           () const { return m_guid           ; }
     const std::string & name           () const { return m_name           ; }
@@ -143,9 +137,9 @@ namespace Children {
   Item::Vector vector( const std::string & _parentGuid );
 }
 
-    } // endnamespace Account {
+    } // endnamespace Accounts {
   } // endnamespace Dbo {
 } // endnamespace GCW {
 
-#endif // end#ifndef __ACCOUNT_H___
+#endif // end#ifndef __ACCOUNTS_H___
 

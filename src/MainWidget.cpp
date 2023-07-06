@@ -9,6 +9,8 @@
 
 GCW::MainWidget::MainWidget()
 {
+  addStyleClass( "MainWidget" );
+
   auto lw = setLayout( std::make_unique< Wt::WVBoxLayout >() );
 
   m_navBar        = lw-> addWidget( std::make_unique< Wt::WNavigationBar   >()    );

@@ -9,7 +9,7 @@
 //#include <Wt/WModelIndex.h>
 
 #include "Dbo/Session.h"
-#include "Dbo/Account.h"
+#include "Dbo/Accounts.h"
 
 namespace GCW {
 
@@ -44,7 +44,7 @@ class AccountsWidget
 
     private:
 
-      void load( Wt::WStandardItem * _treeItem, GCW::Dbo::Account::Item::Ptr _parentAccount );
+      void load( Wt::WStandardItem * _treeItem, GCW::Dbo::Accounts::Item::Ptr _parentAccount );
   };
 
   public:

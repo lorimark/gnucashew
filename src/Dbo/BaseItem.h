@@ -8,16 +8,16 @@
 namespace GCW {
   namespace Dbo {
 
-class BaseItem
-: public Wt::Dbo::Dbo< BaseItem >
+template <class C> class BaseItem
+: public Wt::Dbo::Dbo< C >
 {
   public:
 
-    using Ptr = Wt::Dbo::ptr< Account >;
+    using Ptr = Wt::Dbo::ptr< C >;
     using Collection = Wt::Dbo::collection< Ptr >;
     using Vector = std::vector< Ptr >;
 
-    BaseItem() {}
+    BaseItem():Wt::Dbo::Dbo<C>() {}
 
 };
 

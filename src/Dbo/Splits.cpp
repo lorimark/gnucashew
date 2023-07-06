@@ -1,12 +1,12 @@
 
 #include "../App.h"
 
-#include "Split.h"
+#include "Splits.h"
 
 
-GCW::Dbo::Split::Item::Vector GCW::Dbo::Split::byAccount( const std::string & _accountGuid )
+GCW::Dbo::Splits::Item::Vector GCW::Dbo::Splits::byAccount( const std::string & _accountGuid )
 {
-  GCW::Dbo::Split::Item::Vector retVal;
+  GCW::Dbo::Splits::Item::Vector retVal;
 
   /*
   ** If the session isn't open then there's nothing to load.
@@ -18,7 +18,7 @@ GCW::Dbo::Split::Item::Vector GCW::Dbo::Split::byAccount( const std::string & _a
     Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
 
     auto results =
-      GCW::app()-> gnucash_session().find< GCW::Dbo::Split::Item >()
+      GCW::app()-> gnucash_session().find< GCW::Dbo::Splits::Item >()
       .where( "account_guid = ?" )
       .bind( _accountGuid )
       .resultList()
@@ -32,4 +32,7 @@ GCW::Dbo::Split::Item::Vector GCW::Dbo::Split::byAccount( const std::string & _a
 
   return retVal;
 
-} // endGCW::Dbo::Split::Item::Vector GCW::Dbo::Split::byAccount( const std::string & _accountGuid )
+} // endGCW::Dbo::Splits::Item::Vector GCW::Dbo::Splits::byAccount( const std::string & _accountGuid )
+
+
+

@@ -21,6 +21,8 @@
 */
 GCW::CentralWidget::CentralWidget()
 {
+  addStyleClass( "CentralWidget" );
+
   /*
   ** Always use a layout
   **
@@ -77,7 +79,7 @@ void GCW::CentralWidget::openAccountRegister( const std::string & _accountGuid )
   ** Grab the account so we can fetch things from it.
   **
   */
-  auto accountItem = GCW::Dbo::Account::byGuid( _accountGuid );
+  auto accountItem = GCW::Dbo::Accounts::byGuid( _accountGuid );
 
   /*
   ** If we didn't get an account (this shouldn't happen) then

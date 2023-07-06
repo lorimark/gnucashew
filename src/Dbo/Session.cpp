@@ -4,16 +4,16 @@
 
 #include <Wt/Dbo/backend/Sqlite3.h>
 
-#include "Account.h"
-#include "Split.h"
-#include "Transaction.h"
+#include "Accounts.h"
+#include "Splits.h"
+#include "Transactions.h"
 
 #include "Session.h"
 
 bool GCW::Dbo::Session::open( const std::string & _path )
 {
   /*
-  ** Clear this so that is we don't get opened, then we don't
+  ** Clear this so that if we don't get opened, then we don't
   **  accidently indicate that we are open.
   **
   */
@@ -71,9 +71,9 @@ bool GCW::Dbo::GnuCash::Session::open( const std::string & _path )
 
 void GCW::Dbo::GnuCash::Session::init()
 {
-  mapClass< Account     ::Item >( "accounts"     );
-  mapClass< Transaction ::Item >( "transactions" );
-  mapClass< Split       ::Item >( "splits"       );
+  mapClass< Accounts     ::Item >( "accounts"     );
+  mapClass< Transactions ::Item >( "transactions" );
+  mapClass< Splits       ::Item >( "splits"       );
 
   m_isOpen = true;
 

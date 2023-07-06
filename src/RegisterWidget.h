@@ -8,7 +8,7 @@
 #include <Wt/WStandardItemModel.h>
 
 #include "Dbo/Session.h"
-#include "Dbo/Account.h"
+#include "Dbo/Accounts.h"
 
 namespace GCW {
 
@@ -26,30 +26,36 @@ namespace GCW {
 class RegisterWidget
 : public Wt::WContainerWidget
 {
+
+
+  public:
+
   class Model
   : public Wt::WStandardItemModel
   {
     public:
 
-      void load( const std::string & _accountGuid );
+      Model( const std::string & _accountGuid );
+
+      void refreshFromDisk();
 
     private:
 
-  };
+      std::string m_accountGuid;
 
-  public:
+  }; // endclass Model
 
     RegisterWidget( const std::string & _accountGuid );
-    ~RegisterWidget();
 
-    Wt::WTableView * tableView() { return m_tableView; }
+    Wt::WTableView           * tableView () { return m_tableView; }
+    std::shared_ptr< Model >   model     () { return m_model;     }
 
   private:
 
-    void setModel( const std::string & _accountGuid );
+    void loadData( const std::string & _accountGuid );
 
+    std::shared_ptr< Model > m_model;
     Wt::WTableView * m_tableView = nullptr;
-    std::vector< std::string > m_columns;
 
 };  // endclass RegisterWidget
 

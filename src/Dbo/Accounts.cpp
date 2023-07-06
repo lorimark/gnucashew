@@ -1,12 +1,12 @@
 
 #include "../App.h"
 
-#include "Account.h"
-#include "Transaction.h"
+#include "Accounts.h"
+#include "Transactions.h"
 
-GCW::Dbo::Account::Item::Ptr GCW::Dbo::Account::root()
+GCW::Dbo::Accounts::Item::Ptr GCW::Dbo::Accounts::root()
 {
-  GCW::Dbo::Account::Item::Ptr retVal;
+  GCW::Dbo::Accounts::Item::Ptr retVal;
 
   /*
   ** If the session isn't open then there's nothing to load.
@@ -24,7 +24,7 @@ GCW::Dbo::Account::Item::Ptr GCW::Dbo::Account::root()
     **
     */
     auto results =
-      GCW::app()-> gnucash_session().find< GCW::Dbo::Account::Item >()
+      GCW::app()-> gnucash_session().find< GCW::Dbo::Accounts::Item >()
       .where( "(parent_guid = '' OR parent_guid IS NULL) AND name = 'Root Account'" )
       .resultList()
       ;
@@ -38,11 +38,11 @@ GCW::Dbo::Account::Item::Ptr GCW::Dbo::Account::root()
 
   return retVal;
 
-} // endGCW::Dbo::Account::Item::Ptr GCW::Dbo::Account::load()
+} // endGCW::Dbo::Accounts::Item::Ptr GCW::Dbo::Accounts::load()
 
-GCW::Dbo::Account::Item::Ptr GCW::Dbo::Account::byGuid( const std::string & _guid )
+GCW::Dbo::Accounts::Item::Ptr GCW::Dbo::Accounts::byGuid( const std::string & _guid )
 {
-  GCW::Dbo::Account::Item::Ptr retVal;
+  GCW::Dbo::Accounts::Item::Ptr retVal;
 
   /*
   ** If the session isn't open then there's nothing to load.
@@ -54,24 +54,24 @@ GCW::Dbo::Account::Item::Ptr GCW::Dbo::Account::byGuid( const std::string & _gui
     Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
 
     retVal =
-      GCW::app()-> gnucash_session().load< GCW::Dbo::Account::Item >( _guid )
+      GCW::app()-> gnucash_session().load< GCW::Dbo::Accounts::Item >( _guid )
       ;
 
   } // endif( GCW::app()-> gnucash_session().isOpen() )
 
   return retVal;
 
-} // endGCW::Dbo::Account::Item::Ptr GCW::Dbo::Account::byGuid( const std::string & _guid )
+} // endGCW::Dbo::Accounts::Item::Ptr GCW::Dbo::Accounts::byGuid( const std::string & _guid )
 
 
-GCW::Dbo::Account::Item::Vector GCW::Dbo::Account::Children::vector( const std::string & _parentGuid )
+GCW::Dbo::Accounts::Item::Vector GCW::Dbo::Accounts::Children::vector( const std::string & _parentGuid )
 {
-  GCW::Dbo::Account::Item::Vector retVal;
+  GCW::Dbo::Accounts::Item::Vector retVal;
 
 
   return retVal;
 
-} // endGCW::Dbo::Account::Item::Vector GCW::Dbo::Account::Children::vector( const std::string & _parentGuid )
+} // endGCW::Dbo::Accounts::Item::Vector GCW::Dbo::Accounts::Children::vector( const std::string & _parentGuid )
 
 
 

@@ -1,7 +1,7 @@
 
 
-#ifndef __SPLIT_H___
-#define __SPLIT_H___
+#ifndef __SPLITS_H___
+#define __SPLITS_H___
 
 #include <Wt/Dbo/Dbo.h>
 
@@ -11,7 +11,7 @@
 */
 namespace GCW {
   namespace Dbo {
-    namespace Split {
+    namespace Splits {
       class Item;
     }
   }
@@ -24,7 +24,7 @@ namespace GCW {
 **  as the primary key.
 **
 */
-template<> struct Wt::Dbo::dbo_traits< GCW::Dbo::Split::Item >
+template<> struct Wt::Dbo::dbo_traits< GCW::Dbo::Splits::Item >
 : public Wt::Dbo::dbo_default_traits
 {
   using IdType = std::string;
@@ -33,7 +33,7 @@ template<> struct Wt::Dbo::dbo_traits< GCW::Dbo::Split::Item >
   static const char * versionField()     { return nullptr; }
 };
 
-template<> struct Wt::Dbo::dbo_traits< const GCW::Dbo::Split::Item > : Wt::Dbo::dbo_traits< GCW::Dbo::Split::Item > {};
+template<> struct Wt::Dbo::dbo_traits< const GCW::Dbo::Splits::Item > : Wt::Dbo::dbo_traits< GCW::Dbo::Splits::Item > {};
 
 /*
 ** Now we can start building our class!
@@ -41,7 +41,7 @@ template<> struct Wt::Dbo::dbo_traits< const GCW::Dbo::Split::Item > : Wt::Dbo::
 */
 namespace GCW {
   namespace Dbo {
-    namespace Split {
+    namespace Splits {
 
 /*!
 ** \brief Split Item Class
@@ -148,9 +148,9 @@ class Item
 */
 Item::Vector byAccount( const std::string & _accountGuid );
 
-    } // endnamespace Split {
+    } // endnamespace Splits {
   } // endnamespace Dbo {
 } // endnamespace GCW {
 
-#endif // end#ifndef __SPLIT_H___
+#endif // end#ifndef __SPLITS_H___
 

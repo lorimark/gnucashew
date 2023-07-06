@@ -4,6 +4,7 @@
 
 #include <Wt/WText.h>
 #include <Wt/WTreeTableNode.h>
+#include <Wt/WVBoxLayout.h>
 
 #include "define.h"
 #include "GnuCashew.h"
@@ -11,8 +12,15 @@
 
 
 GCW::AccountsWidget::AccountsWidget()
-: m_treeView( addNew< Wt::WTreeView >() )
 {
+  addStyleClass( "AccountsWidget" );
+
+  auto lw = setLayout( std::make_unique< Wt::WVBoxLayout >() );
+
+  auto w = std::make_unique< Wt::WTreeView >();
+  m_treeView = w.get();
+  lw-> addWidget( std::move( w ) );
+
   treeView()-> setSelectionBehavior( Wt::SelectionBehavior::Rows );
   treeView()-> setSelectionMode(     Wt::SelectionMode::Single   );
   treeView()-> setAlternatingRowColors( true );
@@ -72,7 +80,7 @@ void GCW::AccountsWidget::Model::load()
   if( !GCW::app()-> gnucash_session().isOpen() )
     return;
 
-  load( invisibleRootItem(), GCW::Dbo::Account::root() );
+  load( invisibleRootItem(), GCW::Dbo::Accounts::root() );
 
   int col = 0;
   setHeaderData( col++, "Account Name"         );
@@ -85,11 +93,11 @@ void GCW::AccountsWidget::Model::load()
 
 } // endvoid GCW::AccountsWidget::Model::load()
 
-void GCW::AccountsWidget::Model::load( Wt::WStandardItem * _treeItem, GCW::Dbo::Account::Item::Ptr _parentAccount )
+void GCW::AccountsWidget::Model::load( Wt::WStandardItem * _treeItem, GCW::Dbo::Accounts::Item::Ptr _parentAccount )
 {
   Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
 
-  auto _append = [=]( Wt::WStandardItem * _item, GCW::Dbo::Account::Item::Ptr _accountItem )
+  auto _append = [=]( Wt::WStandardItem * _item, GCW::Dbo::Accounts::Item::Ptr _accountItem )
   {
     std::vector< std::unique_ptr< Wt::WStandardItem > > columns;
 
@@ -115,7 +123,7 @@ void GCW::AccountsWidget::Model::load( Wt::WStandardItem * _treeItem, GCW::Dbo::
   };
 
   auto accounts =
-    GCW::app()-> gnucash_session().find< GCW::Dbo::Account::Item >()
+    GCW::app()-> gnucash_session().find< GCW::Dbo::Accounts::Item >()
     .where( "parent_guid = ?" )
     .bind( _parentAccount-> guid() )
     .resultList()

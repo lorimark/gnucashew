@@ -1,9 +1,10 @@
 
 
-#ifndef __TRANSACTION_H___
-#define __TRANSACTION_H___
+#ifndef __TRANSACTIONS_H___
+#define __TRANSACTIONS_H___
 
 #include <Wt/Dbo/Dbo.h>
+#include <Wt/WDateTime.h>
 
 /*
 ** Predefine the Account class that fixin to come up.
@@ -11,7 +12,7 @@
 */
 namespace GCW {
   namespace Dbo {
-    namespace Transaction {
+    namespace Transactions {
       class Item;
     }
   }
@@ -24,7 +25,7 @@ namespace GCW {
 **  as the primary key.
 **
 */
-template<> struct Wt::Dbo::dbo_traits< GCW::Dbo::Transaction::Item >
+template<> struct Wt::Dbo::dbo_traits< GCW::Dbo::Transactions::Item >
 : public Wt::Dbo::dbo_default_traits
 {
   using IdType = std::string;
@@ -33,7 +34,7 @@ template<> struct Wt::Dbo::dbo_traits< GCW::Dbo::Transaction::Item >
   static const char * versionField()     { return nullptr; }
 };
 
-template<> struct Wt::Dbo::dbo_traits< const GCW::Dbo::Transaction::Item > : Wt::Dbo::dbo_traits< GCW::Dbo::Transaction::Item > {};
+template<> struct Wt::Dbo::dbo_traits< const GCW::Dbo::Transactions::Item > : Wt::Dbo::dbo_traits< GCW::Dbo::Transactions::Item > {};
 
 /*
 ** Now we can start building our class!
@@ -41,8 +42,7 @@ template<> struct Wt::Dbo::dbo_traits< const GCW::Dbo::Transaction::Item > : Wt:
 */
 namespace GCW {
   namespace Dbo {
-    namespace Transaction {
-
+    namespace Transactions {
 
 /*!
 ** \brief Transaction Item
@@ -59,6 +59,9 @@ namespace GCW {
 **   description text(2048)
 **  );
 **  CREATE INDEX tx_post_date_index ON transactions(post_date);
+**   sqlite> select * from transactions;
+**   4b2259ef3fbb486bad1b42f28ec84346|10b24d11b4b94b8789d1830da2695bbb||2023-05-28 10:59:00|2023-05-28 21:46:09|transaction memo
+**   8e841d9c97914cd5a5bd47062e7c91e3|10b24d11b4b94b8789d1830da2695bbb||2023-07-04 10:59:00|2023-07-05 16:19:43|2nd transaction
 ** \endcode
 **
 */
@@ -73,7 +76,18 @@ class Item
 
     Item() {};
 
-    const std::string & guid() const { return m_guid; }
+    const std::string & guid          () const { return m_guid          ; }
+    const std::string & currency_guid () const { return m_currency_guid ; }
+    const std::string & num           () const { return m_num           ; }
+    const std::string & post_date     () const { return m_post_date     ; }
+    const std::string & enter_date    () const { return m_enter_date    ; }
+    const std::string & description   () const { return m_description   ; }
+
+    std::string post_date( const std::string & _format ) const
+    {
+      auto d = Wt::WDateTime::fromString( post_date(), "yyyy-MM-dd hh:mm:ss" );
+      return d.toString( _format ).toUTF8();
+    }
 
     template< class Action > void persist( Action & action )
     {
@@ -100,10 +114,10 @@ class Item
 */
 Item::Ptr byGuid( const std::string & _guid );
 
-    } // endnamespace Transaction {
+    } // endnamespace Transactions {
   } // endnamespace Dbo {
 } // endnamespace GCW {
 
-#endif // end#ifndef __TRANSACTION_H___
+#endif // end#ifndef __TRANSACTIONS_H___
 
 

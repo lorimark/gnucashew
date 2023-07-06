@@ -1,0 +1,69 @@
+
+.RegisterWidget table {
+  width:100%;
+}
+
+.RegisterWidget table thead tr {
+  background-color: #96b183;
+  border-bottom:2px solid black;
+}
+
+.RegisterWidget table th {
+  border:1px solid black;
+}
+
+.RegisterWidget table th, td {
+  padding-left:10px;
+  padding-right:10px;
+  font-weight:normal;
+}
+
+/* Date */
+.RegisterWidget table th:nth-child(1), td:nth-child(1) {
+  text-align:right;
+  width:150px;
+}
+
+/* Action/Num */
+.RegisterWidget table th:nth-child(2), td:nth-child(2) {
+  text-align:left;
+  width:50px;
+}
+
+/* Memo/Description */
+.RegisterWidget table th:nth-child(3), td:nth-child(3) {
+  text-align:left;
+}
+
+/* Account */
+.RegisterWidget table th:nth-child(4), td:nth-child(4) {
+  text-align:right;
+  width:200px;
+}
+
+/* Reconciliation */
+.RegisterWidget table th:nth-child(5), td:nth-child(5) {
+  text-align:center;
+  width:50px;
+}
+
+/* Deposit */
+.RegisterWidget table th:nth-child(6), td:nth-child(6) {
+  text-align:right;
+  width:50px;
+}
+
+/* Withdrawal */
+.RegisterWidget table th:nth-child(7), td:nth-child(7) {
+  text-align:right;
+  width:100px;
+}
+
+/* Balance */
+.RegisterWidget table th:nth-child(7), td:nth-child(8) {
+  text-align:right;
+  width:100px;
+}
+
+
+
