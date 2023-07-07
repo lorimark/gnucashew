@@ -52,8 +52,9 @@ class RegisterWidget
 
   private:
 
-    void loadData( const std::string & _accountGuid );
+    void loadData();
 
+    std::string m_accountGuid;
     std::shared_ptr< Model > m_model;
     GCW::TableView * m_tableView = nullptr;
 

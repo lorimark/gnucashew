@@ -34,6 +34,14 @@
   font-weight:normal;
 }
 
+/*
+** Negative values are red
+**
+*/
+.RegisterWidget .negval
+{
+  color:red;
+}
 
 /* Date */
 .RegisterWidget table th:nth-child(1),

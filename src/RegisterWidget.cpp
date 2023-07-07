@@ -4,6 +4,10 @@
 #include <Wt/WTableView.h>
 #include <Wt/WVBoxLayout.h>
 
+#define DEC_NAMESPACE GCW_DECIMAL
+#include "3rd/decimal.h"
+using namespace GCW_DECIMAL;
+
 #include "define.h"
 #include "App.h"
 #include "RegisterWidget.h"
@@ -14,6 +18,7 @@
 
 GCW::RegisterWidget::
 RegisterWidget( const std::string & _accountGuid )
+: m_accountGuid( _accountGuid )
 {
   addStyleClass( "RegisterWidget" );
 
@@ -34,32 +39,17 @@ RegisterWidget( const std::string & _accountGuid )
   tableView()-> setSelectionMode        ( Wt::SelectionMode::Single      );
   tableView()-> setEditTriggers         ( Wt::EditTrigger::SingleClicked );
 
-#ifdef NEVER
-  int col = 0;
-  table()-> elementAt( 0, col )-> addWidget( textWidget( 0, col, "Date"       ) ); col++;
-  table()-> elementAt( 0, col )-> addWidget( textWidget( 0, col, "Num"        ) ); col++;
-  table()-> elementAt( 0, col )-> addWidget( textWidget( 0, col, "Memo"       ) ); col++;
-  table()-> elementAt( 0, col )-> addWidget( textWidget( 0, col, "Account"    ) ); col++;
-  table()-> elementAt( 0, col )-> addWidget( textWidget( 0, col, "R"          ) ); col++;
-  table()-> elementAt( 0, col )-> addWidget( textWidget( 0, col, "Deposit"    ) ); col++;
-  table()-> elementAt( 0, col )-> addWidget( textWidget( 0, col, "Withdrawal" ) ); col++;
-  table()-> elementAt( 0, col )-> addWidget( textWidget( 0, col, "Balance"    ) ); col++;
-
-  table()-> setHeaderCount( 1 );
-#endif
-
-  loadData( _accountGuid );
+  loadData();
 
 } // endGCW::RegisterWidget::RegisterWidget()
 
 
 void GCW::RegisterWidget::
-loadData( const std::string & _accountGuid )
+loadData()
 {
-  m_model = std::make_shared< Model >( _accountGuid );
+  m_model = std::make_shared< Model >( m_accountGuid );
 
   tableView()-> setModel( m_model );
-//  tableView()-> sortByColumn( 0, Wt::SortOrder::Ascending );
 
   /*
   ** Prefer to set these in gcw.css but having trouble getting the
@@ -109,6 +99,9 @@ refreshFromDisk()
   **  Sorting the vector causes the items to appear in the vector in sequential
   **  (date) order.  They can then be loaded in to the view one after another.
   **
+  ** NOTE: this could be done in the sort procedure itself, but I did it
+  **  here.
+  **
   */
   for( auto splitItem : splitItems )
   {
@@ -138,12 +131,13 @@ refreshFromDisk()
   **  generate a model item row containing all of the column values
   **
   */
+  decimal<2> bal( 0 );
   for( auto splitItem : splitItems )
   {
     /*
     ** Need a handle on the transaction.  Fetch the transaction associated
     **  with this split, so we can get things from it, and then also, fetch
-    **  the other splits that are on this transaction.
+    **  the other splits that are on said transaction.
     **
     */
     auto transactionItem   = GCW::Dbo::Transactions::byGuid( splitItem-> tx_guid() );
@@ -241,25 +235,56 @@ refreshFromDisk()
       */
       default:
       {
-        account = _addColumn( TR("gcw.registerwidget.account.split") ); // account
+        account = _addColumn( TR("gcw.registerwidget.account.multisplit") ); // account
       }
 
     } // endswitch( transactionSplits.size() )
 
     auto reconcile = _addColumn( splitItem-> reconcile_state() ); // Reconciled
 
-    if( transactionItem-> post_date_as_date() == Wt::WDate( 2020, 9, 2 ) )
-    std::cout << __FILE__ << ":" << __LINE__ << std::endl
-      << " split guid->  '" << splitItem-> guid()                    << "'" << std::endl
-      << " tx guid->     '" << transactionItem-> guid()              << "'" << std::endl
-      << " post_date->   '" << Wt::asString( post_date   -> text() ) << "'" << std::endl
-      << " num->         '" << Wt::asString( num         -> text() ) << "'" << std::endl
-      << " description-> '" << Wt::asString( description -> text() ) << "'" << std::endl
-      << " account->     '" << Wt::asString( account     -> text() ) << "'" << std::endl
-      << " reconcile->   '" << Wt::asString( reconcile   -> text() ) << "'" << std::endl
-      << std::endl
-      ;
+    /*
+    ** The following works out the values for the
+    **  'deposit' and 'withdrawal' and 'balance'
+    **  columns.  The 'decimal.h' library is used
+    **  to perform the arithmetic to prevent the
+    **  floating point math problems.
+    **
+    */
+    Wt::WStandardItem * deposit    = nullptr;
+    Wt::WStandardItem * withdrawal = nullptr;
+    Wt::WStandardItem * balance    = nullptr;
 
+    decimal<2> val( splitItem-> value_num() );
+    val /= splitItem-> value_denom();
+
+    bal += val;
+
+    decimal_format f( ',', '.' );
+
+    if( val > 0 )
+    {
+      deposit    = _addColumn( Wt::WString( "{1}" ).arg(  toString( val, f ) ) );
+      withdrawal = _addColumn( "" );
+    }
+
+    if( val < 0 )
+    {
+      deposit    = _addColumn( "" );
+      withdrawal = _addColumn( Wt::WString( "{1}" ).arg( toString( val * decimal<2>(-1), f ) ) );
+    }
+
+    deposit   -> setFlags( Wt::ItemFlag::Editable );
+    withdrawal-> setFlags( Wt::ItemFlag::Editable );
+
+    balance = _addColumn( Wt::WString( "{1}" ).arg( toString( bal, f ) ) );
+
+    if( bal < 0 )
+      balance-> setStyleClass( "negval" );
+
+    /*
+    ** Add the row to the model
+    **
+    */
     appendRow( std::move( columns ) );
 
   } // endfor( auto splitItem : splitItems )

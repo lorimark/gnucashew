@@ -68,7 +68,7 @@
   <message id="gcw.accountswidget.column.totalusd">Total (USD)</message>
   <message id="gcw.accountswidget.column.type">Type</message>
 
-  <message id="gcw.registerwidget.account.split">~~ Split Transaction ~~</message>
+  <message id="gcw.registerwidget.account.multisplit">~~ Split Transaction ~~</message>
   <message id="gcw.registerwidget.account.imbalanceUSD">Imbalance-USD</message>
   <message id="gcw.registerwidget.account.tooltip">
     Split: {1}
