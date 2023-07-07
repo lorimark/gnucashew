@@ -71,6 +71,7 @@
 {
   text-align:right;
   width:200px;
+  direction: rtl;
 }
 
 /* Reconciliation */

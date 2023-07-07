@@ -19,7 +19,8 @@ GCW::App::App( const Wt::WEnvironment & env )
 {
   root()-> addStyleClass( "App" );
 
-  gnucash_session().open( "/home/serveradmin/gnucash-dev.gnucash" );
+//  gnucash_session().open( "/home/serveradmin/gnucash-dev.gnucash" );
+  gnucash_session().open( "/home/serveradmin/LorimarkSolutions.gnucash" );
 
   /*
   ** Utilize the bootstrap theme.

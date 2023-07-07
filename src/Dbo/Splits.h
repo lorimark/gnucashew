@@ -3,7 +3,9 @@
 #ifndef __SPLITS_H___
 #define __SPLITS_H___
 
-#include <Wt/Dbo/Dbo.h>
+#include <Wt/WDate.h>
+
+#include "BaseItem.h"
 
 /*
 ** Predefine the Account class that fixin to come up.
@@ -85,15 +87,9 @@ namespace GCW {
 **
 */
 class Item
-: public Wt::Dbo::Dbo< Item >
+: public GCW::Dbo::BaseItem< Item >
 {
   public:
-
-    using Ptr = Wt::Dbo::ptr< Item >;
-    using Collection = Wt::Dbo::collection< Ptr >;
-    using Vector = std::vector< Ptr >;
-
-    Item() {};
 
     const std::string & guid            () const { return m_guid            ; }
     const std::string & tx_guid         () const { return m_tx_guid         ; }
@@ -108,6 +104,14 @@ class Item
           int           quantity_denom  () const { return m_quantity_denom  ; }
     const std::string   lot_guid        () const { return m_lot_guid        ; }
 
+    /*
+    ** When loading splits, we poke the tx_date and tx_num in to the item so that we
+    **  can quickly sort on it later.
+    **
+    */
+    const Wt::WDate tx_date() const { return m_tx_date; }
+    void set_tx_date ( const Wt::WDate & _value ) const { m_tx_date = _value; }
+
     template< class Action > void persist( Action & action )
     {
       Wt::Dbo::id   ( action, m_guid            , "guid"            ,   32 ); // text(32) PRIMARY KEY NOT NULL,
@@ -116,14 +120,14 @@ class Item
       Wt::Dbo::field( action, m_memo            , "memo"            , 2048 ); // text(2048) NOT NULL,
       Wt::Dbo::field( action, m_action          , "action"          , 2048 ); // text(2048) NOT NULL,
       Wt::Dbo::field( action, m_reconcile_state , "reconcile_state" ,    1 ); // text(1) NOT NULL,
-      Wt::Dbo::field( action, m_reconcile_date  , "reconcile_date " ,   19 ); // text(19),
+      Wt::Dbo::field( action, m_reconcile_date  , "reconcile_date"  ,   19 ); // text(19),
       Wt::Dbo::field( action, m_value_num       , "value_num"              ); // bigint NOT NULL,
       Wt::Dbo::field( action, m_value_denom     , "value_denom"            ); // bigint NOT NULL,
       Wt::Dbo::field( action, m_quantity_num    , "quantity_num"           ); // bigint NOT NULL,
       Wt::Dbo::field( action, m_quantity_denom  , "quantity_denom"         ); // bigint NOT NULL,
       Wt::Dbo::field( action, m_lot_guid        , "lot_guid"        ,   32 ); // text(32)
 
-    }
+    } // endtemplate< class Action > void persist( Action & action )
 
   private:
 
@@ -140,6 +144,8 @@ class Item
     int         m_quantity_denom  ; // bigint NOT NULL,
     std::string m_lot_guid        ; // text(32)
 
+    mutable Wt::WDate m_tx_date;
+
 }; // endclass Item
 
 /*!
@@ -147,6 +153,7 @@ class Item
 **
 */
 Item::Vector byAccount( const std::string & _accountGuid );
+Item::Vector byTransaction( const std::string & _txGuid, const std::string & _excludeSplitGuid );
 
     } // endnamespace Splits {
   } // endnamespace Dbo {

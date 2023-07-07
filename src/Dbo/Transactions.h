@@ -7,6 +7,8 @@
 #include <Wt/WDate.h>
 #include <Wt/WDateTime.h>
 
+#include "Splits.h"
+
 /*
 ** Predefine the Account class that fixin to come up.
 **
@@ -119,7 +121,8 @@ class Item
 ** \brief Load Transaction by Guid
 **
 */
-Item::Ptr byGuid( const std::string & _guid );
+Item::Ptr byGuid( const std::string & _txGuid );
+Item::Vector byAccount( const std::string & _accountGuid );
 
     } // endnamespace Transactions {
   } // endnamespace Dbo {

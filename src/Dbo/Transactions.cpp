@@ -2,7 +2,8 @@
 #include "../App.h"
 #include "Transactions.h"
 
-GCW::Dbo::Transactions::Item::Ptr GCW::Dbo::Transactions::byGuid( const std::string & _txGuid )
+GCW::Dbo::Transactions::Item::Ptr
+GCW::Dbo::Transactions::byGuid( const std::string & _txGuid )
 {
   GCW::Dbo::Transactions::Item::Ptr retVal;
 
@@ -26,4 +27,40 @@ GCW::Dbo::Transactions::Item::Ptr GCW::Dbo::Transactions::byGuid( const std::str
 
 } // endGCW::Dbo::Transactions::Item::Ptr GCW::Dbo::Transactions::byGuid( const std::string & _txGuid )
 
+GCW::Dbo::Transactions::Item::Vector
+GCW::Dbo::Transactions::byAccount( const std::string & _accountGuid )
+{
+  GCW::Dbo::Transactions::Item::Vector retVal;
+
+  /*
+  ** If the session isn't open then there's nothing to load.
+  **
+  */
+  if( GCW::app()-> gnucash_session().isOpen() )
+  {
+
+    Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
+
+    /*
+    ** Pull all transactions that have a split that matches this
+    **  account.  Sort the results by post_date:ascending, so that any
+    **  subsequent views can process the items in sequential order.
+    **
+    */
+    auto results =
+      GCW::app()-> gnucash_session().find< GCW::Dbo::Transactions::Item >()
+      .where( "guid in (select tx_guid from splits where account_guid = ?)" )
+      .bind( _accountGuid )
+      .orderBy( "post_date" )
+      .resultList();
+      ;
+
+    for( auto result : results )
+      retVal.push_back( result );
+
+  } // endif( GCW::app()-> gnucash_session().isOpen() )
+
+  return retVal;
+
+} // endGCW::Dbo::Transactions::Item::Vector GCW::Dbo::Transactions::byAccount( const std::string & _accountGuid )
 

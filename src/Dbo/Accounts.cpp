@@ -4,7 +4,8 @@
 #include "Accounts.h"
 #include "Transactions.h"
 
-GCW::Dbo::Accounts::Item::Ptr GCW::Dbo::Accounts::root()
+GCW::Dbo::Accounts::Item::Ptr
+GCW::Dbo::Accounts::root()
 {
   GCW::Dbo::Accounts::Item::Ptr retVal;
 
@@ -38,9 +39,10 @@ GCW::Dbo::Accounts::Item::Ptr GCW::Dbo::Accounts::root()
 
   return retVal;
 
-} // endGCW::Dbo::Accounts::Item::Ptr GCW::Dbo::Accounts::load()
+} // endGCW::Dbo::Accounts::Item::Ptr GCW::Dbo::Accounts::root()
 
-GCW::Dbo::Accounts::Item::Ptr GCW::Dbo::Accounts::byGuid( const std::string & _guid )
+GCW::Dbo::Accounts::Item::Ptr
+GCW::Dbo::Accounts::byGuid( const std::string & _guid )
 {
   GCW::Dbo::Accounts::Item::Ptr retVal;
 
@@ -64,7 +66,8 @@ GCW::Dbo::Accounts::Item::Ptr GCW::Dbo::Accounts::byGuid( const std::string & _g
 } // endGCW::Dbo::Accounts::Item::Ptr GCW::Dbo::Accounts::byGuid( const std::string & _guid )
 
 
-GCW::Dbo::Accounts::Item::Vector GCW::Dbo::Accounts::Children::vector( const std::string & _parentGuid )
+GCW::Dbo::Accounts::Item::Vector
+GCW::Dbo::Accounts::Children::vector( const std::string & _parentGuid )
 {
   GCW::Dbo::Accounts::Item::Vector retVal;
 
@@ -72,6 +75,60 @@ GCW::Dbo::Accounts::Item::Vector GCW::Dbo::Accounts::Children::vector( const std
   return retVal;
 
 } // endGCW::Dbo::Accounts::Item::Vector GCW::Dbo::Accounts::Children::vector( const std::string & _parentGuid )
+
+
+std::string
+GCW::Dbo::Accounts::fullName( const std::string & _accountGuid )
+{
+  /*
+  ** If the guid is blank, then we for sure have
+  **  nothing.
+  **
+  */
+  if( _accountGuid == "" )
+    return "";
+
+  /*
+  ** Fetch the account by Guid
+  **
+  */
+  auto accountItem = byGuid( _accountGuid );
+
+  /*
+  ** If this is the root account, then we're done like
+  **  we were done when it was a blank guid.
+  **
+  */
+  if( accountItem == root() )
+    return "";
+
+  /*
+  ** Recursive call to the parent.
+  **
+  */
+  std::string retVal = fullName( accountItem-> parent_guid() );
+
+  /*
+  ** If we got anything then we need a separator
+  **
+  */
+  if( retVal != "" )
+      retVal += ":";
+
+  /*
+  ** And, finally the name of our account.
+  **
+  */
+  retVal += accountItem-> name();
+
+  /*
+  ** Recursively, this should generate a name such as;
+  **   "Assets:2023:Cash:FGB:OLB:2300-LSI"
+  **
+  */
+  return retVal;
+
+} // endstd::string fullName( const std::string * _guid );
 
 
 

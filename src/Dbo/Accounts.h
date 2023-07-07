@@ -133,6 +133,8 @@ Item::Ptr root();
 */
 Item::Ptr byGuid( const std::string & _guid );
 
+std::string fullName( const std::string & _guid );
+
 namespace Children {
   Item::Vector vector( const std::string & _parentGuid );
 }
