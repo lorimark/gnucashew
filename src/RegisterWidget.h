@@ -2,6 +2,9 @@
 #ifndef __REGISTERWIDGET_H___
 #define __REGISTERWIDGET_H___
 
+#define DEC_NAMESPACE GCW_DECIMAL
+#include "3rd/decimal.h"
+
 #include <Wt/WContainerWidget.h>
 #include <Wt/WStandardItem.h>
 #include <Wt/WStandardItemModel.h>
@@ -38,6 +41,25 @@ class RegisterWidget
       Model( const std::string & _accountGuid );
 
       void refreshFromDisk();
+
+/*
+balance
+  balance limit
+  balance (Period)
+  balance usd
+  cleared
+  cleared usd
+  fiture minimum
+  future minimum usa
+  last num
+  last reconcile date
+  opening balance
+  present
+  present usd
+  reconciled reconciled usd
+  total total period
+  total usd
+*/
 
     private:
 

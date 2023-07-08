@@ -355,6 +355,13 @@ class Session
 
 namespace GnuCash {
 
+/*!
+** \brief GnuCash Native Session
+**
+** This session controller is designed to interface to a back-end
+**  gnucash data structure, without modification.
+**
+*/
 class Session
 : public GCW::Dbo::Session
 {
@@ -378,6 +385,17 @@ class Session
 
 namespace GnuCashew {
 
+/*!
+** \brief GnuCashew Native Session
+**
+** This session controller is designed to interface to a back-end
+**  gnucashew data structure, with possible modification.  The
+**  gnucashew project requires a little bit more data than is
+**  available in a gnucash database.  Therefore, this session
+**  controller uses slightly modified Dbo classes for managing
+**  interface to the gnucash backend data.
+**
+*/
 class Session
 : public GCW::Dbo::Session
 {

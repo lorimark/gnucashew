@@ -9,6 +9,8 @@
 
 #include "App.h"
 
+extern std::string g_dbName;
+
 GCW::App * GCW::app()
 {
   return static_cast< GCW::App* >( Wt::WApplication::instance() );
@@ -17,10 +19,9 @@ GCW::App * GCW::app()
 GCW::App::App( const Wt::WEnvironment & env )
 : Wt::WApplication( env )
 {
-  root()-> addStyleClass( "App" );
+  root()-> addStyleClass( "GnuCashew" );
 
-  gnucash_session().open( "/home/serveradmin/gnucash-dev.gnucash" );
-//  gnucash_session().open( "/home/serveradmin/LorimarkSolutions.gnucash" );
+  gnucash_session().open( g_dbName );
 
   /*
   ** Utilize the bootstrap theme.

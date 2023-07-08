@@ -79,6 +79,13 @@ GCW::MainWidget::MainWidget()
   popView-> addItem( TR( "gcw.mu.view.newaccounts"   ) );
   m_uView-> setMenu( std::move( popView ) );
 
+  auto m_uHelp = m_menu-> addItem( TR( "gcw.mu.help" ) );
+  auto popHelp = std::make_unique< Wt::WPopupMenu >();
+  popHelp-> addItem( TR( "gcw.mu.help.tutorial"      ) );
+  popHelp-> addItem( TR( "gcw.mu.help.tip"           ) );
+  popHelp-> addItem( TR( "gcw.mu.help.contents"      ) );
+  popHelp-> addItem( TR( "gcw.mu.help.about"         ) );
+  m_uHelp-> setMenu( std::move( popHelp ) );
 
   toolBar()-> addButton( std::make_unique< Wt::WPushButton >("save") );
   toolBar()-> addButton( std::make_unique< Wt::WPushButton >("close") );

@@ -4,11 +4,11 @@
 echo "running"
 # valgrind -v --leak-check=full --show-leak-kinds=all \
 # gdb --args \
-./gnucashew-bin /home/serveradmin/LorimarkSolutions.gnucash \
+./gnucashew-live /home/serveradmin/gnucash-dev.gnucash \
   --pid-file=gnucashew-bin.pid \
   --config=/opt/Wt4/etc/wt/wt_config.xml \
   --approot="approot" \
   --docroot="docroot;.,/images,/resources,/styles,/themes,/dox" \
   --errroot="errroot" \
-  --http-listen 0.0.0.0:8080 \
+  --http-listen 0.0.0.0:8081 \
 

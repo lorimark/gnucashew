@@ -104,14 +104,6 @@ class Item
           int           quantity_denom  () const { return m_quantity_denom  ; }
     const std::string   lot_guid        () const { return m_lot_guid        ; }
 
-    /*
-    ** When loading splits, we poke the tx_date and tx_num in to the item so that we
-    **  can quickly sort on it later.
-    **
-    */
-    const Wt::WDate tx_date() const { return m_tx_date; }
-    void set_tx_date ( const Wt::WDate & _value ) const { m_tx_date = _value; }
-
     template< class Action > void persist( Action & action )
     {
       Wt::Dbo::id   ( action, m_guid            , "guid"            ,   32 ); // text(32) PRIMARY KEY NOT NULL,
@@ -143,8 +135,6 @@ class Item
     int         m_quantity_num    ; // bigint NOT NULL,
     int         m_quantity_denom  ; // bigint NOT NULL,
     std::string m_lot_guid        ; // text(32)
-
-    mutable Wt::WDate m_tx_date;
 
 }; // endclass Item
 

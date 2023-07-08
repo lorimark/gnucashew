@@ -6,6 +6,26 @@
 #include <Wt/Dbo/Dbo.h>
 
 namespace GCW {
+
+/*!
+** \brief DBO Namespace
+**
+** This namespace is reserved for objects that are used to interface
+**  to the back-end datasets directly.
+**
+** At present, the Session object is only set up to access sqlite
+**  data files.
+**
+** The primary gnucash Dbo classes are intended to be direct-maps of
+**  the sqlite underlying schema.
+**
+** It is possible to have gnucashew modify the existing gnucash schema
+**  so as to add additional tables and fields, but it is also possible
+**  to simply have gnucashew keep is customized data in a separate
+**  database.
+**
+*/
+
   namespace Dbo {
 
 template <class C> class BaseItem

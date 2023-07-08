@@ -4,10 +4,6 @@
 #include <Wt/WTableView.h>
 #include <Wt/WVBoxLayout.h>
 
-#define DEC_NAMESPACE GCW_DECIMAL
-#include "3rd/decimal.h"
-using namespace GCW_DECIMAL;
-
 #include "define.h"
 #include "App.h"
 #include "RegisterWidget.h"
@@ -20,6 +16,10 @@ GCW::RegisterWidget::
 RegisterWidget( const std::string & _accountGuid )
 : m_accountGuid( _accountGuid )
 {
+  /*
+  ** Look in gcw.css for styling
+  **
+  */
   addStyleClass( "RegisterWidget" );
 
   /*
@@ -51,20 +51,45 @@ loadData()
 
   tableView()-> setModel( m_model );
 
-  /*
-  ** Prefer to set these in gcw.css but having trouble getting the
-  **  css to behave
-  **
-  */
-  int col = 0;
-  tableView()-> setColumnWidth( col++, "150px" ); // 1 Date
-  tableView()-> setColumnWidth( col++,  "50px" ); // 2 Action/Num
-  tableView()-> setColumnWidth( col++,   "99%" ); // 3 Memo/Description
-  tableView()-> setColumnWidth( col++, "200px" ); // 4 Account
-  tableView()-> setColumnWidth( col++,  "25px" ); // 5 Reconciliation
-  tableView()-> setColumnWidth( col++, "100px" ); // 6 Deposit
-  tableView()-> setColumnWidth( col++, "100px" ); // 7 Withdrawal
-  tableView()-> setColumnWidth( col++, "100px" ); // 8 Balance
+  /* Date */
+  tableView()-> setColumnWidth     ( 0, "150px"                   );
+  tableView()-> setHeaderAlignment ( 0, Wt::AlignmentFlag::Right  );
+  tableView()-> setColumnAlignment ( 0, Wt::AlignmentFlag::Right  );
+
+  /* Action/Num */
+  tableView()-> setColumnWidth     ( 1,  "50px"                   );
+  tableView()-> setHeaderAlignment ( 1, Wt::AlignmentFlag::Center );
+  tableView()-> setColumnAlignment ( 1, Wt::AlignmentFlag::Center );
+
+  /* Memo/Description */
+  tableView()-> setColumnWidth     ( 2,   "99%"                   );
+  tableView()-> setHeaderAlignment ( 2, Wt::AlignmentFlag::Left   );
+  tableView()-> setColumnAlignment ( 2, Wt::AlignmentFlag::Left   );
+
+  /* Account/Transfer */
+  tableView()-> setColumnWidth     ( 3, "200px"                   );
+  tableView()-> setHeaderAlignment ( 3, Wt::AlignmentFlag::Right  );
+  tableView()-> setColumnAlignment ( 3, Wt::AlignmentFlag::Right  );
+
+  /* Reconciliation */
+  tableView()-> setColumnWidth     ( 4,  "25px"                   );
+  tableView()-> setHeaderAlignment ( 4, Wt::AlignmentFlag::Center );
+  tableView()-> setColumnAlignment ( 4, Wt::AlignmentFlag::Center );
+
+  /* Deposit */
+  tableView()-> setColumnWidth     ( 5, "100px"                   );
+  tableView()-> setHeaderAlignment ( 5, Wt::AlignmentFlag::Right  );
+  tableView()-> setColumnAlignment ( 5, Wt::AlignmentFlag::Right  );
+
+  /* Withdrawal */
+  tableView()-> setColumnWidth     ( 6, "100px"                   );
+  tableView()-> setHeaderAlignment ( 6, Wt::AlignmentFlag::Right  );
+  tableView()-> setColumnAlignment ( 6, Wt::AlignmentFlag::Right  );
+
+  /* Balance */
+  tableView()-> setColumnWidth     ( 7, "100px"                   );
+  tableView()-> setHeaderAlignment ( 7, Wt::AlignmentFlag::Right  );
+  tableView()-> setColumnAlignment ( 7, Wt::AlignmentFlag::Right  );
 
 } // endvoid GCW::RegisterWidget::setModel()
 
@@ -77,9 +102,25 @@ Model( const std::string & _accountGuid )
 
 } // endGCW::RegisterWidget::Model::Model( const std::string & _accountGuid )
 
+/*!
+** \brief Refresh From Disk
+**
+** This procedure reads from the gnucash storage source
+**  (either postgres or sqlite) and loads all of the
+**  transactions and their associated splits in to the
+**  model suitable for editing within an automatic
+**  table view.
+**
+*/
 void GCW::RegisterWidget::Model::
 refreshFromDisk()
 {
+  /*
+  ** Make sure the model is empty
+  **
+  */
+  clear();
+
   /*
   ** Get the account loaded, and all the splits for this account.
   **
@@ -95,22 +136,7 @@ refreshFromDisk()
   auto splitItems  = GCW::Dbo::Splits  :: byAccount ( m_accountGuid );
 
   /*
-  ** Set the transaction date on each split, so they can be quickly sorted.
-  **  Sorting the vector causes the items to appear in the vector in sequential
-  **  (date) order.  They can then be loaded in to the view one after another.
-  **
-  ** NOTE: this could be done in the sort procedure itself, but I did it
-  **  here.
-  **
-  */
-  for( auto splitItem : splitItems )
-  {
-    auto transactionItem = GCW::Dbo::Transactions::byGuid( splitItem-> tx_guid() );
-    splitItem-> set_tx_date( transactionItem-> post_date_as_date() );
-  }
-
-  /*
-  ** Sort the transactions by transaction date so that they can be loaded
+  ** Sort the vector of splits by transaction date so that they can be loaded
   **  in to the model in proper sequential order.
   **
   */
@@ -122,16 +148,20 @@ refreshFromDisk()
        const GCW::Dbo::Splits::Item::Ptr item2
      )
      {
-       return item1-> tx_date() < item2-> tx_date();
+       auto trans1 = GCW::Dbo::Transactions::byGuid( item1-> tx_guid() );
+       auto trans2 = GCW::Dbo::Transactions::byGuid( item2-> tx_guid() );
+       return trans1-> post_date_as_date() < trans2-> post_date_as_date();
      }
   );
 
   /*
   ** Process each split item.  Grab the contents of the split, and
-  **  generate a model item row containing all of the column values
+  **  generate a model item row containing all of the column values.
+  **  Maintain a running balance as we go along to keep the balance
+  **  reflected within the view.
   **
   */
-  decimal<2> bal( 0 );
+  GCW_DECIMAL::decimal<2> bal( 0 );
   for( auto splitItem : splitItems )
   {
     /*
@@ -140,8 +170,8 @@ refreshFromDisk()
     **  the other splits that are on said transaction.
     **
     */
-    auto transactionItem   = GCW::Dbo::Transactions::byGuid( splitItem-> tx_guid() );
-    auto transactionSplits = GCW::Dbo::Splits::byTransaction( splitItem-> tx_guid(), splitItem-> guid() );
+    auto transactionItem   = GCW::Dbo:: Transactions ::byGuid       ( splitItem-> tx_guid() );
+    auto transactionSplits = GCW::Dbo:: Splits       ::byTransaction( splitItem-> tx_guid(), splitItem-> guid() );
 
     /*
     ** The columns we are building go here
@@ -153,18 +183,6 @@ refreshFromDisk()
       auto item = std::make_unique< Wt::WStandardItem >( _value );
 
       item-> setToolTip( _value );
-#ifdef NEVER
-      auto toolTip =
-        TR("gcw.registerwidget.account.tooltip")
-        .arg( splitItem-> guid() )
-        .arg( splitItem-> tx_date().toString() )
-        .arg( transactionItem-> num() )
-        .arg( transactionItem-> description () )
-        .arg( splitItem-> tx_guid() )
-        .toUTF8()
-        ;
-      item-> setToolTip( toolTip );
-#endif
 
       auto retVal = item.get();
       columns.push_back( std::move( item ) );
@@ -175,8 +193,8 @@ refreshFromDisk()
     ** Assemble each column
     **
     */
-    auto post_date = _addColumn( splitItem-> tx_date().toString( "MM/dd/yyyy" ) );
-         post_date-> setData( splitItem-> tx_date() );
+    auto post_date = _addColumn( transactionItem-> post_date_as_date().toString( "MM/dd/yyyy" ) );
+         post_date-> setData( splitItem-> guid() );
          post_date-> setFlags( Wt::ItemFlag::Editable );
 
     auto num = _addColumn( transactionItem-> num() );
@@ -243,10 +261,9 @@ refreshFromDisk()
     auto reconcile = _addColumn( splitItem-> reconcile_state() ); // Reconciled
 
     /*
-    ** The following works out the values for the
-    **  'deposit' and 'withdrawal' and 'balance'
-    **  columns.  The 'decimal.h' library is used
-    **  to perform the arithmetic to prevent the
+    ** The following works out the values for the 'deposit' and
+    **  'withdrawal' and 'balance' columns.  The 'decimal.h'
+    **  library is used to perform the arithmetic to prevent the
     **  floating point math problems.
     **
     */
@@ -254,23 +271,24 @@ refreshFromDisk()
     Wt::WStandardItem * withdrawal = nullptr;
     Wt::WStandardItem * balance    = nullptr;
 
-    decimal<2> val( splitItem-> value_num() );
+    GCW_DECIMAL::decimal<2> val( splitItem-> value_num() );
     val /= splitItem-> value_denom();
 
     bal += val;
 
-    decimal_format f( ',', '.' );
+    GCW_DECIMAL::decimal_format f( ',', '.' );
+    GCW_DECIMAL::decimal<2> negate(-1);
 
     if( val > 0 )
     {
-      deposit    = _addColumn( Wt::WString( "{1}" ).arg(  toString( val, f ) ) );
+      deposit    = _addColumn( Wt::WString( "{1}" ).arg( toString( val, f ) ) );
       withdrawal = _addColumn( "" );
     }
 
     if( val < 0 )
     {
       deposit    = _addColumn( "" );
-      withdrawal = _addColumn( Wt::WString( "{1}" ).arg( toString( val * decimal<2>(-1), f ) ) );
+      withdrawal = _addColumn( Wt::WString( "{1}" ).arg( toString( val * negate, f ) ) );
     }
 
     deposit   -> setFlags( Wt::ItemFlag::Editable );
@@ -290,14 +308,14 @@ refreshFromDisk()
   } // endfor( auto splitItem : splitItems )
 
   int col = 0;
-  setHeaderData( col, "Date"       ); col++;
-  setHeaderData( col, "Num"        ); col++;
-  setHeaderData( col, "Memo"       ); col++;
-  setHeaderData( col, "Account"    ); col++;
-  setHeaderData( col, "R"          ); col++;
-  setHeaderData( col, "Deposit"    ); col++;
-  setHeaderData( col, "Withdrawal" ); col++;
-  setHeaderData( col, "Balance"    ); col++;
+  setHeaderData( col++, "Date"       );
+  setHeaderData( col++, "Num"        );
+  setHeaderData( col++, "Memo"       );
+  setHeaderData( col++, "Account"    );
+  setHeaderData( col++, "R"          );
+  setHeaderData( col++, "Deposit"    );
+  setHeaderData( col++, "Withdrawal" );
+  setHeaderData( col++, "Balance"    );
 
 } // endvoid GCW::RegisterWidget::Model::refreshFromDisk()
 

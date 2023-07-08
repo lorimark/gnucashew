@@ -21,6 +21,8 @@
 
 #include "GnuCashew.h"
 
+std::string g_dbName;
+
 #define VAULT_ROOT std::string("/")
 #define CLIENT_FOLDERS "/"
 
@@ -99,10 +101,6 @@ void HtmlResource::handleRequest( const Wt::Http::Request & request, Wt::Http::R
   {
     std::vector< std::string > allowed =
     {
-      { "192.168.168.168" }, // router
-      { "47.190.7.163"    }, // mark home
-      { "67.79.41.154"    }, // artemis office
-//      { "70.119.46.4"     }, // thomas
     };
 
     return
@@ -201,10 +199,6 @@ void MonitResource::handleRequest( const Wt::Http::Request & request, Wt::Http::
   {
     std::vector< std::string > allowed =
     {
-      { "192.168.168.168" }, // router
-      { "47.190.7.163"    }, // mark home
-      { "67.79.41.154"    }, // artemis office
-      { "70.119.46.4"     }, // thomas
     };
 
     return
@@ -300,10 +294,6 @@ void ApiResource::handleRequest( const Wt::Http::Request & request, Wt::Http::Re
   {
     std::vector< std::string > allowed =
     {
-      { "192.168.168.168" }, // router
-      { "47.190.7.163"    }, // mark home
-      { "67.79.41.154"    }, // artemis office
-      { "70.119.46.4"     }, // thomas
     };
 
     return
@@ -373,9 +363,6 @@ void ApiResource::handleRequest( const Wt::Http::Request & request, Wt::Http::Re
 
 
 
-
-
-
 template <class C>
 void addEntryPoint( const std::string & url, Wt::WServer & server )
 {
@@ -390,9 +377,16 @@ void addEntryPoint( const std::string & url, Wt::WServer & server )
   );
 }
 
+
+
+
 int main( int argc, char ** argv )
 {
   show_program_version( "start-up" );
+
+  g_dbName = argv[1];
+
+  std::cout << __FILE__ << ":" << __LINE__ << " using:" << g_dbName << std::endl;
 
   /*
   ** Set the layout to employ the services that
@@ -414,35 +408,8 @@ int main( int argc, char ** argv )
     server.addResource( apiResource, "/api"  );
     server.addResource( apiResource, "/api2" );
 
-    addEntryPoint< GCW::App >( "gnucashew", server );
-
-#ifdef NEVER
-    addEntryPoint< Rtm::EstimateRequest >( "/estimate-request"    , server );
-    addEntryPoint< Rtm::AppStaffMobile  >( "/mstaff"              , server );
-    addEntryPoint< Rtm::AppStaffMobile  >( "/mstaff2"             , server );
-    addEntryPoint< Rtm::AppStaffHandler >( "/handler"             , server ); // handler will handle: bolsubmit, daysheet, photosubmit
-    addEntryPoint< Rtm::AppStaffHandler >( "/handler2"            , server );
-    addEntryPoint< Rtm::AppStaffHandler >( "/mhandler"            , server );
-    addEntryPoint< Rtm::AppStaffHandler >( "/mhandler2"           , server );
-    addEntryPoint< Rtm::AppBolSubmit    >( "/bolsubmit"           , server );
-    addEntryPoint< Rtm::AppBolSubmit    >( "/bolsubmit2"          , server );
-
-//    addEntryPoint< Rtm::AppDaySheet     >( "/daysheet"            , server ); // a simple app to accept photo uploads of daysheets
-//    addEntryPoint< Rtm::AppDaySheet     >( "/daysheet2"           , server );
-
-    addEntryPoint< Rtm::AppStaff        >( "/training"            , server ); // training site (uses same db as staff2)
-    addEntryPoint< Rtm::AppStaff        >( "/staff2"              , server ); // primary development site
-    addEntryPoint< Rtm::AppStaff        >( "/staff3"              , server ); // secondary development site
-    addEntryPoint< Rtm::AppStaff        >( "/beta"                , server ); // beta testing (after staff2,3)
-    addEntryPoint< Rtm::AppStaff        >( "/prerelease"          , server ); // live data site, but not released yet
-    addEntryPoint< Rtm::AppStaff        >( "/staff"               , server ); // live in-office desktop site
-    addEntryPoint< Rtm::AppClient       >( "/client"              , server );
-    addEntryPoint< Rtm::AppVault        >( "/vault"               , server );
-    addEntryPoint< Rtm::AppTest         >( "/test"                , server );
-    addEntryPoint< Rtm::AppFeedback     >( "/feedback"            , server );
-//    addEntryPoint< Rtm::AppCalc         >( "/calc",              server );
-    addEntryPoint< Rtm::AppStatic       >( "/"                    , server );
-#endif
+    addEntryPoint< GCW::App >( "/demo"      , server );
+    addEntryPoint< GCW::App >( "/gnucashew" , server );
 
     server.run();
   }
