@@ -1,4 +1,4 @@
-# gnucashew
+# GnuCashew
 Web based version of GnuCash
 
 This is an attempt to produce a web-based interface for the
@@ -9,9 +9,6 @@ This is an attempt to produce a web-based interface for the
  gnucash codebase for reading and writing to the data files,
  but I am finding the code there to be pretty daunting... so
  I'll try from the 'other side' and see how far I can get.
-
-This project uses Wt (https://www.webtoolkit.eu/wt) as the
- web rendering library.
 
 If you want to fiddle with a simple demo, go to;
 
@@ -26,6 +23,9 @@ This will put you in to a generic default gnucash sqlite file
 The source-generated doxygen files can be found here;
 
 https://gnucashew.lorimarksolutions.com/dox/html/index.html
+
+This project uses Wt (https://www.webtoolkit.eu/wt) as the
+ web rendering library.
 
 Have fun!  Let me know what you think!
 
