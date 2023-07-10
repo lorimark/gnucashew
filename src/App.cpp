@@ -29,7 +29,7 @@ GCW::App::App( const Wt::WEnvironment & env )
   */
   auto bootstrapTheme = std::make_shared<Wt::WBootstrapTheme>();
   bootstrapTheme-> setVersion( Wt::BootstrapVersion::v3 );
-  bootstrapTheme-> setResponsive(true);
+  bootstrapTheme-> setResponsive( true );
   setTheme( bootstrapTheme );
   useStyleSheet( "resources/themes/bootstrap/3/bootstrap-theme.min.css" );
   useStyleSheet( "gcw.css" );

@@ -39,6 +39,7 @@ add_executable (
   AccountsWidget.cpp
   App.cpp
   CentralWidget.cpp
+  Config.cpp
   GnuCashew.cpp
   MainWidget.cpp
   RegisterWidget.cpp

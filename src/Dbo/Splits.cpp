@@ -104,12 +104,11 @@ GCW::Dbo::Splits::bySplit
   auto splitItem = load( _splitGuid );
 
   /*
-  ** If the session isn't open then there's nothing to load.
+  ** If we don't have a splitItem then we can't do nuthin.
   **
   */
   if( splitItem )
   {
-
     Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
 
     auto results =

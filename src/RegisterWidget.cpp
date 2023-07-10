@@ -1,9 +1,11 @@
 #line 2 "src/RegisterWidget.cpp"
 
+#include <Wt/WDateEdit.h>
 #include <Wt/WItemDelegate.h>
 #include <Wt/WText.h>
 #include <Wt/WTableView.h>
 #include <Wt/WVBoxLayout.h>
+#include <Wt/WHBoxLayout.h>
 
 #include "define.h"
 #include "App.h"
@@ -11,6 +13,137 @@
 #include "Dbo/Accounts.h"
 #include "Dbo/Splits.h"
 #include "Dbo/Transactions.h"
+
+namespace {
+
+class HeaderDelegate
+: public Wt::WItemDelegate
+{
+  public:
+
+
+    std::unique_ptr< Wt::WWidget > createEditor
+    (
+     const Wt::WModelIndex & _index,
+     Wt::WFlags< Wt::ViewItemRenderFlag > _flags
+    ) const;
+
+    virtual Wt::cpp17::any editState( Wt::WWidget *editor, const Wt::WModelIndex &index ) const override;
+
+};
+
+std::unique_ptr< Wt::WWidget > HeaderDelegate::createEditor
+(
+  const Wt::WModelIndex & _index,
+  Wt::WFlags< Wt::ViewItemRenderFlag > _flags
+) const
+{
+  auto retVal = std::make_unique< Wt::WDateEdit >();
+
+  std::cout << __FILE__ << ":" << __LINE__ << " " << _index.row() << std::endl;
+
+  return std::move( retVal );
+}
+
+Wt::cpp17::any HeaderDelegate::editState( Wt::WWidget *editor, const Wt::WModelIndex &index ) const
+{
+  auto dateEdit = dynamic_cast< Wt::WDateEdit* >( editor );
+
+  std::cout << __FILE__ << ":" << __LINE__ << " " << std::endl;
+
+  return dateEdit-> text();
+}
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+class DateDelegate
+: public Wt::WItemDelegate
+{
+  public:
+
+
+    std::unique_ptr< Wt::WWidget > createEditor
+    (
+     const Wt::WModelIndex & _index,
+     Wt::WFlags< Wt::ViewItemRenderFlag > _flags
+    ) const;
+
+    virtual Wt::cpp17::any editState( Wt::WWidget *editor, const Wt::WModelIndex &index ) const override;
+
+    void doCloseEditor( Wt::WDateEdit * _dateEdit, bool save ) const;
+
+    mutable Wt::WDateEdit * m_dateEdit = nullptr;
+};
+
+std::unique_ptr< Wt::WWidget > DateDelegate::createEditor
+(
+  const Wt::WModelIndex & _index,
+  Wt::WFlags< Wt::ViewItemRenderFlag > _flags
+) const
+{
+  auto retVal = std::make_unique< Wt::WContainerWidget >();
+  retVal-> setSelectable( true );
+
+  std::cout << __FILE__ << ":" << __LINE__ << " " << Wt::asString( _index.data( Wt::ItemDataRole::Edit ) ) << std::endl;
+
+  auto date = Wt::WDate::fromString( Wt::asString( _index.data( Wt::ItemDataRole::Edit ) ), GCW::date_format() );
+
+  auto dateEdit = std::make_unique< Wt::WDateEdit >();
+  m_dateEdit = dateEdit.get();
+  dateEdit-> setFormat( GCW::date_format() );
+  dateEdit-> setDate( date );
+  dateEdit-> enterPressed  ().connect( [&](){ doCloseEditor( dateEdit.get(), true  ); });
+  dateEdit-> escapePressed ().connect( [&](){ doCloseEditor( dateEdit.get(), false ); });
+
+  std::cout << __FILE__ << ":" << __LINE__
+    << " " << _index.row()
+    << " " << _index.column()
+    << std::endl
+    ;
+
+  retVal-> setLayout( std::make_unique< Wt::WHBoxLayout >() );
+  retVal-> layout()-> setContentsMargins( 1,1,1,1 );
+  retVal-> layout()-> addWidget( std::move( dateEdit ) );
+
+  return retVal;
+
+} // endstd::unique_ptr< Wt::WWidget > DateDelegate::createEditor
+
+void DateDelegate::doCloseEditor( Wt::WDateEdit * _dateEdit, bool save ) const
+{
+  std::cout << __FILE__ << ":" << __LINE__ << " " << std::endl;
+
+} // endvoid DateDelegate::doCloseEditor( Wt::WDateEdit * _dateEdit, bool save ) const
+
+Wt::cpp17::any DateDelegate::editState( Wt::WWidget * _editor, const Wt::WModelIndex & _index ) const
+{
+  auto cw = dynamic_cast< Wt::WContainerWidget* >( _editor );
+
+  auto de = dynamic_cast< Wt::WDateEdit* >( cw-> layout()-> widget() );
+
+  std::cout << __FILE__ << ":" << __LINE__
+    << " " << _index.row()
+    << " " << _index.column()
+    << " " << de
+    << " " << m_dateEdit-> text()
+    << std::endl
+    ;
+
+//  return "";
+  return m_dateEdit-> text();
+
+} // endWt::cpp17::any DateDelegate::editState( Wt::WWidget * _editor, const Wt::WModelIndex & _index ) const
+
+
+
+
+
+
+
+} // endnamespace {
+
+
 
 
 GCW::RegisterWidget::
@@ -34,20 +167,30 @@ RegisterWidget( const std::string & _accountGuid )
   lw-> addWidget( std::move( w ), 1 );
   tableView()-> addStyleClass( "TableView" );
 
-  tableView()-> setSortingEnabled       ( false                          );
-  tableView()-> setAlternatingRowColors ( true                           );
-  tableView()-> setSelectionBehavior    ( Wt::SelectionBehavior::Rows    );
-  tableView()-> setSelectionMode        ( Wt::SelectionMode::Single      );
-  tableView()-> setEditTriggers         ( Wt::EditTrigger::SingleClicked );
-
-  tableView()-> setHeaderItemDelegate( std::make_shared< Wt::WItemDelegate >() );
+  tableView()-> setSortingEnabled        ( false                                                         );
+  tableView()-> setAlternatingRowColors  ( true                                                          );
+  tableView()-> setSelectionBehavior     ( Wt::SelectionBehavior::Rows                                   );
+  tableView()-> setSelectionMode         ( Wt::SelectionMode::Single                                     );
+  tableView()-> setEditTriggers          ( Wt::EditTrigger::SingleClicked                                );
+  tableView()-> setEditOptions           ( Wt::EditOption::SingleEditor | Wt::EditOption::SaveWhenClosed );
+  tableView()-> setHeaderItemDelegate    (    std::make_shared< HeaderDelegate >()                       );
+  tableView()-> setItemDelegateForColumn ( 0, std::make_shared< DateDelegate   >()                       );
 
   tableView()-> headerClicked().connect( [=]( int col, Wt::WMouseEvent event )
-      {
-        std::cout << __FILE__ << ":" << __LINE__ << " " << col << std::endl;
+  {
+    std::cout << __FILE__ << ":" << __LINE__ << " " << col << std::endl;
+  });
 
+  tableView()-> selectionChanged().connect( [=]()
+  {
+    std::cout << __FILE__ << ":" << __LINE__ << " " << std::endl;
+  });
 
-      });
+  tableView()-> keyPressed().connect( [=]( Wt::WKeyEvent _event )
+  {
+    std::cout << __FILE__ << ":" << __LINE__ << " " << _event.charCode() << std::endl;
+
+  });
 
   loadData();
 
@@ -62,7 +205,7 @@ loadData()
   tableView()-> setModel( m_model );
 
   /* Date */
-  tableView()-> setColumnWidth     ( 0, "100px"                   );
+  tableView()-> setColumnWidth     ( 0, "150px"                   );
   tableView()-> setHeaderAlignment ( 0, Wt::AlignmentFlag::Right  );
   tableView()-> setColumnAlignment ( 0, Wt::AlignmentFlag::Right  );
 
@@ -109,6 +252,21 @@ Model( const std::string & _accountGuid )
   m_accountGuid( _accountGuid )
 {
   refreshFromDisk();
+
+  dataChanged().connect( [=]( Wt::WModelIndex _index1, Wt::WModelIndex _index2 )
+  {
+    std::cout << __FILE__ << ":" << __LINE__
+    << " r1:" << _index1.row() << " c1:" << _index1.column()
+    << " r2:" << _index2.row() << " c2:" << _index2.column()
+    << std::endl;
+
+  });
+
+  itemChanged().connect( [=]( Wt::WStandardItem * _item )
+  {
+    std::cout << __FILE__ << ":" << __LINE__ << " " << Wt::asString( _item-> data() ) << std::endl;
+
+  });
 
 } // endGCW::RegisterWidget::Model::Model( const std::string & _accountGuid )
 
@@ -160,8 +318,7 @@ refreshFromDisk()
   **  and so forth.
   **
   */
-  GCW_DECIMAL::decimal<2> runningBalance( 0 );
-  GCW_DECIMAL::decimal_format format( ',', '.' );
+  DECIMAL::decimal<2> runningBalance( 0 );
   for( auto splitItem : splitItems )
   {
     /*!
@@ -211,7 +368,7 @@ refreshFromDisk()
     ** \endcode
     **
     */
-    auto post_date = _addColumn( transactionItem-> post_date_as_date().toString( "MM/dd/yyyy" ) );
+    auto post_date = _addColumn( transactionItem-> post_date_as_date().toString( GCW::date_format() ) );
          post_date-> setData( splitItem-> guid() );
          post_date-> setFlags( Wt::ItemFlag::Editable );
 
@@ -329,7 +486,7 @@ refreshFromDisk()
     deposit   -> setFlags( Wt::ItemFlag::Editable );
     withdrawal-> setFlags( Wt::ItemFlag::Editable );
 
-    balance = _addColumn( Wt::WString( "{1}" ).arg( toString( runningBalance, format ) ) );
+    balance = _addColumn( Wt::WString( "{1}" ).arg( toString( runningBalance, GCW::decimal_format() ) ) );
 
     if( runningBalance < 0 )
       balance-> setStyleClass( "negval" );

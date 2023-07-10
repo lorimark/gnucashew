@@ -7,6 +7,7 @@
 #include <Wt/WEnvironment.h>
 
 #include "Dbo/Session.h"
+#include "Config.h"
 #include "MainWidget.h"
 
 namespace GCW {
@@ -28,7 +29,7 @@ class App
 
     Dbo::GnuCash::Session     m_gnucash_session;
     Dbo::GnuCashew::Session   m_gnucashew_session;
-    MainWidget   * m_mainWidget = nullptr;
+    MainWidget              * m_mainWidget = nullptr;
 
 }; // endclass App
 

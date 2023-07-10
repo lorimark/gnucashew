@@ -5,7 +5,7 @@
 
 #include <Wt/WDate.h>
 
-#include "../gnucashew.h"
+#include "../GnuCashew.h"
 #include "BaseItem.h"
 
 /*
@@ -112,9 +112,9 @@ class Item
     **  number type.  It can then be used in regular accounting
     **  calculations.
     */
-    GCW_DECIMAL::decimal<2> value() const
+    DECIMAL::decimal<2> value() const
     {
-      GCW_DECIMAL::decimal<2> retVal( value_num() );
+      DECIMAL::decimal<2> retVal( value_num() );
       retVal /= value_denom();
       return retVal;
     }
@@ -126,7 +126,7 @@ class Item
 
     std::string valueAsString() const
     {
-      return Wt::WString( "{1}" ).arg( toString( value(), GCW_DECIMAL::decimal_format( ',', '.' ) ) ).toUTF8();
+      return Wt::WString( "{1}" ).arg( toString( value(), GCW::decimal_format() ) ).toUTF8();
     }
 
     /*!
@@ -136,16 +136,16 @@ class Item
     **  number type.  It can then be used in regular accounting
     **  calculations.
     */
-    GCW_DECIMAL::decimal<2> quantity() const
+    DECIMAL::decimal<2> quantity() const
     {
-      GCW_DECIMAL::decimal<2> retVal( quantity_num() );
+      DECIMAL::decimal<2> retVal( quantity_num() );
       retVal /= quantity_denom();
       return retVal;
     }
 
-    std::string quantityAsString( GCW_DECIMAL::decimal<2> _value ) const
+    std::string quantityAsString() const
     {
-      return Wt::WString( "{1}" ).arg( toString( quantity(), GCW_DECIMAL::decimal_format( ',', '.' ) ) ).toUTF8();
+      return Wt::WString( "{1}" ).arg( toString( quantity(), GCW::decimal_format() ) ).toUTF8();
     }
 
     bool quantityIsNegative() const

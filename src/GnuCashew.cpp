@@ -17,49 +17,22 @@
 #include "GnuCashew.h"
 
 
+DECIMAL::decimal_format GCW::decimal_format()
+{
+  return DECIMAL::decimal_format( '.', ',' );
+}
 
 
+std::string GCW::date_format()
+{
+  return "MM/dd/yyyy";
+//  return "yyyy-MM-dd";
+}
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+std::string GCW::time_format()
+{
+  return "hh:mm:ss";
+}
 
 
