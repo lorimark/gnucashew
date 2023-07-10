@@ -2,9 +2,6 @@
 #ifndef __REGISTERWIDGET_H___
 #define __REGISTERWIDGET_H___
 
-#define DEC_NAMESPACE GCW_DECIMAL
-#include "3rd/decimal.h"
-
 #include <Wt/WContainerWidget.h>
 #include <Wt/WStandardItem.h>
 #include <Wt/WStandardItemModel.h>
@@ -36,12 +33,15 @@ class RegisterWidget
   class Model
   : public Wt::WStandardItemModel
   {
+    using RowItem = std::vector< std::unique_ptr< Wt::WStandardItem > >;
+
     public:
 
       Model( const std::string & _accountGuid );
 
       void refreshFromDisk();
 
+      RowItem makeRow( const std::string & _splitGuid );
 /*
 balance
   balance limit

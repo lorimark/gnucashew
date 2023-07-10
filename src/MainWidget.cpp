@@ -22,7 +22,7 @@ GCW::MainWidget::MainWidget()
   ** Set up the navbar
   **
   */
-  auto link = Wt::WLink("https://www.lorimarksolutions.com/gnucashew");
+  auto link = Wt::WLink("https://gnucashew.lorimarksolutions.com/dox/html/index.html");
   link.setTarget( Wt::LinkTarget::NewWindow );
   navBar()-> setResponsive( true );
   navBar()-> addStyleClass( "navbar-light bg-light" );

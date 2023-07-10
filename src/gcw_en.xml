@@ -39,6 +39,12 @@
   <message id="gcw.mu.view.refresh">Refresh</message>
   <message id="gcw.mu.view.newaccounts">New Accounts Page</message>
 
+  <message id="gcw.mu.help">Help</message>
+  <message id="gcw.mu.help.tutorial">Tutorial and Concepts Guide</message>
+  <message id="gcw.mu.help.tip">Tips Of The Day</message>
+  <message id="gcw.mu.help.contents">Contents</message>
+  <message id="gcw.mu.help.about">About</message>
+
   <message id="gcw.accountswidget.column.accountcode">Account Code</message>
   <message id="gcw.accountswidget.column.accountcolor">Account Color</message>
   <message id="gcw.accountswidget.column.accountname">Account Name</message>
@@ -70,6 +76,7 @@
 
   <message id="gcw.registerwidget.account.multisplit">~~ Split Transaction ~~</message>
   <message id="gcw.registerwidget.account.imbalanceUSD">Imbalance-USD</message>
+  <message id="gcw.registerwidget.account.imbalanceUSD.toolTip">This transaction is incomplete without a complete split.  Assign a split account to this transaction to clear this message.</message>
   <message id="gcw.registerwidget.account.tooltip">
     Split: {1}
     Date: {2}

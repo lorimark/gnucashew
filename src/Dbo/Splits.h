@@ -5,6 +5,7 @@
 
 #include <Wt/WDate.h>
 
+#include "../gnucashew.h"
 #include "BaseItem.h"
 
 /*
@@ -104,6 +105,54 @@ class Item
           int           quantity_denom  () const { return m_quantity_denom  ; }
     const std::string   lot_guid        () const { return m_lot_guid        ; }
 
+    /*!
+    ** \brief Return 'value' as a decimal.h number.
+    **
+    ** This converts the stored number in to a proper decimal<>
+    **  number type.  It can then be used in regular accounting
+    **  calculations.
+    */
+    GCW_DECIMAL::decimal<2> value() const
+    {
+      GCW_DECIMAL::decimal<2> retVal( value_num() );
+      retVal /= value_denom();
+      return retVal;
+    }
+
+    bool valueIsNegative() const
+    {
+      return value() < 0;
+    }
+
+    std::string valueAsString() const
+    {
+      return Wt::WString( "{1}" ).arg( toString( value(), GCW_DECIMAL::decimal_format( ',', '.' ) ) ).toUTF8();
+    }
+
+    /*!
+    ** \brief Return 'quantity' as a decimal.h number.
+    **
+    ** This converts the stored number in to a proper decimal<>
+    **  number type.  It can then be used in regular accounting
+    **  calculations.
+    */
+    GCW_DECIMAL::decimal<2> quantity() const
+    {
+      GCW_DECIMAL::decimal<2> retVal( quantity_num() );
+      retVal /= quantity_denom();
+      return retVal;
+    }
+
+    std::string quantityAsString( GCW_DECIMAL::decimal<2> _value ) const
+    {
+      return Wt::WString( "{1}" ).arg( toString( quantity(), GCW_DECIMAL::decimal_format( ',', '.' ) ) ).toUTF8();
+    }
+
+    bool quantityIsNegative() const
+    {
+      return quantity() < 0;
+    }
+
     template< class Action > void persist( Action & action )
     {
       Wt::Dbo::id   ( action, m_guid            , "guid"            ,   32 ); // text(32) PRIMARY KEY NOT NULL,
@@ -139,11 +188,60 @@ class Item
 }; // endclass Item
 
 /*!
-** \brief Load Splits by Account
+** \brief Load a single split
+**
+** This function returns a split based on the GUID.
 **
 */
-Item::Vector byAccount( const std::string & _accountGuid );
-Item::Vector byTransaction( const std::string & _txGuid, const std::string & _excludeSplitGuid );
+Item::Ptr load( const std::string & _splitGuid );
+
+/*!
+** \brief Load Splits by Account
+**
+** This function returns a vector of Split items, sorted
+**  by transaction date.  The result includes ~all~ splits
+**  associated with a single account.
+**
+** \return Vector of Items sorted by Transction Date
+*/
+Item::Vector byAccount
+(
+ /** Account GUID */
+ const std::string & _accountGuid
+);
+
+/*!
+** \brief Load Splits by Split
+**
+** This function returns a vector of Split items, sorted
+**  by transaction date.  The result includes ~all~ splits
+**  associated with a transaction except for the split
+**  ID used to identify the transaction.  This function
+**  acts as a convenience function for a split to quickly
+**  identify all of the 'other' splits.
+**
+** \return Vector of Items sorted by Transction Date
+*/
+Item::Vector bySplit
+(
+ /** Split GUID */
+ const std::string & _splitGuid
+);
+
+/*!
+** \brief Load Splits by Transaction
+**
+** This function returns a vector of Split items, sorted
+**  by transaction date.  The result includes ~all~ splits
+**  associated with a transaction
+**
+** \return Vector of Items sorted by Transction Date
+*/
+Item::Vector byTransaction
+(
+ /** Transaction GUID */
+ const std::string & _txGuid
+);
 
     } // endnamespace Splits {
   } // endnamespace Dbo {

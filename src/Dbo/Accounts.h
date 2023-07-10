@@ -46,8 +46,11 @@ namespace GCW {
 /*!
 ** \brief Account Item Class
 **
-** This class represents an 'account' within gnucash
+** This class represents an 'account' within gnucash.  This is a Dbo object
+**  so this class is used as the interface between the gnucashew application
+**  and the back-end database.
 **
+** \par Native GnuCash Account Sqlite Schema
 ** \code
 **  CREATE TABLE accounts
 **  (

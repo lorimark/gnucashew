@@ -1,5 +1,6 @@
 #line 2 "src/RegisterWidget.cpp"
 
+#include <Wt/WItemDelegate.h>
 #include <Wt/WText.h>
 #include <Wt/WTableView.h>
 #include <Wt/WVBoxLayout.h>
@@ -39,6 +40,15 @@ RegisterWidget( const std::string & _accountGuid )
   tableView()-> setSelectionMode        ( Wt::SelectionMode::Single      );
   tableView()-> setEditTriggers         ( Wt::EditTrigger::SingleClicked );
 
+  tableView()-> setHeaderItemDelegate( std::make_shared< Wt::WItemDelegate >() );
+
+  tableView()-> headerClicked().connect( [=]( int col, Wt::WMouseEvent event )
+      {
+        std::cout << __FILE__ << ":" << __LINE__ << " " << col << std::endl;
+
+
+      });
+
   loadData();
 
 } // endGCW::RegisterWidget::RegisterWidget()
@@ -52,7 +62,7 @@ loadData()
   tableView()-> setModel( m_model );
 
   /* Date */
-  tableView()-> setColumnWidth     ( 0, "150px"                   );
+  tableView()-> setColumnWidth     ( 0, "100px"                   );
   tableView()-> setHeaderAlignment ( 0, Wt::AlignmentFlag::Right  );
   tableView()-> setColumnAlignment ( 0, Wt::AlignmentFlag::Right  );
 
@@ -115,69 +125,71 @@ Model( const std::string & _accountGuid )
 void GCW::RegisterWidget::Model::
 refreshFromDisk()
 {
-  /*
-  ** Make sure the model is empty
+  /*!
+  ** Before refreshing from disk, the entire contents of the
+  **  model are cleared, so it is important to make sure anything
+  **  to be saved from the model should be done first.
   **
   */
   clear();
 
-  /*
-  ** Get the account loaded, and all the splits for this account.
+  /*!
+  ** In order to produce a proper 'register' of items, it is important
+  **  to load the data from the 'splits' side of the transaction rather
+  **  than the transaction itself.  This is due to the fact that it is
+  **  possible to have a single transaction that has two splits on the
+  **  same account!  While there's no practical reason to enter a
+  **  transaction like that, it is still possible, and needs to be 
+  **  represented correctly in the view.
   **
-  ** NOTE: it is important to load the 'splits' that are associated
-  **  with an account, since it is possible to create a single transaction
-  **  that is comprised of two splits for the same account!  There's no
-  **  practical reason I can think to do this, but it can happen, and the
-  **  only way to represent the transactions properly within the view
-  **  is to work from the split side of the relationship.
-  **
-  */
-  auto accountItem = GCW::Dbo::Accounts:: byGuid    ( m_accountGuid );
-  auto splitItems  = GCW::Dbo::Splits  :: byAccount ( m_accountGuid );
-
-  /*
-  ** Sort the vector of splits by transaction date so that they can be loaded
-  **  in to the model in proper sequential order.
+  ** Note that when the splits are loaded based on the account ID, they
+  **  are returned in a std::vector that is sorted based on the transction
+  **  date.
   **
   */
-  std::sort
-  (
-   splitItems.begin(),
-   splitItems.end(),
-   []( const GCW::Dbo::Splits::Item::Ptr item1,
-       const GCW::Dbo::Splits::Item::Ptr item2
-     )
-     {
-       auto trans1 = GCW::Dbo::Transactions::byGuid( item1-> tx_guid() );
-       auto trans2 = GCW::Dbo::Transactions::byGuid( item2-> tx_guid() );
-       return trans1-> post_date_as_date() < trans2-> post_date_as_date();
-     }
-  );
+  auto splitItems = GCW::Dbo::Splits::byAccount( m_accountGuid );
 
-  /*
-  ** Process each split item.  Grab the contents of the split, and
+  /*!
+  ** Each item is processed from the vector in sequential order.
+  **  In this process we grab the contents of the split, and
   **  generate a model item row containing all of the column values.
   **  Maintain a running balance as we go along to keep the balance
-  **  reflected within the view.
+  **  reflected within the view.  The result is a multi-column row
+  **  item that is added to the model.  This allows the model to be
+  **  subsequently resorted without affecting the running balances
+  **  and so forth.
   **
   */
-  GCW_DECIMAL::decimal<2> bal( 0 );
+  GCW_DECIMAL::decimal<2> runningBalance( 0 );
+  GCW_DECIMAL::decimal_format format( ',', '.' );
   for( auto splitItem : splitItems )
   {
-    /*
-    ** Need a handle on the transaction.  Fetch the transaction associated
-    **  with this split, so we can get things from it, and then also, fetch
-    **  the other splits that are on said transaction.
+    /*!
+    ** From the initial split item, we get a handle on the transaction,
+    **  and then load all of the other splits associated with this
+    **  transaction.
     **
     */
-    auto transactionItem   = GCW::Dbo:: Transactions ::byGuid       ( splitItem-> tx_guid() );
-    auto transactionSplits = GCW::Dbo:: Splits       ::byTransaction( splitItem-> tx_guid(), splitItem-> guid() );
+    auto transactionItem   = GCW::Dbo::Transactions ::byGuid  ( splitItem-> tx_guid() );
+    auto transactionSplits = GCW::Dbo::Splits       ::bySplit ( splitItem-> guid()    );
 
-    /*
-    ** The columns we are building go here
+    /*!
+    ** \par Model Columns
+    ** \code
+    **   col  name                  notes
+    **  -----+---------------------+----------------------
+    **    0   date
+    **    1   num (check number)
+    **    2   description
+    **    3   account / transfer
+    **    4   reconciliation
+    **    5   increase column
+    **    6   decrease column
+    **    7   balance column        r/o (computed)
+    ** \endcode
     **
     */
-    std::vector< std::unique_ptr< Wt::WStandardItem > > columns;
+    RowItem columns;
     auto _addColumn = [&]( auto _value )
     {
       auto item = std::make_unique< Wt::WStandardItem >( _value );
@@ -189,8 +201,14 @@ refreshFromDisk()
       return retVal;
     };
 
-    /*
-    ** Assemble each column
+    /*!
+    ** \note The post_date also carries with it the guid of the split item itself, so
+    **  that the originating split can be located from the table view.  The guid
+    **  can be accessed by;
+    **
+    ** \code
+    ** auto splitRowGuid = Wt::asString( standardItem.data( Wt::ItemRole::User ) )
+    ** \endcode
     **
     */
     auto post_date = _addColumn( transactionItem-> post_date_as_date().toString( "MM/dd/yyyy" ) );
@@ -203,33 +221,39 @@ refreshFromDisk()
     auto description = _addColumn( transactionItem-> description() );
          description-> setFlags( Wt::ItemFlag::Editable );
 
-    /*
-    ** Generate the 'account' text.  The text depends on the
+    /*!
+    ** The 'account' text depends on the
     **  target account defined in the split.  There are three
     **  options here;
     **
-    **   - no splits... this shows up as an 'imbalance'
-    **   - 1 split...   this just shows the split account on the line
-    **   - >1 split...  this is more than one target account, so just indicate 'split'
+    **   -# no splits... this shows up as an <b>'imbalance'</b>
+    **   -# 1 split...   this just shows the split account on the line
+    **   -# >1 split...  this is more than one target account, so just indicate 'split'
     **
     */
     Wt::WStandardItem * account = nullptr;
     switch( transactionSplits.size() )
     {
-      /*
+      /*!
+      ** \par Imbalance
       ** This is actually a problem... We don't have another split, and
       **  according to 'generally accepted accounting practices' we
       **  should!  So, just  plop an 'imbalance' indicator in the view.
+      **  A style-class is also applied to the item to allow the rendering
+      **  in the view to highlight this problem.
       **
       */
       case 0:
       {
         account = _addColumn( TR("gcw.registerwidget.account.imbalanceUSD") ); // account
         account-> setFlags( Wt::ItemFlag::Editable );
+        account-> setStyleClass( "errval" );
+        account-> setToolTip( TR("gcw.registerwidget.account.imbalanceUSD.toolTip") );
         break;
       }
 
-      /*
+      /*!
+      ** \par Normal Split
       ** This is a straight and simple 1:1 split transaction, so we can pull
       **  the account name from the other side of the split and pop that in
       **  to the model directly.
@@ -244,7 +268,8 @@ refreshFromDisk()
         break;
       }
 
-      /*
+      /*!
+      ** \par Multi-Split
       ** When we have more than one split then we cannot display
       **  all of the split accounts on just one line, so just pop
       **  a message that indicates that we're in a multisplit
@@ -260,43 +285,53 @@ refreshFromDisk()
 
     auto reconcile = _addColumn( splitItem-> reconcile_state() ); // Reconciled
 
-    /*
-    ** The following works out the values for the 'deposit' and
-    **  'withdrawal' and 'balance' columns.  The 'decimal.h'
-    **  library is used to perform the arithmetic to prevent the
-    **  floating point math problems.
+    /*!
+    ** Values of the transaction appear either in the (+)Increase column
+    **  or in the (-)Decrease column depending on if they are positive
+    **  or negative.  The 'decimal.h' library is used to perform the
+    **  arithmetic to prevent the floating point math problems.
+    **
+    ** The balance on the transaction is computed on-the-fly, which
+    **  makes clear the importance of having the initial vector of splits
+    **  to appear in the correct chronological order.
     **
     */
     Wt::WStandardItem * deposit    = nullptr;
     Wt::WStandardItem * withdrawal = nullptr;
     Wt::WStandardItem * balance    = nullptr;
 
-    GCW_DECIMAL::decimal<2> val( splitItem-> value_num() );
-    val /= splitItem-> value_denom();
+    /*
+    ** Accumulate the running balance
+    **
+    */
+    runningBalance += splitItem-> value();
 
-    bal += val;
-
-    GCW_DECIMAL::decimal_format f( ',', '.' );
-    GCW_DECIMAL::decimal<2> negate(-1);
-
-    if( val > 0 )
+    if( splitItem-> value() > 0 )
     {
-      deposit    = _addColumn( Wt::WString( "{1}" ).arg( toString( val, f ) ) );
+      deposit    = _addColumn( splitItem-> valueAsString() );
       withdrawal = _addColumn( "" );
     }
 
-    if( val < 0 )
+    else
+    if( splitItem-> value() < 0 )
     {
       deposit    = _addColumn( "" );
-      withdrawal = _addColumn( Wt::WString( "{1}" ).arg( toString( val * negate, f ) ) );
+      withdrawal = _addColumn( splitItem-> valueAsString() );
+    }
+
+    else
+    if( splitItem-> value() == 0 )
+    {
+      deposit    = _addColumn( "" );
+      withdrawal = _addColumn( "" );
     }
 
     deposit   -> setFlags( Wt::ItemFlag::Editable );
     withdrawal-> setFlags( Wt::ItemFlag::Editable );
 
-    balance = _addColumn( Wt::WString( "{1}" ).arg( toString( bal, f ) ) );
+    balance = _addColumn( Wt::WString( "{1}" ).arg( toString( runningBalance, format ) ) );
 
-    if( bal < 0 )
+    if( runningBalance < 0 )
       balance-> setStyleClass( "negval" );
 
     /*
@@ -319,4 +354,11 @@ refreshFromDisk()
 
 } // endvoid GCW::RegisterWidget::Model::refreshFromDisk()
 
+GCW::RegisterWidget::Model::RowItem GCW::RegisterWidget::Model::
+makeRow( const std::string & _splitGuid )
+{
+  RowItem rowItem;
+
+  return rowItem;
+}
 

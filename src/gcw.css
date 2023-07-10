@@ -18,6 +18,17 @@
   color:red;
 }
 
+/*
+** Error values are super-red
+**
+*/
+.RegisterWidget div.errval
+{
+  color:#0713ce;
+  background-color:#ff000082 !important;
+  border-radius:5px;
+}
+
 /* Account elipsis ... on the left */
 .RegisterWidget .Wt-header      .Wt-tv-c4,
 .RegisterWidget .Wt-tv-contents .Wt-tv-c4
