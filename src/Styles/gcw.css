@@ -88,4 +88,12 @@
   background-color:yellow;
 }
 
+/* read-only selected row */
+.RegisterWidget
+ .Wt-itemview
+  .active
+{
+  color: #0d0c0c;
+  font-weight:bold;
+}
 

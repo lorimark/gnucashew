@@ -197,8 +197,6 @@ std::unique_ptr< Wt::WWidget > SuggestionDelegate::createEditor
 
   for( auto item : model-> suggestionsFromColumn( _index.column() ) )
   {
-    std::cout << __FILE__ << ":" << __LINE__ << " " << item << std::endl;
-
     popup-> addSuggestion( item, item );
   }
 
@@ -257,8 +255,6 @@ std::unique_ptr< Wt::WWidget > AccountDelegate::createEditor
 
   for( auto item : items )
   {
-    std::cout << __FILE__ << ":" << __LINE__ << " " << item << std::endl;
-
     popup-> addSuggestion( item );
   }
 
@@ -312,9 +308,39 @@ RegisterWidget( const std::string & _accountGuid )
     std::cout << __FILE__ << ":" << __LINE__ << " " << col << std::endl;
   });
 
+  /*
+  ** This 'selectionChanged' procedure is 'clunky'.
+  **
+  ** This procedure is designed to respond to a row-selection
+  **  change event.  When a different row is selected, we want
+  **  any open editors to be closed, and the row selection to
+  **  move to the newly selected row.
+  **
+  ** Right now the problem is with the 'select' command, where
+  **  it calling 'select' cause this 'selectionChanged' event
+  **  to fire again.  So, ther is a littl 'selecting' interlock
+  **  built around it to try to prevent this weirdness.
+  **
+  ** The other problem with this routine is when 'selecting'
+  **  a cell that is editable, the editor is immediately engaged
+  **  but this 'selectionChanged' signal never fires... so we have
+  **  to sort that out.
+  **
+  */
   tableView()-> selectionChanged().connect( [=]()
   {
-    std::cout << __FILE__ << ":" << __LINE__ << " " << std::endl;
+    static bool selecting = false;
+    std::cout << __FILE__ << ":" << __LINE__ << " selecting:" << selecting << std::endl;
+    if( !selecting )
+    {
+      selecting = true; // prevent-recursive-calls as we change the selection
+      auto selections = tableView()-> selectedIndexes();
+      tableView()-> closeEditors( true );
+      tableView()-> clearSelection();
+      tableView()-> select( *selections.begin() );
+      selecting = false;
+    }
+
   });
 
   tableView()-> keyPressed().connect( [=]( Wt::WKeyEvent _event )
@@ -386,16 +412,16 @@ Model( const std::string & _accountGuid )
 
   dataChanged().connect( [=]( Wt::WModelIndex _index1, Wt::WModelIndex _index2 )
   {
-    std::cout << __FILE__ << ":" << __LINE__
-    << " r1:" << _index1.row() << " c1:" << _index1.column()
-    << " r2:" << _index2.row() << " c2:" << _index2.column()
-    << std::endl;
+//    std::cout << __FILE__ << ":" << __LINE__
+//    << " r1:" << _index1.row() << " c1:" << _index1.column()
+//    << " r2:" << _index2.row() << " c2:" << _index2.column()
+//    << std::endl;
 
   });
 
   itemChanged().connect( [=]( Wt::WStandardItem * _item )
   {
-    std::cout << __FILE__ << ":" << __LINE__ << " " << Wt::asString( _item-> data() ) << std::endl;
+//    std::cout << __FILE__ << ":" << __LINE__ << " " << Wt::asString( _item-> data() ) << std::endl;
 
   });
 
@@ -452,6 +478,12 @@ refreshFromDisk()
   DECIMAL::decimal<2> runningBalance( 0 );
   for( auto splitItem : splitItems )
   {
+    /*
+    ** Start out read-only.
+    **
+    */
+    bool editable = false;
+
     /*!
     ** From the initial split item, we get a handle on the transaction,
     **  and then load all of the other splits associated with this
@@ -501,13 +533,10 @@ refreshFromDisk()
     */
     auto post_date = _addColumn( transactionItem-> post_date_as_date().toString( GCW::CFG::date_format() ) );
          post_date-> setData( splitItem-> guid() );
-         post_date-> setFlags( Wt::ItemFlag::Editable );
 
     auto num = _addColumn( transactionItem-> num() );
-         num-> setFlags( Wt::ItemFlag::Editable );
 
     auto description = _addColumn( transactionItem-> description() );
-         description-> setFlags( Wt::ItemFlag::Editable );
 
     /*!
     ** The 'account' text depends on the
@@ -534,7 +563,6 @@ refreshFromDisk()
       case 0:
       {
         account = _addColumn( TR("gcw.RegisterWidget.account.imbalanceUSD") ); // account
-        account-> setFlags( Wt::ItemFlag::Editable );
         account-> setStyleClass( "errval" );
         account-> setToolTip( TR("gcw.RegisterWidget.account.imbalanceUSD.toolTip") );
         break;
@@ -552,7 +580,6 @@ refreshFromDisk()
         auto txSplitItem = *transactionSplits.begin();
         auto splitAccountItem = GCW::Dbo::Accounts::byGuid( txSplitItem-> account_guid() );
         account = _addColumn( GCW::Dbo::Accounts::fullName( splitAccountItem-> guid() ) );
-        account-> setFlags( Wt::ItemFlag::Editable );
         break;
       }
 
@@ -614,13 +641,30 @@ refreshFromDisk()
       withdrawal = _addColumn( "" );
     }
 
-    deposit   -> setFlags( Wt::ItemFlag::Editable );
-    withdrawal-> setFlags( Wt::ItemFlag::Editable );
-
-    balance = _addColumn( Wt::WString( "{1}" ).arg( toString( runningBalance, GCW::CFG::decimal_format() ) ) );
+    balance =
+      _addColumn
+      (
+       Wt::WString( "{1}" )
+       .arg( toString( runningBalance, GCW::CFG::decimal_format() ) )
+      );
 
     if( runningBalance < 0 )
       balance-> setStyleClass( "negval" );
+
+    if( splitItem-> reconcile_state() == "y" )
+      editable = false;
+    else
+      editable = true;
+
+    if( editable )
+    {
+      post_date   -> setFlags( Wt::ItemFlag::Editable );
+      num         -> setFlags( Wt::ItemFlag::Editable );
+      description -> setFlags( Wt::ItemFlag::Editable );
+      account     -> setFlags( Wt::ItemFlag::Editable );
+      deposit     -> setFlags( Wt::ItemFlag::Editable );
+      withdrawal  -> setFlags( Wt::ItemFlag::Editable );
+    }
 
     /*
     ** Add the row to the model
