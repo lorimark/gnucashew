@@ -126,7 +126,7 @@ class Item
 
     std::string valueAsString() const
     {
-      return Wt::WString( "{1}" ).arg( toString( value(), GCW::decimal_format() ) ).toUTF8();
+      return Wt::WString( "{1}" ).arg( toString( value(), GCW::CFG::decimal_format() ) ).toUTF8();
     }
 
     /*!
@@ -145,7 +145,7 @@ class Item
 
     std::string quantityAsString() const
     {
-      return Wt::WString( "{1}" ).arg( toString( quantity(), GCW::decimal_format() ) ).toUTF8();
+      return Wt::WString( "{1}" ).arg( toString( quantity(), GCW::CFG::decimal_format() ) ).toUTF8();
     }
 
     bool quantityIsNegative() const

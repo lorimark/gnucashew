@@ -5,6 +5,8 @@
 #include <Wt/WText.h>
 #include <Wt/WVBoxLayout.h>
 
+#include "define.h"
+#include "App.h"
 #include "CentralWidget.h"
 
 /*!
@@ -56,7 +58,7 @@ GCW::CentralWidget::CentralWidget()
   {
     auto widget = std::make_unique< GCW::AccountsWidget >();
     m_accountsWidget = widget.get();
-    tabWidget()-> addTab( std::move( widget ), "Accounts" );
+    tabWidget()-> addTab( std::move( widget ), TR( "gcw.AccountsWidget.tabName" ) );
 
     accountsWidget()-> doubleClicked().connect( this, &GCW::CentralWidget::openAccountRegister );
   }

@@ -78,8 +78,8 @@ GCW::App::App( const Wt::WEnvironment & env )
   ** GnuCashew english language translations
   **
   */
-  messageResourceBundle().use( appRoot() + "gcw"    );  // UI elements
-  messageResourceBundle().use( appRoot() + "gcw_en" );  // Language Elements
+  messageResourceBundle().use( docRoot() + "/styles/gcw_gui" );  // UI elements
+  messageResourceBundle().use( docRoot() + "/styles/gcw_en"  );  // Language Elements
 
   /*
   ** set the date format to the browser.

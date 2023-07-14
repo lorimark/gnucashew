@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<messages xmlns:if="Wt.WTemplate.conditions">
+
+  <message id="gcw.language_file">English</message>
+
+  <message id="gcw.MainWidget.mu.file">File</message>
+  <message id="gcw.MainWidget.mu.file.new">New File</message>
+  <message id="gcw.MainWidget.mu.file.open">Open...</message>
+  <message id="gcw.MainWidget.mu.file.import">Import</message>
+  <message id="gcw.MainWidget.mu.file.save">Save</message>
+  <message id="gcw.MainWidget.mu.file.saveas">Save As...</message>
+  <message id="gcw.MainWidget.mu.file.revert">Revert</message>
+  <message id="gcw.MainWidget.mu.file.print">Print</message>
+  <message id="gcw.MainWidget.mu.file.pagesetup">Page Setup</message>
+  <message id="gcw.MainWidget.mu.file.export">Export</message>
+  <message id="gcw.MainWidget.mu.file.properties">Properties</message>
+  <message id="gcw.MainWidget.mu.file.close">Close</message>
+  <message id="gcw.MainWidget.mu.file.quit">Quit</message>
+
+  <message id="gcw.MainWidget.mu.edit">Edit</message>
+  <message id="gcw.MainWidget.mu.edit.cut">Cut</message>
+  <message id="gcw.MainWidget.mu.edit.copy">Copy</message>
+  <message id="gcw.MainWidget.mu.edit.paste">Paste</message>
+  <message id="gcw.MainWidget.mu.edit.edit">Edit Account</message>
+  <message id="gcw.MainWidget.mu.edit.delete">Delete Account</message>
+  <message id="gcw.MainWidget.mu.edit.find">Find Account</message>
+  <message id="gcw.MainWidget.mu.edit.cascade">Cascade Account Properties</message>
+  <message id="gcw.MainWidget.mu.edit.renumber">Renumber Subaccounts</message>
+  <message id="gcw.MainWidget.mu.edit.openaccount">Open Account</message>
+  <message id="gcw.MainWidget.mu.edit.opensubaccounts">Open SubAccounts</message>
+
+  <message id="gcw.MainWidget.mu.view">View</message>
+  <message id="gcw.MainWidget.mu.view.toolbar">Toolbar</message>
+  <message id="gcw.MainWidget.mu.view.summarybar">Summary Bar</message>
+  <message id="gcw.MainWidget.mu.view.statusbar">Status Bar</message>
+  <message id="gcw.MainWidget.mu.view.tabposition">Tab Position</message>
+  <message id="gcw.MainWidget.mu.view.filterby">Filter by...</message>
+  <message id="gcw.MainWidget.mu.view.refresh">Refresh</message>
+  <message id="gcw.MainWidget.mu.view.newaccounts">New Accounts Page</message>
+
+  <message id="gcw.MainWidget.mu.help">Help</message>
+  <message id="gcw.MainWidget.mu.help.tutorial">Tutorial and Concepts Guide</message>
+  <message id="gcw.MainWidget.mu.help.tip">Tips Of The Day</message>
+  <message id="gcw.MainWidget.mu.help.contents">Contents</message>
+  <message id="gcw.MainWidget.mu.help.about">About</message>
+
+  <message id="gcw.MainWidget.tb.save">save</message>
+  <message id="gcw.MainWidget.tb.close">close</message>
+  <message id="gcw.MainWidget.tb.newInvoice">new invoice</message>
+  <message id="gcw.MainWidget.tb.open">open</message>
+  <message id="gcw.MainWidget.tb.edit">edit</message>
+  <message id="gcw.MainWidget.tb.new">new</message>
+  <message id="gcw.MainWidget.tb.delete">delete</message>
+
+  <message id="gcw.AccountsWidget.tabName">Accounts</message>
+  <message id="gcw.AccountsWidget.column.accountcode">Account Code</message>
+  <message id="gcw.AccountsWidget.column.accountcolor">Account Color</message>
+  <message id="gcw.AccountsWidget.column.accountname">Account Name</message>
+  <message id="gcw.AccountsWidget.column.balance">Balance</message>
+  <message id="gcw.AccountsWidget.column.balancelimit">Balance Limit</message>
+  <message id="gcw.AccountsWidget.column.balanceperiod">Balance Period</message>
+  <message id="gcw.AccountsWidget.column.balanceusd">Balance (USD)</message>
+  <message id="gcw.AccountsWidget.column.cleared">Cleared</message>
+  <message id="gcw.AccountsWidget.column.clearedusd">Cleared (USD)</message>
+  <message id="gcw.AccountsWidget.column.commodity">Commodity</message>
+  <message id="gcw.AccountsWidget.column.description">Description</message>
+  <message id="gcw.AccountsWidget.column.futureminimum">Future Minimum</message>
+  <message id="gcw.AccountsWidget.column.futureminimumusd">Future Minumum (USD)</message>
+  <message id="gcw.AccountsWidget.column.hidden">Hidden</message>
+  <message id="gcw.AccountsWidget.column.lastnum">Last Num</message>
+  <message id="gcw.AccountsWidget.column.lastreconciledate">Last Reconcile Date</message>
+  <message id="gcw.AccountsWidget.column.notes">Notes</message>
+  <message id="gcw.AccountsWidget.column.openingbalance">Opening Balance</message>
+  <message id="gcw.AccountsWidget.column.placeholder">Placeholder</message>
+  <message id="gcw.AccountsWidget.column.present">Present</message>
+  <message id="gcw.AccountsWidget.column.presentusd">Present (USD)</message>
+  <message id="gcw.AccountsWidget.column.reconciled">Reconciled</message>
+  <message id="gcw.AccountsWidget.column.reconciledusd">Reconciled (USD)</message>
+  <message id="gcw.AccountsWidget.column.taxinfo">Tax Info</message>
+  <message id="gcw.AccountsWidget.column.total">Total</message>
+  <message id="gcw.AccountsWidget.column.totalperiod">Total (Period)</message>
+  <message id="gcw.AccountsWidget.column.totalusd">Total (USD)</message>
+  <message id="gcw.AccountsWidget.column.type">Type</message>
+
+  <message id="gcw.RegisterWidget">Register</message>
+  <message id="gcw.RegisterWidget.account.multisplit">~~ Split Transaction ~~</message>
+  <message id="gcw.RegisterWidget.account.imbalanceUSD">Imbalance-USD</message>
+  <message id="gcw.RegisterWidget.account.imbalanceUSD.toolTip">This transaction is incomplete without a complete split.  Assign a split account to this transaction to clear this message.</message>
+  <message id="gcw.RegisterWidget.account.tooltip">
+    Split: {1}
+    Date: {2}
+    Num: {3}
+    Memo: {4}
+    Account: {5}
+  </message>
+
+</messages>
+

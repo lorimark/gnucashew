@@ -88,11 +88,11 @@ std::unique_ptr< Wt::WWidget > DateDelegate::createEditor
   auto retVal = std::make_unique< Wt::WContainerWidget >();
   retVal-> setSelectable( true );
 
-  auto date = Wt::WDate::fromString( Wt::asString( _index.data( Wt::ItemDataRole::Edit ) ), GCW::date_format() );
+  auto date = Wt::WDate::fromString( Wt::asString( _index.data( Wt::ItemDataRole::Edit ) ), GCW::CFG::date_format() );
 
   auto dateEdit = std::make_unique< Wt::WDateEdit >();
   m_dateEdit = dateEdit.get();
-  dateEdit-> setFormat( GCW::date_format() );
+  dateEdit-> setFormat( GCW::CFG::date_format() );
   dateEdit-> setDate( date );
   dateEdit-> enterPressed  ().connect( [&](){ doCloseEditor( dateEdit.get(), true  ); });
   dateEdit-> escapePressed ().connect( [&](){ doCloseEditor( dateEdit.get(), false ); });
@@ -499,7 +499,7 @@ refreshFromDisk()
     ** \endcode
     **
     */
-    auto post_date = _addColumn( transactionItem-> post_date_as_date().toString( GCW::date_format() ) );
+    auto post_date = _addColumn( transactionItem-> post_date_as_date().toString( GCW::CFG::date_format() ) );
          post_date-> setData( splitItem-> guid() );
          post_date-> setFlags( Wt::ItemFlag::Editable );
 
@@ -533,10 +533,10 @@ refreshFromDisk()
       */
       case 0:
       {
-        account = _addColumn( TR("gcw.registerwidget.account.imbalanceUSD") ); // account
+        account = _addColumn( TR("gcw.RegisterWidget.account.imbalanceUSD") ); // account
         account-> setFlags( Wt::ItemFlag::Editable );
         account-> setStyleClass( "errval" );
-        account-> setToolTip( TR("gcw.registerwidget.account.imbalanceUSD.toolTip") );
+        account-> setToolTip( TR("gcw.RegisterWidget.account.imbalanceUSD.toolTip") );
         break;
       }
 
@@ -566,7 +566,7 @@ refreshFromDisk()
       */
       default:
       {
-        account = _addColumn( TR("gcw.registerwidget.account.multisplit") ); // account
+        account = _addColumn( TR("gcw.RegisterWidget.account.multisplit") ); // account
       }
 
     } // endswitch( transactionSplits.size() )
@@ -617,7 +617,7 @@ refreshFromDisk()
     deposit   -> setFlags( Wt::ItemFlag::Editable );
     withdrawal-> setFlags( Wt::ItemFlag::Editable );
 
-    balance = _addColumn( Wt::WString( "{1}" ).arg( toString( runningBalance, GCW::decimal_format() ) ) );
+    balance = _addColumn( Wt::WString( "{1}" ).arg( toString( runningBalance, GCW::CFG::decimal_format() ) ) );
 
     if( runningBalance < 0 )
       balance-> setStyleClass( "negval" );

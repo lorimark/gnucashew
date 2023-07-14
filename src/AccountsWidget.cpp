@@ -28,34 +28,34 @@ AccountsWidget()
   treeView()-> setAlternatingRowColors( true );
   treeView()-> doubleClicked().connect( this, &GCW::AccountsWidget::doubleClicked );
 
-  m_columns.push_back( TR8( "gcw.accountswidget.column.accountcode"       ) );
-  m_columns.push_back( TR8( "gcw.accountswidget.column.accountcolor"      ) );
-  m_columns.push_back( TR8( "gcw.accountswidget.column.accountname"       ) );
-  m_columns.push_back( TR8( "gcw.accountswidget.column.balance"           ) );
-  m_columns.push_back( TR8( "gcw.accountswidget.column.balancelimit"      ) );
-  m_columns.push_back( TR8( "gcw.accountswidget.column.balanceperiod"     ) );
-  m_columns.push_back( TR8( "gcw.accountswidget.column.balanceusd"        ) );
-  m_columns.push_back( TR8( "gcw.accountswidget.column.cleared"           ) );
-  m_columns.push_back( TR8( "gcw.accountswidget.column.clearedusd"        ) );
-  m_columns.push_back( TR8( "gcw.accountswidget.column.commodity"         ) );
-  m_columns.push_back( TR8( "gcw.accountswidget.column.description"       ) );
-  m_columns.push_back( TR8( "gcw.accountswidget.column.futureminimum"     ) );
-  m_columns.push_back( TR8( "gcw.accountswidget.column.futureminimumusd"  ) );
-  m_columns.push_back( TR8( "gcw.accountswidget.column.hidden"            ) );
-  m_columns.push_back( TR8( "gcw.accountswidget.column.lastnum"           ) );
-  m_columns.push_back( TR8( "gcw.accountswidget.column.lastreconciledate" ) );
-  m_columns.push_back( TR8( "gcw.accountswidget.column.notes"             ) );
-  m_columns.push_back( TR8( "gcw.accountswidget.column.openingbalance"    ) );
-  m_columns.push_back( TR8( "gcw.accountswidget.column.placeholder"       ) );
-  m_columns.push_back( TR8( "gcw.accountswidget.column.present"           ) );
-  m_columns.push_back( TR8( "gcw.accountswidget.column.presentusd"        ) );
-  m_columns.push_back( TR8( "gcw.accountswidget.column.reconciled"        ) );
-  m_columns.push_back( TR8( "gcw.accountswidget.column.reconciledusd"     ) );
-  m_columns.push_back( TR8( "gcw.accountswidget.column.taxinfo"           ) );
-  m_columns.push_back( TR8( "gcw.accountswidget.column.total"             ) );
-  m_columns.push_back( TR8( "gcw.accountswidget.column.totalperiod"       ) );
-  m_columns.push_back( TR8( "gcw.accountswidget.column.totalusd"          ) );
-  m_columns.push_back( TR8( "gcw.accountswidget.column.type"              ) );
+  m_columns.push_back( TR8( "gcw.AccountsWidget.column.accountcode"       ) );
+  m_columns.push_back( TR8( "gcw.AccountsWidget.column.accountcolor"      ) );
+  m_columns.push_back( TR8( "gcw.AccountsWidget.column.accountname"       ) );
+  m_columns.push_back( TR8( "gcw.AccountsWidget.column.balance"           ) );
+  m_columns.push_back( TR8( "gcw.AccountsWidget.column.balancelimit"      ) );
+  m_columns.push_back( TR8( "gcw.AccountsWidget.column.balanceperiod"     ) );
+  m_columns.push_back( TR8( "gcw.AccountsWidget.column.balanceusd"        ) );
+  m_columns.push_back( TR8( "gcw.AccountsWidget.column.cleared"           ) );
+  m_columns.push_back( TR8( "gcw.AccountsWidget.column.clearedusd"        ) );
+  m_columns.push_back( TR8( "gcw.AccountsWidget.column.commodity"         ) );
+  m_columns.push_back( TR8( "gcw.AccountsWidget.column.description"       ) );
+  m_columns.push_back( TR8( "gcw.AccountsWidget.column.futureminimum"     ) );
+  m_columns.push_back( TR8( "gcw.AccountsWidget.column.futureminimumusd"  ) );
+  m_columns.push_back( TR8( "gcw.AccountsWidget.column.hidden"            ) );
+  m_columns.push_back( TR8( "gcw.AccountsWidget.column.lastnum"           ) );
+  m_columns.push_back( TR8( "gcw.AccountsWidget.column.lastreconciledate" ) );
+  m_columns.push_back( TR8( "gcw.AccountsWidget.column.notes"             ) );
+  m_columns.push_back( TR8( "gcw.AccountsWidget.column.openingbalance"    ) );
+  m_columns.push_back( TR8( "gcw.AccountsWidget.column.placeholder"       ) );
+  m_columns.push_back( TR8( "gcw.AccountsWidget.column.present"           ) );
+  m_columns.push_back( TR8( "gcw.AccountsWidget.column.presentusd"        ) );
+  m_columns.push_back( TR8( "gcw.AccountsWidget.column.reconciled"        ) );
+  m_columns.push_back( TR8( "gcw.AccountsWidget.column.reconciledusd"     ) );
+  m_columns.push_back( TR8( "gcw.AccountsWidget.column.taxinfo"           ) );
+  m_columns.push_back( TR8( "gcw.AccountsWidget.column.total"             ) );
+  m_columns.push_back( TR8( "gcw.AccountsWidget.column.totalperiod"       ) );
+  m_columns.push_back( TR8( "gcw.AccountsWidget.column.totalusd"          ) );
+  m_columns.push_back( TR8( "gcw.AccountsWidget.column.type"              ) );
 
   setModel();
 
@@ -136,13 +136,13 @@ load()
   load( invisibleRootItem(), GCW::Dbo::Accounts::root() );
 
   int col = 0;
-  setHeaderData( col++, "Account Name"         );
-  setHeaderData( col++, "Account Code"         );
-  setHeaderData( col++, "Description"          );
-  setHeaderData( col++, "Tax Info"             );
-  setHeaderData( col++, "Notes"                );
-  setHeaderData( col++, "Future Minimum (USD)" );
-  setHeaderData( col++, "Total"                );
+  setHeaderData( col++, TR( "gcw.AccountsWidget.column.accountname"      ) );
+  setHeaderData( col++, TR( "gcw.AccountsWidget.column.accountcode"      ) );
+  setHeaderData( col++, TR( "gcw.AccountsWidget.column.description"      ) );
+  setHeaderData( col++, TR( "gcw.AccountsWidget.column.taxinfo"          ) );
+  setHeaderData( col++, TR( "gcw.AccountsWidget.column.notes"            ) );
+  setHeaderData( col++, TR( "gcw.AccountsWidget.column.futureminimumusd" ) );
+  setHeaderData( col++, TR( "gcw.AccountsWidget.column.total"            ) );
 
 } // endvoid GCW::AccountsWidget::Model::load()
 

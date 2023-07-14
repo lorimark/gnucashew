@@ -23,7 +23,7 @@ MainWidget()
   ** Set up the navbar
   **
   */
-  auto link = Wt::WLink("https://gnucashew.lorimarksolutions.com/dox/html/index.html");
+  auto link = Wt::WLink( TR8("gcw_gui.doxygen_link") );
   link.setTarget( Wt::LinkTarget::NewWindow );
   navBar()-> setResponsive( true );
   navBar()-> addStyleClass( "navbar-light bg-light" );
@@ -31,77 +31,77 @@ MainWidget()
 
   auto m_menu = navBar()-> addMenu( std::make_unique< Wt::WMenu >() );
 
-  auto m_uFile = m_menu-> addItem( TR("gcw.mu.file") );
+  auto m_uFile = m_menu-> addItem( TR("gcw.MainWidget.mu.file") );
   auto popFile = std::make_unique< Wt::WPopupMenu >();
-  popFile-> addItem( TR( "gcw.mu.file.new"        ) );
-  popFile-> addItem( TR( "gcw.mu.file.open"       ) );
-  popFile-> addItem( TR( "gcw.mu.file.import"     ) );
+  popFile-> addItem( TR( "gcw.MainWidget.mu.file.new"        ) );
+  popFile-> addItem( TR( "gcw.MainWidget.mu.file.open"       ) );
+  popFile-> addItem( TR( "gcw.MainWidget.mu.file.import"     ) );
   popFile-> addSeparator();
-  popFile-> addItem( TR( "gcw.mu.file.save"       ) );
-  popFile-> addItem( TR( "gcw.mu.file.saveas"     ) );
-  popFile-> addItem( TR( "gcw.mu.file.revert"     ) );
+  popFile-> addItem( TR( "gcw.MainWidget.mu.file.save"       ) );
+  popFile-> addItem( TR( "gcw.MainWidget.mu.file.saveas"     ) );
+  popFile-> addItem( TR( "gcw.MainWidget.mu.file.revert"     ) );
   popFile-> addSeparator();
-  popFile-> addItem( TR( "gcw.mu.file.print"      ) );
-  popFile-> addItem( TR( "gcw.mu.file.pagesetup"  ) );
-  popFile-> addItem( TR( "gcw.mu.file.export"     ) );
+  popFile-> addItem( TR( "gcw.MainWidget.mu.file.print"      ) );
+  popFile-> addItem( TR( "gcw.MainWidget.mu.file.pagesetup"  ) );
+  popFile-> addItem( TR( "gcw.MainWidget.mu.file.export"     ) );
   popFile-> addSeparator();
-  popFile-> addItem( TR( "gcw.mu.file.properties" ) );
+  popFile-> addItem( TR( "gcw.MainWidget.mu.file.properties" ) );
   popFile-> addSeparator();
-  popFile-> addItem( TR( "gcw.mu.file.close"      ) );
-  popFile-> addItem( TR( "gcw.mu.file.quit"       ) );
+  popFile-> addItem( TR( "gcw.MainWidget.mu.file.close"      ) );
+  popFile-> addItem( TR( "gcw.MainWidget.mu.file.quit"       ) );
   m_uFile-> setMenu( std::move( popFile ) );
 
-  auto m_uEdit = m_menu-> addItem( TR( "gcw.mu.edit" ) );
+  auto m_uEdit = m_menu-> addItem( TR( "gcw.MainWidget.mu.edit" ) );
   auto popEdit = std::make_unique< Wt::WPopupMenu >();
-  popEdit-> addItem( TR( "gcw.mu.edit.cut"             ) );
-  popEdit-> addItem( TR( "gcw.mu.edit.copy"            ) );
-  popEdit-> addItem( TR( "gcw.mu.edit.paste"           ) );
+  popEdit-> addItem( TR( "gcw.MainWidget.mu.edit.cut"             ) );
+  popEdit-> addItem( TR( "gcw.MainWidget.mu.edit.copy"            ) );
+  popEdit-> addItem( TR( "gcw.MainWidget.mu.edit.paste"           ) );
   popEdit-> addSeparator();
-  popEdit-> addItem( TR( "gcw.mu.edit.edit"            ) );
-  popEdit-> addItem( TR( "gcw.mu.edit.delete"          ) );
-  popEdit-> addItem( TR( "gcw.mu.edit.find"            ) );
-  popEdit-> addItem( TR( "gcw.mu.edit.cascade"         ) );
-  popEdit-> addItem( TR( "gcw.mu.edit.renumber"        ) );
+  popEdit-> addItem( TR( "gcw.MainWidget.mu.edit.edit"            ) );
+  popEdit-> addItem( TR( "gcw.MainWidget.mu.edit.delete"          ) );
+  popEdit-> addItem( TR( "gcw.MainWidget.mu.edit.find"            ) );
+  popEdit-> addItem( TR( "gcw.MainWidget.mu.edit.cascade"         ) );
+  popEdit-> addItem( TR( "gcw.MainWidget.mu.edit.renumber"        ) );
   popEdit-> addSeparator();
-  popEdit-> addItem( TR( "gcw.mu.edit.openaccount"     ) );
-  popEdit-> addItem( TR( "gcw.mu.edit.opensubaccounts" ) );
+  popEdit-> addItem( TR( "gcw.MainWidget.mu.edit.openaccount"     ) );
+  popEdit-> addItem( TR( "gcw.MainWidget.mu.edit.opensubaccounts" ) );
   m_uEdit-> setMenu( std::move( popEdit ) );
 
-  auto m_uView = m_menu-> addItem( TR( "gcw.mu.view" ) );
+  auto m_uView = m_menu-> addItem( TR( "gcw.MainWidget.mu.view" ) );
   auto popView = std::make_unique< Wt::WPopupMenu >();
-  popView-> addItem( TR( "gcw.mu.view.toolbar"       ) );
-  popView-> addItem( TR( "gcw.mu.view.summarybar"    ) );
-  popView-> addItem( TR( "gcw.mu.view.statusbar"     ) );
-  popView-> addItem( TR( "gcw.mu.view.tabposition"   ) );
+  popView-> addItem( TR( "gcw.MainWidget.mu.view.toolbar"       ) );
+  popView-> addItem( TR( "gcw.MainWidget.mu.view.summarybar"    ) );
+  popView-> addItem( TR( "gcw.MainWidget.mu.view.statusbar"     ) );
+  popView-> addItem( TR( "gcw.MainWidget.mu.view.tabposition"   ) );
   popView-> addSeparator();
-  popView-> addItem( TR( "gcw.mu.view.filterby"      ) );
+  popView-> addItem( TR( "gcw.MainWidget.mu.view.filterby"      ) );
   popView-> addSeparator();
-  popView-> addItem( TR( "gcw.mu.view.refresh"       ) );
-  popView-> addItem( TR( "gcw.mu.view.newaccounts"   ) );
+  popView-> addItem( TR( "gcw.MainWidget.mu.view.refresh"       ) );
+  popView-> addItem( TR( "gcw.MainWidget.mu.view.newaccounts"   ) );
   m_uView-> setMenu( std::move( popView ) );
 
-  auto m_uHelp = m_menu-> addItem( TR( "gcw.mu.help" ) );
+  auto m_uHelp = m_menu-> addItem( TR( "gcw.MainWidget.mu.help" ) );
   auto popHelp = std::make_unique< Wt::WPopupMenu >();
-  popHelp-> addItem( TR( "gcw.mu.help.tutorial"      ) );
-  popHelp-> addItem( TR( "gcw.mu.help.tip"           ) );
-  popHelp-> addItem( TR( "gcw.mu.help.contents"      ) );
-  popHelp-> addItem( TR( "gcw.mu.help.about"         ) );
+  popHelp-> addItem( TR( "gcw.MainWidget.mu.help.tutorial"      ) );
+  popHelp-> addItem( TR( "gcw.MainWidget.mu.help.tip"           ) );
+  popHelp-> addItem( TR( "gcw.MainWidget.mu.help.contents"      ) );
+  popHelp-> addItem( TR( "gcw.MainWidget.mu.help.about"         ) );
   m_uHelp-> setMenu( std::move( popHelp ) );
 
-  toolBar()-> addButton( std::make_unique< Wt::WPushButton >( TR( "gcw.tb.save"       ) ) );
-  toolBar()-> addButton( std::make_unique< Wt::WPushButton >( TR( "gcw.tb.close"      ) ) );
-  toolBar()-> addButton( std::make_unique< Wt::WPushButton >( TR( "gcw.tb.newInvoice" ) ) );
-  toolBar()-> addButton( std::make_unique< Wt::WPushButton >( TR( "gcw.tb.open"       ) ) );
+  toolBar()-> addButton( std::make_unique< Wt::WPushButton >( TR( "gcw.MainWidget.tb.save"       ) ) );
+  toolBar()-> addButton( std::make_unique< Wt::WPushButton >( TR( "gcw.MainWidget.tb.close"      ) ) );
+  toolBar()-> addButton( std::make_unique< Wt::WPushButton >( TR( "gcw.MainWidget.tb.newInvoice" ) ) );
+  toolBar()-> addButton( std::make_unique< Wt::WPushButton >( TR( "gcw.MainWidget.tb.open"       ) ) );
 
   {
-    auto b = std::make_unique< Wt::WPushButton >( TR( "gcw.tb.edit" ) );
+    auto b = std::make_unique< Wt::WPushButton >( TR( "gcw.MainWidget.tb.edit" ) );
     auto e = b.get();
     toolBar()-> addButton( std::move(b) );
     e-> clicked().connect( [=](){ editSelectedAccount(); });
   }
 
-  toolBar()-> addButton( std::make_unique< Wt::WPushButton >( TR( "gcw.tb.new"    ) ) );
-  toolBar()-> addButton( std::make_unique< Wt::WPushButton >( TR( "gcw.tb.delete" ) ) );
+  toolBar()-> addButton( std::make_unique< Wt::WPushButton >( TR( "gcw.MainWidget.tb.new"    ) ) );
+  toolBar()-> addButton( std::make_unique< Wt::WPushButton >( TR( "gcw.MainWidget.tb.delete" ) ) );
 
   statusBar()-> addNew< Wt::WText >( "status bar" );
 

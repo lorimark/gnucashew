@@ -11,11 +11,39 @@
 
 namespace GCW {
 
+  /*!
+  ** \brief Config Namespace
+  **
+  ** The config namespace provides access to the various 
+  **  configuration variables.
+  **
+  */
+  namespace CFG {
+
+/*!
+** \brief Decimal Format Specifier
+**
+** This provides the DECIMAL<2>() library with the formatting
+**  specification for converting DECIMAL numbers to strings.
+**
+*/
 DECIMAL::decimal_format decimal_format();
 
+/*!
+** \brief Date Format Specifier
+**
+**
+*/
 std::string date_format();
+
+/*!
+** \brief Time Format Specifier
+**
+**
+*/
 std::string time_format();
 
+  } // endnamespace Config {
 } // endnamespace GCW {
 
 #endif // end#ifndef __GNUCASHEW_H___
