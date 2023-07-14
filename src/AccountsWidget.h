@@ -6,7 +6,6 @@
 #include <Wt/WTreeView.h>
 #include <Wt/WStandardItem.h>
 #include <Wt/WStandardItemModel.h>
-//#include <Wt/WModelIndex.h>
 
 #include "Dbo/Session.h"
 #include "Dbo/Accounts.h"
@@ -51,9 +50,15 @@ class AccountsWidget
 
     AccountsWidget();
 
-    Wt::WTreeView * treeView() { return m_treeView; }
+    std::shared_ptr< Model > model   () { return m_model;    }
+    Wt::WTreeView          * treeView() { return m_treeView; }
 
     Wt::Signal< std::string > & doubleClicked() { return m_doubleClicked; }
+
+    std::string selectedAccount();
+
+    void editAccount( const std::string & _accountGuid );
+    void editSelectedAccount();
 
   private:
 

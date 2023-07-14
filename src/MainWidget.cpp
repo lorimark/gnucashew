@@ -7,7 +7,8 @@
 #include "define.h"
 #include "MainWidget.h"
 
-GCW::MainWidget::MainWidget()
+GCW::MainWidget::
+MainWidget()
 {
   addStyleClass( "MainWidget" );
 
@@ -87,16 +88,29 @@ GCW::MainWidget::MainWidget()
   popHelp-> addItem( TR( "gcw.mu.help.about"         ) );
   m_uHelp-> setMenu( std::move( popHelp ) );
 
-  toolBar()-> addButton( std::make_unique< Wt::WPushButton >("save") );
-  toolBar()-> addButton( std::make_unique< Wt::WPushButton >("close") );
-  toolBar()-> addButton( std::make_unique< Wt::WPushButton >("new invoice") );
-  toolBar()-> addButton( std::make_unique< Wt::WPushButton >("open") );
-  toolBar()-> addButton( std::make_unique< Wt::WPushButton >("edit") );
-  toolBar()-> addButton( std::make_unique< Wt::WPushButton >("new") );
-  toolBar()-> addButton( std::make_unique< Wt::WPushButton >("delete") );
+  toolBar()-> addButton( std::make_unique< Wt::WPushButton >( TR( "gcw.tb.save"       ) ) );
+  toolBar()-> addButton( std::make_unique< Wt::WPushButton >( TR( "gcw.tb.close"      ) ) );
+  toolBar()-> addButton( std::make_unique< Wt::WPushButton >( TR( "gcw.tb.newInvoice" ) ) );
+  toolBar()-> addButton( std::make_unique< Wt::WPushButton >( TR( "gcw.tb.open"       ) ) );
 
-  statusBar()-> addNew< Wt::WText >( "status text" );
+  {
+    auto b = std::make_unique< Wt::WPushButton >( TR( "gcw.tb.edit" ) );
+    auto e = b.get();
+    toolBar()-> addButton( std::move(b) );
+    e-> clicked().connect( [=](){ editSelectedAccount(); });
+  }
+
+  toolBar()-> addButton( std::make_unique< Wt::WPushButton >( TR( "gcw.tb.new"    ) ) );
+  toolBar()-> addButton( std::make_unique< Wt::WPushButton >( TR( "gcw.tb.delete" ) ) );
+
+  statusBar()-> addNew< Wt::WText >( "status bar" );
 
 } // endGCW::MainWidget::MainWidget()
 
+void GCW::MainWidget::
+editSelectedAccount()
+{
+  centralWidget()-> accountsWidget()-> editSelectedAccount();
+
+}
 

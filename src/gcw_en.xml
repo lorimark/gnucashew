@@ -45,6 +45,14 @@
   <message id="gcw.mu.help.contents">Contents</message>
   <message id="gcw.mu.help.about">About</message>
 
+  <message id="gcw.tb.save">save</message>
+  <message id="gcw.tb.close">close</message>
+  <message id="gcw.tb.newInvoice">new invoice</message>
+  <message id="gcw.tb.open">open</message>
+  <message id="gcw.tb.edit">edit</message>
+  <message id="gcw.tb.new">new</message>
+  <message id="gcw.tb.delete">delete</message>
+
   <message id="gcw.accountswidget.column.accountcode">Account Code</message>
   <message id="gcw.accountswidget.column.accountcolor">Account Color</message>
   <message id="gcw.accountswidget.column.accountname">Account Name</message>

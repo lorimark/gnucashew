@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<messages xmlns:if="Wt.WTemplate.conditions">
+
+  <message id="gcw.accounteditor.form.tab1">
+    <div> Identification </div>
+    <table>
+      <tr>
+        <td>
+          <label for="${id:name}">
+            ${name-label}
+          </label>
+        </td>
+        <td>
+          ${name}
+          ${name-info}
+        </td>
+      </tr>
+    </table>
+  </message>
+
+  <message id="gcw.accounteditor.form.tab2">
+    more properties editor
+  </message>
+
+
+</messages>
+

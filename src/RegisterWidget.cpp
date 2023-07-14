@@ -2,6 +2,7 @@
 
 #include <Wt/WDateEdit.h>
 #include <Wt/WItemDelegate.h>
+#include <Wt/WSuggestionPopup.h>
 #include <Wt/WText.h>
 #include <Wt/WTableView.h>
 #include <Wt/WVBoxLayout.h>
@@ -70,6 +71,8 @@ class DateDelegate
     ) const;
 
     virtual Wt::cpp17::any editState( Wt::WWidget *editor, const Wt::WModelIndex &index ) const override;
+    void setEditState( Wt::WWidget * _editor, const Wt::WModelIndex & _index, const Wt::cpp17::any & _value ) const;
+    void setModelData ( const Wt::cpp17::any & _editState, Wt::WAbstractItemModel * _model, const Wt::WModelIndex & _index ) const;
 
     void doCloseEditor( Wt::WDateEdit * _dateEdit, bool save ) const;
 
@@ -84,8 +87,6 @@ std::unique_ptr< Wt::WWidget > DateDelegate::createEditor
 {
   auto retVal = std::make_unique< Wt::WContainerWidget >();
   retVal-> setSelectable( true );
-
-  std::cout << __FILE__ << ":" << __LINE__ << " " << Wt::asString( _index.data( Wt::ItemDataRole::Edit ) ) << std::endl;
 
   auto date = Wt::WDate::fromString( Wt::asString( _index.data( Wt::ItemDataRole::Edit ) ), GCW::date_format() );
 
@@ -135,8 +136,135 @@ Wt::cpp17::any DateDelegate::editState( Wt::WWidget * _editor, const Wt::WModelI
 
 } // endWt::cpp17::any DateDelegate::editState( Wt::WWidget * _editor, const Wt::WModelIndex & _index ) const
 
+void DateDelegate::setEditState( Wt::WWidget * _editor, const Wt::WModelIndex & _index, const Wt::cpp17::any & _value ) const
+{
+  std::cout << __FILE__ << ":" << __LINE__ << " " << _editor    << std::endl;
+  std::cout << __FILE__ << ":" << __LINE__ << " " << m_dateEdit << std::endl;
+
+} // endvoid DateDelegate::setEditState( Wt::WWidget * _editor, const Wt::WModelIndex & _index, const Wt::cpp17::any & _value ) const
+
+void DateDelegate::setModelData( const Wt::cpp17::any & _editState, Wt::WAbstractItemModel * _model, const Wt::WModelIndex & _index ) const
+{
+  std::cout << __FILE__ << ":" << __LINE__ << " " << Wt::asString( _editState ) << std::endl;
+
+}
 
 
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+
+class SuggestionDelegate
+: public Wt::WItemDelegate
+{
+  public:
+
+
+    std::unique_ptr< Wt::WWidget > createEditor
+    (
+     const Wt::WModelIndex & _index,
+     Wt::WFlags< Wt::ViewItemRenderFlag > _flags
+    ) const;
+
+};
+
+std::unique_ptr< Wt::WWidget > SuggestionDelegate::createEditor
+(
+  const Wt::WModelIndex & _index,
+  Wt::WFlags< Wt::ViewItemRenderFlag > _flags
+) const
+{
+  auto retVal = Wt::WItemDelegate::createEditor( _index, _flags );
+  auto cw = dynamic_cast< Wt::WContainerWidget* >( retVal.get() );
+  auto lineEdit = dynamic_cast< Wt::WLineEdit* >( cw-> widget(0) );
+
+  // options for email address suggestions
+  Wt::WSuggestionPopup::Options popupOptions =
+  {
+    "<b>",         // highlightBeginTag
+    "</b>",        // highlightEndTag
+    ',',           // listSeparator      (for multiple addresses)
+    " \n",         // whitespace
+    "-., \"@\n;",  // wordSeparators     (within an address)
+    ""             // appendReplacedText (prepare next email address)
+   };
+
+  auto popup = retVal-> addChild( std::make_unique< Wt::WSuggestionPopup >( popupOptions ) );
+  popup-> forEdit( lineEdit );
+
+  auto model = dynamic_cast< const GCW::RegisterWidget::Model* >(_index.model() );
+
+  for( auto item : model-> suggestionsFromColumn( _index.column() ) )
+  {
+    std::cout << __FILE__ << ":" << __LINE__ << " " << item << std::endl;
+
+    popup-> addSuggestion( item, item );
+  }
+
+  return retVal;
+
+} // endstd::unique_ptr< Wt::WWidget > SuggestionDelegate::createEditor
+
+
+
+
+class AccountDelegate
+: public Wt::WItemDelegate
+{
+  public:
+
+
+    std::unique_ptr< Wt::WWidget > createEditor
+    (
+     const Wt::WModelIndex & _index,
+     Wt::WFlags< Wt::ViewItemRenderFlag > _flags
+    ) const;
+
+};
+
+std::unique_ptr< Wt::WWidget > AccountDelegate::createEditor
+(
+  const Wt::WModelIndex & _index,
+  Wt::WFlags< Wt::ViewItemRenderFlag > _flags
+) const
+{
+  auto retVal = Wt::WItemDelegate::createEditor( _index, _flags );
+  auto cw = dynamic_cast< Wt::WContainerWidget* >( retVal.get() );
+  auto lineEdit = dynamic_cast< Wt::WLineEdit* >( cw-> widget(0) );
+
+  // options for email address suggestions
+  Wt::WSuggestionPopup::Options popupOptions =
+  {
+    "<b>",         // highlightBeginTag
+    "</b>",        // highlightEndTag
+    ',',           // listSeparator      (for multiple addresses)
+    " \n",         // whitespace
+    "-., \"@\n;",  // wordSeparators     (within an address)
+    ""             // appendReplacedText (prepare next email address)
+   };
+
+  auto popup = retVal-> addChild( std::make_unique< Wt::WSuggestionPopup >( popupOptions ) );
+  popup-> forEdit( lineEdit, Wt::PopupTrigger::Editing | Wt::PopupTrigger::DropDownIcon );
+  popup-> setAttributeValue( "style", "height:400px;overflow:scroll" );
+//  popup-> setJavaScriptMember( "wtNoReparent", "true" );
+
+  auto model = dynamic_cast< const GCW::RegisterWidget::Model* >( _index.model() );
+
+  std::set< std::string > items;
+  for( auto accountItem : GCW::Dbo::Accounts::activeAccounts() )
+    items.insert( GCW::Dbo::Accounts::fullName( accountItem-> guid() ) );
+
+  for( auto item : items )
+  {
+    std::cout << __FILE__ << ":" << __LINE__ << " " << item << std::endl;
+
+    popup-> addSuggestion( item );
+  }
+
+  return retVal;
+
+} // endstd::unique_ptr< Wt::WWidget > AccountDelegate::createEditor
 
 
 
@@ -173,8 +301,11 @@ RegisterWidget( const std::string & _accountGuid )
   tableView()-> setSelectionMode         ( Wt::SelectionMode::Single                                     );
   tableView()-> setEditTriggers          ( Wt::EditTrigger::SingleClicked                                );
   tableView()-> setEditOptions           ( Wt::EditOption::SingleEditor | Wt::EditOption::SaveWhenClosed );
-  tableView()-> setHeaderItemDelegate    (    std::make_shared< HeaderDelegate >()                       );
-  tableView()-> setItemDelegateForColumn ( 0, std::make_shared< DateDelegate   >()                       );
+  tableView()-> setHeaderItemDelegate    (    std::make_shared< HeaderDelegate       >()                 );
+  tableView()-> setItemDelegateForColumn ( 0, std::make_shared< DateDelegate         >()                 );
+  tableView()-> setItemDelegateForColumn ( 1, std::make_shared< SuggestionDelegate   >()                 );
+  tableView()-> setItemDelegateForColumn ( 2, std::make_shared< SuggestionDelegate   >()                 );
+  tableView()-> setItemDelegateForColumn ( 3, std::make_shared< AccountDelegate      >()                 );
 
   tableView()-> headerClicked().connect( [=]( int col, Wt::WMouseEvent event )
   {
@@ -518,4 +649,25 @@ makeRow( const std::string & _splitGuid )
 
   return rowItem;
 }
+
+std::set< std::string > GCW::RegisterWidget::Model::
+suggestionsFromColumn( int _column ) const
+{
+  std::set< std::string > retVal;
+
+  for( int row=0; row< rowCount(); row++ )
+    retVal.insert( Wt::asString( item( row, _column )-> text() ).toUTF8() );
+
+  return retVal;
+}
+
+
+GCW::RegisterWidget::AccountSuggestionModel::
+AccountSuggestionModel( const std::string & _accountGuid )
+: Wt::WStandardItemModel( 0, 1 ),
+  m_accountGuid( _accountGuid )
+{
+
+} // endGCW::RegisterWidget::Model::Model( const std::string & _accountGuid )
+
 

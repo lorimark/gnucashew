@@ -6,7 +6,7 @@ echo "running"
 # gdb --args \
 ./gnucashew-live /home/serveradmin/gnucash-dev.gnucash \
   --pid-file=gnucashew-bin.pid \
-  --config=/opt/Wt4/etc/wt/wt_config.xml \
+  --config=wt_config.xml \
   --approot="approot" \
   --docroot="docroot;.,/images,/resources,/styles,/themes,/dox" \
   --errroot="errroot" \

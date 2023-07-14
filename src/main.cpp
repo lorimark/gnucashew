@@ -58,7 +58,7 @@ class Redirector
     Redirector( const Wt::WEnvironment & env )
     : Wt::WApplication(env)
     {
-      redirect( "/staff" );
+      redirect( "/demo" );
     }
 };
 
@@ -384,6 +384,13 @@ int main( int argc, char ** argv )
 {
   show_program_version( "start-up" );
 
+  /*
+  ** Right now we're putting the 'database to open' on the command
+  **  line.  We can then run a 'demo' version connected to the 'demo'
+  **  database easily.  Later we'll replace this with a proper 'open'
+  **  tool.
+  **
+  */
   g_dbName = argv[1];
 
   std::cout << __FILE__ << ":" << __LINE__ << " using:" << g_dbName << std::endl;
@@ -397,22 +404,46 @@ int main( int argc, char ** argv )
   Wt::WLayout::setDefaultImplementation( Wt::LayoutImplementation::JavaScript );
 //  Wt::WLayout::setDefaultImplementation( Wt::LayoutImplementation::Flex );
 
+  /*
+  ** Fire up the Wt web server.  If anything throws we'll catch it.
+  **
+  */
   try
   {
     Wt::WServer server( argc, argv );
 
-    server.addResource( std::make_shared< HtmlResource  >(), "/html"       );
-    server.addResource( std::make_shared< MonitResource >(), "/monittoken" );
+    /*
+    ** These resources provide access to things in a static manner
+    **  (not used yet)
+    **
+    */
+//    server.addResource( std::make_shared< HtmlResource  >(), "/html"       );
+//    server.addResource( std::make_shared< MonitResource >(), "/monittoken" );
 
-    auto apiResource = std::make_shared<ApiResource>();
-    server.addResource( apiResource, "/api"  );
-    server.addResource( apiResource, "/api2" );
+    /*
+    ** These resources provide an external API interface to the project
+    **  (not used yet)
+    **
+    */
+//    auto apiResource = std::make_shared<ApiResource>();
+//    server.addResource( apiResource, "/api"  );
+//    server.addResource( apiResource, "/api2" );
 
-    addEntryPoint< GCW::App >( "/demo"      , server );
-    addEntryPoint< GCW::App >( "/gnucashew" , server );
+    /*
+    ** These are the site entry-points.  There are two URL for this, but
+    **  they yeild the same 'site' service.  The 'demo' is there just for
+    **  giving quick demos so the url reads gnucashew.websiteserver.demo
+    **  rather than gnucashew.websiteserver.gnucashew.
+    **
+    */
+    addEntryPoint< Redirector >( "/"          , server );
+    addEntryPoint< GCW::App   >( "/demo"      , server );
+    addEntryPoint< GCW::App   >( "/gnucashew" , server );
 
     server.run();
-  }
+
+  } // endtry
+
   catch( Wt::WServer::Exception & e )
   {
     std::cerr << e.what() << " TERMINATING TERMINATING TERMINATING" << std::endl;

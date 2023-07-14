@@ -4,6 +4,7 @@
 #define __ACCOUNTS_H___
 
 #include "BaseItem.h"
+#include "Account.h"
 
 /*
 ** Predefine the Account class that fixin to come up.
@@ -94,17 +95,17 @@ class Item
 
     template< class Action > void persist( Action & action )
     {
-      Wt::Dbo::id   ( action, m_guid           , "guid"           ,   32 ); // text(32) PRIMARY KEY NOT NULL
-      Wt::Dbo::field( action, m_name           , "name"           , 2048 ); // text(2048) NOT NULL
-      Wt::Dbo::field( action, m_account_type   , "account_type"   , 2048 ); // text(2048) NOT NULL
-      Wt::Dbo::field( action, m_commodity_guid , "commodity_guid" ,   32 ); // text(32)
-      Wt::Dbo::field( action, m_commodity_scu  , "commodity_scu"         ); // integer NOT NULL
-      Wt::Dbo::field( action, m_non_std_scu    , "non_std_scu"           ); // integer NOT NULL
-      Wt::Dbo::field( action, m_parent_guid    , "parent_guid"    ,   32 ); // text(32)
-      Wt::Dbo::field( action, m_code           , "code"           , 2048 ); // text(2048)
-      Wt::Dbo::field( action, m_description    , "description"    , 2048 ); // text(2048)
-      Wt::Dbo::field( action, m_hidden         , "hidden"                ); // integer
-      Wt::Dbo::field( action, m_placeHolder    , "placeholder"           ); // integer
+      Wt::Dbo::id   ( action, m_guid           , GCW::Dbo::Account::Field::guid            ,   32 ); // text(32) PRIMARY KEY NOT NULL
+      Wt::Dbo::field( action, m_name           , GCW::Dbo::Account::Field::name            , 2048 ); // text(2048) NOT NULL
+      Wt::Dbo::field( action, m_account_type   , GCW::Dbo::Account::Field::account_type    , 2048 ); // text(2048) NOT NULL
+      Wt::Dbo::field( action, m_commodity_guid , GCW::Dbo::Account::Field::commodity_guid  ,   32 ); // text(32)
+      Wt::Dbo::field( action, m_commodity_scu  , GCW::Dbo::Account::Field::commodity_scu          ); // integer NOT NULL
+      Wt::Dbo::field( action, m_non_std_scu    , GCW::Dbo::Account::Field::non_std_scu            ); // integer NOT NULL
+      Wt::Dbo::field( action, m_parent_guid    , GCW::Dbo::Account::Field::parent_guid     ,   32 ); // text(32)
+      Wt::Dbo::field( action, m_code           , GCW::Dbo::Account::Field::code            , 2048 ); // text(2048)
+      Wt::Dbo::field( action, m_description    , GCW::Dbo::Account::Field::description     , 2048 ); // text(2048)
+      Wt::Dbo::field( action, m_hidden         , GCW::Dbo::Account::Field::hidden                 ); // integer
+      Wt::Dbo::field( action, m_placeHolder    , GCW::Dbo::Account::Field::placeHolder            ); // integer
     }
 
   private:
@@ -137,6 +138,9 @@ Item::Ptr root();
 Item::Ptr byGuid( const std::string & _guid );
 
 std::string fullName( const std::string & _guid );
+
+Item::Vector allAccounts();
+Item::Vector activeAccounts();
 
 namespace Children {
   Item::Vector vector( const std::string & _parentGuid );

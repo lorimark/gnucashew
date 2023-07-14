@@ -1,5 +1,6 @@
 #line 2 "src/App.cpp"
 
+#include <Wt/WEnvironment.h>
 #include <Wt/Date/tz.h>
 #include <Wt/WBootstrapTheme.h>
 #include <Wt/WDate.h>
@@ -10,6 +11,43 @@
 #include "App.h"
 
 extern std::string g_dbName;
+
+namespace {
+
+void showEnvironment()
+{
+  auto app = GCW::app();
+
+  std::cout << __FILE__ << ":" << __LINE__
+    << "\n title:              " << app-> title()
+    << "\n appRoot:            " << app-> appRoot()
+    << "\n docRoot:            " << app-> docRoot()
+    << "\n sessionId:          " << app-> sessionId()
+    << "\n metaHeader:         " << app-> metaHeader( Wt::MetaHeaderType::Meta, "*" )
+    << "\n bodyClass:          " << app-> bodyClass()
+    << "\n htmlClass:          " << app-> htmlClass()
+    << "\n url:                " << app-> url()
+    << "\n bookmarkUrl:        " << app-> bookmarkUrl()
+    << "\n internalPath:       " << app-> internalPath()
+    << "\n javaScriptClass:    " << app-> javaScriptClass()
+    << "\n resourcesUrl:       " << app-> resourcesUrl()
+    << "\n r-resourcesUrl:     " << app-> relativeResourcesUrl()
+    << "\n referrer:           " << app-> environment().referer()
+    << "\n accept:             " << app-> environment().accept()
+    << "\n X-Forwarded-For:    " << app-> environment().headerValue( "X-Forwarded-For" )
+    << "\n X-Forwarded-Client: " << app-> environment().headerValue( "X-Forwarded-Client" )
+    << "\n X-Forwarded-Xyz:    " << app-> environment().headerValue( "X-Forwarded-Xyz" )
+    << "\n clientAddress:      " << app-> environment().clientAddress()
+    << std::endl
+    ;
+
+  for( const auto & pair : app-> environment().getParameterMap() )
+    for( const auto & value : pair.second )
+      std::cout << __FILE__ << ":" << __LINE__ << " " << pair.first << "=" << value << std::endl;
+
+} // endvoid showEnvironment()
+
+} // endnamespace {
 
 GCW::App * GCW::app()
 {
@@ -23,6 +61,8 @@ GCW::App::App( const Wt::WEnvironment & env )
 
   gnucash_session().open( g_dbName );
 
+  showEnvironment();
+
   /*
   ** Utilize the bootstrap theme.
   **
@@ -32,19 +72,20 @@ GCW::App::App( const Wt::WEnvironment & env )
   bootstrapTheme-> setResponsive( true );
   setTheme( bootstrapTheme );
   useStyleSheet( "resources/themes/bootstrap/3/bootstrap-theme.min.css" );
-  useStyleSheet( "gcw.css" );
+  useStyleSheet( "styles/gcw.css" );
 
   /*
   ** GnuCashew english language translations
   **
   */
-  messageResourceBundle().use( appRoot() + "gcw_en" );
+  messageResourceBundle().use( appRoot() + "gcw"    );  // UI elements
+  messageResourceBundle().use( appRoot() + "gcw_en" );  // Language Elements
 
-#ifdef NEVER
   /*
-  ** set the date format to regular american.
+  ** set the date format to the browser.
   **
   */
+#ifdef NEVER
   auto loc = locale();
   auto tz = date::locate_zone( environment().timeZoneName() );
   loc.setTimeZone( tz );

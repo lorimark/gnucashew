@@ -8,10 +8,12 @@
 
 #include "define.h"
 #include "GnuCashew.h"
+#include "AccountEditor.h"
 #include "AccountsWidget.h"
 
 
-GCW::AccountsWidget::AccountsWidget()
+GCW::AccountsWidget::
+AccountsWidget()
 {
   addStyleClass( "AccountsWidget" );
 
@@ -59,7 +61,57 @@ GCW::AccountsWidget::AccountsWidget()
 
 } // endGCW::AccountsWidget::AccountsWidget()
 
-void GCW::AccountsWidget::setModel()
+/*!
+** \return GUID String
+*/
+std::string GCW::AccountsWidget::
+selectedAccount()
+{
+  std::string retVal;
+
+  /*
+  ** The tree-view should have only one selection.  Grab
+  **  its index and get to the User data that carries the
+  **  GUID of the selected item.
+  **
+  */
+  auto selected = treeView()-> selectedIndexes();
+  if( selected.size() == 1 )
+    retVal =
+      Wt::asString
+      (
+       model()-> data( *selected.begin(),
+       Wt::ItemDataRole::User
+      )
+    ).toUTF8();
+
+  return retVal;
+
+} // endstd::string GCW::AccountsWidget::selectedAccount()
+
+void GCW::AccountsWidget::
+editAccount( const std::string & _accountGuid )
+{
+  if( _accountGuid == "" )
+    return;
+
+  GCW::AccountEditorDialog dialog( "Edit Account" );
+
+  dialog.exec();
+
+} // endvoid GCW::AccountsWidget::editAccount( const std::string & _accountGuid )
+
+
+void GCW::AccountsWidget::
+editSelectedAccount()
+{
+  editAccount( selectedAccount() );
+
+} // endvoid GCW::AccountsWidget::editAccount( const std::string & _accountGuid )
+
+
+void GCW::AccountsWidget::
+setModel()
 {
   m_model = std::make_shared< Model >();
 
@@ -71,7 +123,8 @@ void GCW::AccountsWidget::setModel()
 
 } // endvoid GCW::AccountsWidget::setModel()
 
-void GCW::AccountsWidget::Model::load()
+void GCW::AccountsWidget::Model::
+load()
 {
   /*
   ** If the session isn't open then there's nothing to load.
@@ -93,7 +146,8 @@ void GCW::AccountsWidget::Model::load()
 
 } // endvoid GCW::AccountsWidget::Model::load()
 
-void GCW::AccountsWidget::Model::load( Wt::WStandardItem * _treeItem, GCW::Dbo::Accounts::Item::Ptr _parentAccount )
+void GCW::AccountsWidget::Model::
+load( Wt::WStandardItem * _treeItem, GCW::Dbo::Accounts::Item::Ptr _parentAccount )
 {
   Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
 
@@ -137,7 +191,8 @@ void GCW::AccountsWidget::Model::load( Wt::WStandardItem * _treeItem, GCW::Dbo::
 
 } // endvoid load( Wt::WStandardItem * _treeItem, Account::Ptr _parentAccount )
 
-void GCW::AccountsWidget::doubleClicked( const Wt::WModelIndex & index, const Wt::WMouseEvent & event )
+void GCW::AccountsWidget::
+doubleClicked( const Wt::WModelIndex & index, const Wt::WMouseEvent & event )
 {
 #ifdef NEVER
   std::cout << std::endl << std::endl << __FILE__ << ":" << __LINE__
@@ -155,5 +210,6 @@ void GCW::AccountsWidget::doubleClicked( const Wt::WModelIndex & index, const Wt
   m_doubleClicked.emit( Wt::asString( m_model-> data( index, Wt::ItemDataRole::User ) ).toUTF8() );
 
 } // endvoid GCW::AccountsWidget::doubleClicked( const Wt::WModelIndex & index, const Wt::WMouseEvent & event )
+
 
 

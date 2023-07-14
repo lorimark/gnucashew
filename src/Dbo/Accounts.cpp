@@ -67,6 +67,68 @@ GCW::Dbo::Accounts::byGuid( const std::string & _guid )
 
 
 GCW::Dbo::Accounts::Item::Vector
+GCW::Dbo::Accounts::allAccounts()
+{
+  GCW::Dbo::Accounts::Item::Vector retVal;
+
+  /*
+  ** If the session isn't open then there's nothing to load.
+  **
+  */
+  if( GCW::app()-> gnucash_session().isOpen() )
+  {
+
+    Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
+
+    auto results =
+      GCW::app()-> gnucash_session().find< GCW::Dbo::Accounts::Item >()
+      .resultList()
+      ;
+
+    for( auto result : results )
+      retVal.push_back( result );
+
+  } // endif( GCW::app()-> gnucash_session().isOpen() )
+
+
+  return retVal;
+
+} // endGCW::Dbo::Accounts::Item::Vector GCW::Dbo::Accounts::Children::vector( const std::string & _parentGuid )
+
+
+GCW::Dbo::Accounts::Item::Vector
+GCW::Dbo::Accounts::activeAccounts()
+{
+  GCW::Dbo::Accounts::Item::Vector retVal;
+
+  /*
+  ** If the session isn't open then there's nothing to load.
+  **
+  */
+  if( GCW::app()-> gnucash_session().isOpen() )
+  {
+
+    Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
+
+    auto results =
+      GCW::app()-> gnucash_session().find< GCW::Dbo::Accounts::Item >()
+      .resultList()
+      ;
+
+    for( auto result : results )
+      if( !result-> hidden()
+       && !result-> placeHolder()
+        )
+      retVal.push_back( result );
+
+  } // endif( GCW::app()-> gnucash_session().isOpen() )
+
+  return retVal;
+
+} // endGCW::Dbo::Accounts::Item::Vector GCW::Dbo::Accounts::Children::vector( const std::string & _parentGuid )
+
+
+GCW::Dbo::Accounts::Item::Vector
 GCW::Dbo::Accounts::Children::vector( const std::string & _parentGuid )
 {
   GCW::Dbo::Accounts::Item::Vector retVal;
@@ -76,13 +138,19 @@ GCW::Dbo::Accounts::Children::vector( const std::string & _parentGuid )
 
 } // endGCW::Dbo::Accounts::Item::Vector GCW::Dbo::Accounts::Children::vector( const std::string & _parentGuid )
 
-
+/*!
+** \brief Compute Account Full-Name from Heirarchy
+**
+** This function will calculate the "full account name" from
+**  the accountGuid up to the root parent.
+**
+*/
 std::string
 GCW::Dbo::Accounts::fullName( const std::string & _accountGuid )
 {
-  /*
-  ** If the guid is blank, then we for sure have
-  **  nothing.
+  /*!
+  ** If the provided account guid is blank, then just return
+  **  an empty string.
   **
   */
   if( _accountGuid == "" )
@@ -94,16 +162,19 @@ GCW::Dbo::Accounts::fullName( const std::string & _accountGuid )
   */
   auto accountItem = byGuid( _accountGuid );
 
-  /*
-  ** If this is the root account, then we're done like
-  **  we were done when it was a blank guid.
+  /*!
+  ** During the building process, even though the "root account"
+  **  is a valid account, it is ignored and not included in the
+  **  results.
   **
   */
   if( accountItem == root() )
     return "";
 
   /*
-  ** Recursive call to the parent.
+  ** This is a recursive function that extracts the portions of
+  **  the account names and assembles them in to a contiguous
+  **  string with ':' color separator.
   **
   */
   std::string retVal = fullName( accountItem-> parent_guid() );
@@ -121,7 +192,7 @@ GCW::Dbo::Accounts::fullName( const std::string & _accountGuid )
   */
   retVal += accountItem-> name();
 
-  /*
+  /*!
   ** Recursively, this should generate a name such as;
   **   "Assets:2023:Cash:FGB:OLB:2300-LSI"
   **

@@ -30,6 +30,18 @@ class RegisterWidget
 
   public:
 
+  class AccountSuggestionModel
+  : public Wt::WStandardItemModel
+  {
+    public:
+
+      AccountSuggestionModel( const std::string & _accountGuid );
+
+
+      std::string m_accountGuid;
+
+  };
+
   class Model
   : public Wt::WStandardItemModel
   {
@@ -42,6 +54,8 @@ class RegisterWidget
       void refreshFromDisk();
 
       RowItem makeRow( const std::string & _splitGuid );
+
+      std::set< std::string > suggestionsFromColumn( int _column ) const;
 /*
 balance
   balance limit
