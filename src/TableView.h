@@ -69,6 +69,8 @@ public:
 
 protected:
 
+    void handleClick( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _event );
+
     /*
     ** Map table columns to width
     **

@@ -37,6 +37,7 @@ class MainWidget
   private:
 
     void editSelectedAccount();
+    void test();
 
     Wt::WNavigationBar   * m_navBar        = nullptr;
     Wt::WToolBar         * m_toolBar       = nullptr;

@@ -212,4 +212,3 @@ doubleClicked( const Wt::WModelIndex & index, const Wt::WMouseEvent & event )
 } // endvoid GCW::AccountsWidget::doubleClicked( const Wt::WModelIndex & index, const Wt::WMouseEvent & event )
 
 
-

@@ -30,32 +30,32 @@ class RegisterWidget
 
   public:
 
-  class AccountSuggestionModel
-  : public Wt::WStandardItemModel
-  {
-    public:
+    class AccountSuggestionModel
+    : public Wt::WStandardItemModel
+    {
+      public:
 
-      AccountSuggestionModel( const std::string & _accountGuid );
+        AccountSuggestionModel( const std::string & _accountGuid );
 
 
-      std::string m_accountGuid;
+        std::string m_accountGuid;
 
-  };
+    };
 
-  class Model
-  : public Wt::WStandardItemModel
-  {
-    using RowItem = std::vector< std::unique_ptr< Wt::WStandardItem > >;
+    class Model
+    : public Wt::WStandardItemModel
+    {
+      using RowItem = std::vector< std::unique_ptr< Wt::WStandardItem > >;
 
-    public:
+      public:
 
-      Model( const std::string & _accountGuid );
+        Model( const std::string & _accountGuid );
 
-      void refreshFromDisk();
+        void refreshFromDisk();
 
-      RowItem makeRow( const std::string & _splitGuid );
+        RowItem makeRow( const std::string & _splitGuid );
 
-      std::set< std::string > suggestionsFromColumn( int _column ) const;
+        std::set< std::string > suggestionsFromColumn( int _column ) const;
 /*
 balance
   balance limit
@@ -75,16 +75,18 @@ balance
   total usd
 */
 
-    private:
+      private:
 
-      std::string m_accountGuid;
+        std::string m_accountGuid;
 
-  }; // endclass Model
+    }; // endclass Model
 
     RegisterWidget( const std::string & _accountGuid );
 
     GCW::TableView           * tableView () { return m_tableView; }
     std::shared_ptr< Model >   model     () { return m_model;     }
+
+    void test();
 
   private:
 
@@ -93,6 +95,8 @@ balance
     std::string m_accountGuid;
     std::shared_ptr< Model > m_model;
     GCW::TableView * m_tableView = nullptr;
+    int m_clickedRow = -1;
+    int m_clickedCol = -1;
 
 };  // endclass RegisterWidget
 

@@ -5,6 +5,7 @@
 #include <Wt/WSuggestionPopup.h>
 #include <Wt/WText.h>
 #include <Wt/WTableView.h>
+#include <Wt/WTheme.h>
 #include <Wt/WVBoxLayout.h>
 #include <Wt/WHBoxLayout.h>
 
@@ -85,11 +86,31 @@ std::unique_ptr< Wt::WWidget > DateDelegate::createEditor
   Wt::WFlags< Wt::ViewItemRenderFlag > _flags
 ) const
 {
+  /*
+  ** The editor is placed in to a container for layout
+  **  management
+  **
+  */
   auto retVal = std::make_unique< Wt::WContainerWidget >();
   retVal-> setSelectable( true );
 
-  auto date = Wt::WDate::fromString( Wt::asString( _index.data( Wt::ItemDataRole::Edit ) ), GCW::CFG::date_format() );
+  /*
+  ** Get the date from the string value
+  **
+  */
+  auto date =
+    Wt::WDate::fromString
+    (
+     Wt::asString( _index.data( Wt::ItemDataRole::Edit ) ),
+     GCW::CFG::date_format()
+    );
 
+  /*
+  ** Build an editor
+  **
+  ** Hitting the 'enter' key or the 'esc' key closes the editor
+  **
+  */
   auto dateEdit = std::make_unique< Wt::WDateEdit >();
   m_dateEdit = dateEdit.get();
   dateEdit-> setFormat( GCW::CFG::date_format() );
@@ -97,12 +118,10 @@ std::unique_ptr< Wt::WWidget > DateDelegate::createEditor
   dateEdit-> enterPressed  ().connect( [&](){ doCloseEditor( dateEdit.get(), true  ); });
   dateEdit-> escapePressed ().connect( [&](){ doCloseEditor( dateEdit.get(), false ); });
 
-  std::cout << __FILE__ << ":" << __LINE__
-    << " " << _index.row()
-    << " " << _index.column()
-    << std::endl
-    ;
-
+  /*
+  ** Stuff it in to the layout
+  **
+  */
   retVal-> setLayout( std::make_unique< Wt::WHBoxLayout >() );
   retVal-> layout()-> setContentsMargins( 1,1,1,1 );
   retVal-> layout()-> addWidget( std::move( dateEdit ) );
@@ -113,7 +132,13 @@ std::unique_ptr< Wt::WWidget > DateDelegate::createEditor
 
 void DateDelegate::doCloseEditor( Wt::WDateEdit * _dateEdit, bool save ) const
 {
-  std::cout << __FILE__ << ":" << __LINE__ << " " << std::endl;
+  closeEditor().emit( _dateEdit, save );
+
+#ifdef NEVER
+  m_editorClosed.emit( m_row, m_col );
+  m_row = -1;
+  m_col = -1;
+#endif
 
 } // endvoid DateDelegate::doCloseEditor( Wt::WDateEdit * _dateEdit, bool save ) const
 
@@ -289,16 +314,75 @@ RegisterWidget( const std::string & _accountGuid )
   auto w = std::make_unique< GCW::TableView >();
   m_tableView = w.get();
   lw-> addWidget( std::move( w ), 1 );
-  tableView()-> addStyleClass( "TableView" );
+  tableView()-> addStyleClass( "Gcw-TableView" );
 
-  tableView()-> setSortingEnabled        ( false                                                         );
-  tableView()-> setAlternatingRowColors  ( true                                                          );
-  tableView()-> setSelectionBehavior     ( Wt::SelectionBehavior::Rows                                   );
-  tableView()-> setSelectionMode         ( Wt::SelectionMode::Single                                     );
-  tableView()-> setEditTriggers          ( Wt::EditTrigger::SingleClicked                                );
-  tableView()-> setEditOptions           ( Wt::EditOption::SingleEditor | Wt::EditOption::SaveWhenClosed );
-  tableView()-> setHeaderItemDelegate    (    std::make_shared< HeaderDelegate       >()                 );
-  tableView()-> setItemDelegateForColumn ( 0, std::make_shared< DateDelegate         >()                 );
+  /*
+  ** Configure the table view
+  **
+  */
+  tableView()-> setSortingEnabled       ( false                                                         );
+  tableView()-> setAlternatingRowColors ( true                                                          );
+  tableView()-> setSelectionBehavior    ( Wt::SelectionBehavior::Rows                                   );
+  tableView()-> setSelectionMode        ( Wt::SelectionMode::Single                                     );
+  tableView()-> setEditTriggers         ( Wt::EditTrigger::SingleClicked                                );
+  tableView()-> setEditOptions          ( Wt::EditOption::SingleEditor | Wt::EditOption::SaveWhenClosed );
+  tableView()-> setHeaderItemDelegate   ( std::make_shared< HeaderDelegate       >()                    );
+
+  {
+    auto delegate = std::make_shared< DateDelegate >();
+    tableView()-> setItemDelegateForColumn( 0, delegate  );
+
+    delegate->
+      closeEditor().connect( [&]( Wt::WWidget* _widget, bool _save )
+      {
+        std::cout << __FILE__ << ":" << __LINE__ << " " << std::endl;
+
+      });
+
+
+#ifdef NEVER
+    delegate->
+      editorCreated().connect( [&]( int _row, int _column)
+      {
+        std::cout << __FILE__ << ":" << __LINE__
+          << " row:" << _row
+          << " col:" << _column
+          << std::endl;
+
+        for( int column = 0; column< tableView()-> model()-> columnCount(); column++ )
+        {
+          std::cout << __FILE__ << ":" << __LINE__
+            << " row:" << _row
+            << " col:" << column
+            << std::endl;
+
+          tableView()-> itemWidget( tableView()-> model()-> index( _row, column ) )-> addStyleClass( "active" );
+        }
+
+      });
+
+    delegate->
+      editorClosed().connect( [&]( int _row, int _column )
+      {
+        std::cout << __FILE__ << ":" << __LINE__
+          << " row:" << _row
+          << " col:" << _column
+          << std::endl;
+
+        for( int column = 0; column< tableView()-> model()-> columnCount(); column++ )
+        {
+          std::cout << __FILE__ << ":" << __LINE__
+            << " row:" << _row
+            << " col:" << column
+            << std::endl;
+
+          tableView()-> itemWidget( tableView()-> model()-> index( _row, column ) )-> removeStyleClass( "active" );
+        }
+
+      });
+#endif
+  }
+
   tableView()-> setItemDelegateForColumn ( 1, std::make_shared< SuggestionDelegate   >()                 );
   tableView()-> setItemDelegateForColumn ( 2, std::make_shared< SuggestionDelegate   >()                 );
   tableView()-> setItemDelegateForColumn ( 3, std::make_shared< AccountDelegate      >()                 );
@@ -331,6 +415,7 @@ RegisterWidget( const std::string & _accountGuid )
   {
     static bool selecting = false;
     std::cout << __FILE__ << ":" << __LINE__ << " selecting:" << selecting << std::endl;
+#ifdef NEVER
     if( !selecting )
     {
       selecting = true; // prevent-recursive-calls as we change the selection
@@ -341,7 +426,57 @@ RegisterWidget( const std::string & _accountGuid )
       selecting = false;
     }
 
+#endif
   });
+
+#ifdef NEVER
+  tableView()->
+    clicked().connect( [=]( Wt::WModelIndex _index, Wt::WMouseEvent _event )
+    {
+      std::cout << __FILE__ << ":" << __LINE__ << "clicked"
+        << " row:" << _index.row()
+        << " col:" << _index.column()
+        << std::endl
+        ;
+
+      if( m_clickedRow != -1
+       && m_clickedCol != -1
+        )
+      {
+        std::cout << __FILE__ << ":" << __LINE__ << " unselect:" << m_clickedRow << std::endl;
+
+        for( int column = 0; column< tableView()-> model()-> columnCount(); column++ )
+        {
+          tableView()->
+            itemWidget( tableView()-> model()-> index( m_clickedRow, column ) )->
+              removeStyleClass( "active" );
+        }
+
+        if( m_clickedRow != _index.row()
+          )
+          tableView()-> closeEditors( true );
+      }
+
+      m_clickedRow = _index.row();
+      m_clickedCol = _index.column();
+
+      for( int column = 0; column< tableView()-> model()-> columnCount(); column++ )
+      {
+        std::cout << __FILE__ << ":" << __LINE__ << " select:" << m_clickedRow << std::endl;
+
+        tableView()-> itemWidget( tableView()-> model()-> index( m_clickedRow, column ) )->
+          addStyleClass( "active" );
+      }
+
+#ifdef NEVER
+      std::cout << __FILE__ << ":" << __LINE__ << " " << Wt::WApplication::instance()->theme()->activeClass() << std::endl;
+
+//      tableView()-> clearSelection();
+
+//      tableView()-> closeEditors();
+#endif
+    });
+#endif
 
   tableView()-> keyPressed().connect( [=]( Wt::WKeyEvent _event )
   {
@@ -351,8 +486,26 @@ RegisterWidget( const std::string & _accountGuid )
 
   loadData();
 
-} // endGCW::RegisterWidget::RegisterWidget()
+} // endGCW::RegisterWidget::RegisterWidget( const std::string & _accountGuid )
 
+void GCW::RegisterWidget::
+test()
+{
+  std::cout << __FILE__ << ":" << __LINE__ << " ::test::" << std::endl;
+
+  std::cout << __FILE__ << ":" << __LINE__ << " " << tableView()-> selectedIndexes().size() << std::endl;
+
+  auto selectedIndex = *tableView()-> selectedIndexes().begin();
+
+  if( selectedIndex.isValid() )
+  {
+
+    std::cout << __FILE__ << ":" << __LINE__ << " " << tableView()-> selectedIndexes().size() << std::endl;
+
+  }
+
+
+} // endvoid GCW::RegisterWidget::test()
 
 void GCW::RegisterWidget::
 loadData()
@@ -401,7 +554,7 @@ loadData()
   tableView()-> setHeaderAlignment ( 7, Wt::AlignmentFlag::Right  );
   tableView()-> setColumnAlignment ( 7, Wt::AlignmentFlag::Right  );
 
-} // endvoid GCW::RegisterWidget::setModel()
+} // endvoid GCW::RegisterWidget::loadData()
 
 GCW::RegisterWidget::Model::
 Model( const std::string & _accountGuid )

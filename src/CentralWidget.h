@@ -41,6 +41,8 @@ class CentralWidget
     */
     int tabIndex( const std::string & _text );
 
+    void test();
+
   private:
 
     Wt::WTabWidget      * m_tabWidget      = nullptr;

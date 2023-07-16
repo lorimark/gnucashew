@@ -88,3 +88,35 @@ auto GCW::TableView::setColumnWidth( int column, const Wt::WLength& width ) -> v
 
 } // endauto GCW::TableView::setColumnWidth(int column, const Wt::WLength& width) -> void
 
+void GCW::TableView::handleClick( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _event )
+{
+#ifdef NEVER
+  std::cout << __FILE__ << ":" << __LINE__
+    << " handleClick:<start>"
+    << " row:" << _index.row()
+    << " col:" << _index.column()
+    << std::endl
+    ;
+
+  if( selectedIndexes().size() > 0 )
+  {
+    auto selectedIndex = *selectedIndexes().begin();
+
+    std::cout << __FILE__ << ":" << __LINE__
+      << " selected:" << selectedIndexes().size()
+      << " row:" << selectedIndex.row()
+      << " col:" << selectedIndex.column()
+       << std::endl
+      ;
+  }
+#endif
+
+  Wt::WTableView::handleClick( _index, _event );
+
+//  std::cout << __FILE__ << ":" << __LINE__ << " handleClick:<end>" << std::endl;
+
+} // endvoid GCW::TableView::handleClick( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _event )
+
+
+
+

@@ -43,6 +43,17 @@
   direction: rtl;
 }
 
+/* read-only selected row */
+.RegisterWidget
+ .Wt-tableview
+  .Wt-tv-contents.Wt-striped
+   div.Wt-tv-c.active
+{
+  color: #0d0c0c;
+  font-weight:bold;
+  background-color:#ffff7e !important;
+}
+
 /* Alternating Row Colors */
 .RegisterWidget
  .Wt-tableview
@@ -88,12 +99,4 @@
   background-color:yellow;
 }
 
-/* read-only selected row */
-.RegisterWidget
- .Wt-itemview
-  .active
-{
-  color: #0d0c0c;
-  font-weight:bold;
-}
 

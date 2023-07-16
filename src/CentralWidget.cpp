@@ -21,7 +21,8 @@
 **  as they are requested.
 **
 */
-GCW::CentralWidget::CentralWidget()
+GCW::CentralWidget::
+CentralWidget()
 {
   addStyleClass( "CentralWidget" );
 
@@ -65,7 +66,8 @@ GCW::CentralWidget::CentralWidget()
 
 } // endGCW::CentralWidget::CentralWidget()
 
-int GCW::CentralWidget::tabIndex( const std::string & _text )
+int GCW::CentralWidget::
+tabIndex( const std::string & _text )
 {
   for( int i=0; i< tabWidget()-> count(); i++ )
     if( tabWidget()-> tabText( i ) == _text )
@@ -75,7 +77,8 @@ int GCW::CentralWidget::tabIndex( const std::string & _text )
 
 } // endint GCW::CentralWidget::tabIndex( const std::string & _text )
 
-void GCW::CentralWidget::openAccountRegister( const std::string & _accountGuid )
+void GCW::CentralWidget::
+openAccountRegister( const std::string & _accountGuid )
 {
   /*
   ** Grab the account so we can fetch things from it.
@@ -121,4 +124,16 @@ void GCW::CentralWidget::openAccountRegister( const std::string & _accountGuid )
   tabWidget()-> setCurrentIndex( tabIndex( accountItem-> name() ) );
 
 } // endvoid GCW::CentralWidget::openAccountRegister( const std::string & _accountGuid )
+
+void GCW::CentralWidget::
+test()
+{
+  if( auto registerWidget = dynamic_cast< GCW::RegisterWidget* >( tabWidget()-> widget( tabWidget()-> currentIndex() ) ) )
+  {
+    registerWidget-> test();
+  }
+
+} // endvoid GCW::CentralWidget::test()
+
+
 

@@ -103,6 +103,13 @@ MainWidget()
   toolBar()-> addButton( std::make_unique< Wt::WPushButton >( TR( "gcw.MainWidget.tb.new"    ) ) );
   toolBar()-> addButton( std::make_unique< Wt::WPushButton >( TR( "gcw.MainWidget.tb.delete" ) ) );
 
+  {
+    auto b = std::make_unique< Wt::WPushButton >( "test" );
+    auto e = b.get();
+    toolBar()-> addButton( std::move(b) );
+    e-> clicked().connect( [=](){ test(); });
+  }
+
   statusBar()-> addNew< Wt::WText >( "status bar" );
 
 } // endGCW::MainWidget::MainWidget()
@@ -112,5 +119,11 @@ editSelectedAccount()
 {
   centralWidget()-> accountsWidget()-> editSelectedAccount();
 
+}
+
+void GCW::MainWidget::
+test()
+{
+  centralWidget()-> test();
 }
 
