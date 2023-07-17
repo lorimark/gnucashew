@@ -2,6 +2,7 @@
 
 #include <any>
 
+#include <Wt/Json/Serializer.h>
 #include <Wt/WText.h>
 #include <Wt/WTreeTableNode.h>
 #include <Wt/WVBoxLayout.h>
@@ -65,7 +66,7 @@ AccountsWidget()
 ** \return GUID String
 */
 std::string GCW::AccountsWidget::
-selectedAccount()
+selectedAccount() const
 {
   std::string retVal;
 
@@ -122,6 +123,33 @@ setModel()
   treeView()-> sortByColumn( 0, Wt::SortOrder::Ascending );
 
 } // endvoid GCW::AccountsWidget::setModel()
+
+Wt::Json::Object GCW::AccountsWidget::
+toJson() const
+{
+  Wt::Json::Object jobj;
+  jobj["selectedAccount"] = Wt::WString( selectedAccount() );
+
+  for( int col=0; col< 7; col++ )
+    jobj[ Wt::WString("columnWidth-{1}").arg( col ).toUTF8() ] = Wt::WString( treeView()-> columnWidth( col ).cssText() );
+
+  return jobj;
+}
+
+bool GCW::AccountsWidget::
+fromJson( const Wt::Json::Object & _jobj )
+{
+  return true;
+}
+
+void GCW::AccountsWidget::
+test()
+{
+  std::cout << __FILE__ << ":" << __LINE__ << " " << std::endl;
+
+  std::cout << __FILE__ << ":" << __LINE__ << " " << Wt::Json::serialize( toJson() ) << std::endl;
+
+} // endvoid GCW::AccountsWidget::test()
 
 void GCW::AccountsWidget::Model::
 load()

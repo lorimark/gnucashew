@@ -2,6 +2,7 @@
 #ifndef __ACCOUNTSWIDGET_H___
 #define __ACCOUNTSWIDGET_H___
 
+#include <Wt/Json/Object.h>
 #include <Wt/WContainerWidget.h>
 #include <Wt/WTreeView.h>
 #include <Wt/WStandardItem.h>
@@ -50,15 +51,20 @@ class AccountsWidget
 
     AccountsWidget();
 
-    std::shared_ptr< Model > model   () { return m_model;    }
-    Wt::WTreeView          * treeView() { return m_treeView; }
+    std::shared_ptr< Model > model   () const { return m_model;    }
+    Wt::WTreeView          * treeView() const { return m_treeView; }
 
     Wt::Signal< std::string > & doubleClicked() { return m_doubleClicked; }
 
-    std::string selectedAccount();
+    std::string selectedAccount() const;
 
     void editAccount( const std::string & _accountGuid );
     void editSelectedAccount();
+
+    Wt::Json::Object toJson() const;
+    bool fromJson( const Wt::Json::Object & _jobj );
+
+    void test();
 
   private:
 

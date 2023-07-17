@@ -124,6 +124,6 @@ editSelectedAccount()
 void GCW::MainWidget::
 test()
 {
-  centralWidget()-> test();
+  centralWidget()-> accountsWidget()-> test();
 }
 

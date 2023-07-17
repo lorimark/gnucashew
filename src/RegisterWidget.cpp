@@ -503,6 +503,21 @@ test()
 
 } // endvoid GCW::RegisterWidget::test()
 
+Wt::Json::Object GCW::RegisterWidget::
+toJson() const
+{
+  Wt::Json::Object jobj;
+
+  return jobj;
+}
+
+bool GCW::RegisterWidget::
+fromJson( const Wt::Json::Object & _jobj )
+{
+  return true;
+}
+
+
 void GCW::RegisterWidget::
 loadData()
 {
@@ -590,6 +605,33 @@ void GCW::RegisterWidget::Model::
 refreshFromDisk()
 {
   /*!
+  ** \par Model Columns
+  ** \code
+  **   col  name                  notes
+  **  -----+---------------------+----------------------
+  **    0   date
+  **    1   num (check number)
+  **    2   description
+  **    3   account / transfer
+  **    4   reconciliation
+  **    5   increase
+  **    6   decrease
+  **    7   balance r/o (computed)
+  ** \endcode
+  **
+  */
+  auto _addColumn = [&]( RowItem & columns, auto _value )
+  {
+    auto item = std::make_unique< Wt::WStandardItem >( _value );
+
+    item-> setToolTip( _value );
+
+    auto retVal = item.get();
+    columns.push_back( std::move( item ) );
+    return retVal;
+  };
+
+  /*!
   ** Before refreshing from disk, the entire contents of the
   **  model are cleared, so it is important to make sure anything
   **  to be saved from the model should be done first.
@@ -623,6 +665,8 @@ refreshFromDisk()
   DECIMAL::decimal<2> runningBalance( 0 );
   for( auto splitItem : splitItems )
   {
+    RowItem columns;
+
     /*
     ** Start out read-only.
     **
@@ -639,34 +683,6 @@ refreshFromDisk()
     auto transactionSplits = GCW::Dbo::Splits       ::bySplit ( splitItem-> guid()    );
 
     /*!
-    ** \par Model Columns
-    ** \code
-    **   col  name                  notes
-    **  -----+---------------------+----------------------
-    **    0   date
-    **    1   num (check number)
-    **    2   description
-    **    3   account / transfer
-    **    4   reconciliation
-    **    5   increase column
-    **    6   decrease column
-    **    7   balance column        r/o (computed)
-    ** \endcode
-    **
-    */
-    RowItem columns;
-    auto _addColumn = [&]( auto _value )
-    {
-      auto item = std::make_unique< Wt::WStandardItem >( _value );
-
-      item-> setToolTip( _value );
-
-      auto retVal = item.get();
-      columns.push_back( std::move( item ) );
-      return retVal;
-    };
-
-    /*!
     ** \note The post_date also carries with it the guid of the split item itself, so
     **  that the originating split can be located from the table view.  The guid
     **  can be accessed by;
@@ -676,12 +692,12 @@ refreshFromDisk()
     ** \endcode
     **
     */
-    auto post_date = _addColumn( transactionItem-> post_date_as_date().toString( GCW::CFG::date_format() ) );
+    auto post_date = _addColumn( columns, transactionItem-> post_date_as_date().toString( GCW::CFG::date_format() ) );
          post_date-> setData( splitItem-> guid() );
 
-    auto num = _addColumn( transactionItem-> num() );
+    auto num = _addColumn( columns, transactionItem-> num() );
 
-    auto description = _addColumn( transactionItem-> description() );
+    auto description = _addColumn( columns, transactionItem-> description() );
 
     /*!
     ** The 'account' text depends on the
@@ -689,7 +705,7 @@ refreshFromDisk()
     **  options here;
     **
     **   -# no splits... this shows up as an <b>'imbalance'</b>
-    **   -# 1 split...   this just shows the split account on the line
+    **   -# 1 split...   this just shows the split account on the same single line
     **   -# >1 split...  this is more than one target account, so just indicate 'split'
     **
     */
@@ -707,7 +723,7 @@ refreshFromDisk()
       */
       case 0:
       {
-        account = _addColumn( TR("gcw.RegisterWidget.account.imbalanceUSD") ); // account
+        account = _addColumn( columns, TR("gcw.RegisterWidget.account.imbalanceUSD") ); // account
         account-> setStyleClass( "errval" );
         account-> setToolTip( TR("gcw.RegisterWidget.account.imbalanceUSD.toolTip") );
         break;
@@ -724,7 +740,7 @@ refreshFromDisk()
       {
         auto txSplitItem = *transactionSplits.begin();
         auto splitAccountItem = GCW::Dbo::Accounts::byGuid( txSplitItem-> account_guid() );
-        account = _addColumn( GCW::Dbo::Accounts::fullName( splitAccountItem-> guid() ) );
+        account = _addColumn( columns, GCW::Dbo::Accounts::fullName( splitAccountItem-> guid() ) );
         break;
       }
 
@@ -738,12 +754,12 @@ refreshFromDisk()
       */
       default:
       {
-        account = _addColumn( TR("gcw.RegisterWidget.account.multisplit") ); // account
+        account = _addColumn( columns, TR("gcw.RegisterWidget.account.multisplit") ); // account
       }
 
     } // endswitch( transactionSplits.size() )
 
-    auto reconcile = _addColumn( splitItem-> reconcile_state() ); // Reconciled
+    auto reconcile = _addColumn( columns, splitItem-> reconcile_state() ); // Reconciled
 
     /*!
     ** Values of the transaction appear either in the (+)Increase column
@@ -768,27 +784,28 @@ refreshFromDisk()
 
     if( splitItem-> value() > 0 )
     {
-      deposit    = _addColumn( splitItem-> valueAsString() );
-      withdrawal = _addColumn( "" );
+      deposit    = _addColumn( columns, splitItem-> valueAsString() );
+      withdrawal = _addColumn( columns, "" );
     }
 
     else
     if( splitItem-> value() < 0 )
     {
-      deposit    = _addColumn( "" );
-      withdrawal = _addColumn( splitItem-> valueAsString() );
+      deposit    = _addColumn( columns, "" );
+      withdrawal = _addColumn( columns, splitItem-> valueAsString() );
     }
 
     else
     if( splitItem-> value() == 0 )
     {
-      deposit    = _addColumn( "" );
-      withdrawal = _addColumn( "" );
+      deposit    = _addColumn( columns, "" );
+      withdrawal = _addColumn( columns, "" );
     }
 
     balance =
       _addColumn
       (
+       columns,
        Wt::WString( "{1}" )
        .arg( toString( runningBalance, GCW::CFG::decimal_format() ) )
       );
@@ -821,15 +838,33 @@ refreshFromDisk()
 
   } // endfor( auto splitItem : splitItems )
 
+  /*!
+  ** After all the split items are loaded, an additional ~blank~ item
+  **  is included at the end of the vector, for coding new entries.
+  **
+  */
+  {
+    RowItem columns;
+    _addColumn( columns, ""  )-> setFlags( Wt::ItemFlag::Editable ); // Date
+    _addColumn( columns, ""  )-> setFlags( Wt::ItemFlag::Editable ); // Num
+    _addColumn( columns, ""  )-> setFlags( Wt::ItemFlag::Editable ); // Memo
+    _addColumn( columns, ""  )-> setFlags( Wt::ItemFlag::Editable ); // Account
+    _addColumn( columns, "n" )                                     ; // R
+    _addColumn( columns, ""  )-> setFlags( Wt::ItemFlag::Editable ); // Deposit
+    _addColumn( columns, ""  )-> setFlags( Wt::ItemFlag::Editable ); // Withdrawal
+    _addColumn( columns, ""  )                                     ; // Balance
+    appendRow( std::move( columns ) );
+  }
+
   int col = 0;
-  setHeaderData( col++, "Date"       );
-  setHeaderData( col++, "Num"        );
-  setHeaderData( col++, "Memo"       );
-  setHeaderData( col++, "Account"    );
-  setHeaderData( col++, "R"          );
-  setHeaderData( col++, "Deposit"    );
-  setHeaderData( col++, "Withdrawal" );
-  setHeaderData( col++, "Balance"    );
+  setHeaderData( col++, TR( "gcw.RegisterWidget.column.date"       ) );
+  setHeaderData( col++, TR( "gcw.RegisterWidget.column.num"        ) );
+  setHeaderData( col++, TR( "gcw.RegisterWidget.column.memo"       ) );
+  setHeaderData( col++, TR( "gcw.RegisterWidget.column.account"    ) );
+  setHeaderData( col++, TR( "gcw.RegisterWidget.column.reconcile"  ) );
+  setHeaderData( col++, TR( "gcw.RegisterWidget.column.deposit"    ) );
+  setHeaderData( col++, TR( "gcw.RegisterWidget.column.withdrawal" ) );
+  setHeaderData( col++, TR( "gcw.RegisterWidget.column.balance"    ) );
 
 } // endvoid GCW::RegisterWidget::Model::refreshFromDisk()
 

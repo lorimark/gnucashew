@@ -2,6 +2,7 @@
 #ifndef __REGISTERWIDGET_H___
 #define __REGISTERWIDGET_H___
 
+#include <Wt/Json/Object.h>
 #include <Wt/WContainerWidget.h>
 #include <Wt/WStandardItem.h>
 #include <Wt/WStandardItemModel.h>
@@ -87,6 +88,9 @@ balance
     std::shared_ptr< Model >   model     () { return m_model;     }
 
     void test();
+
+    Wt::Json::Object toJson() const;
+    bool fromJson( const Wt::Json::Object & _jobj );
 
   private:
 

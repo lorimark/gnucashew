@@ -6,6 +6,21 @@
 
 namespace {
 
+/*!
+** \brief Splits Sorter
+**
+** This is a little (private) vector sorter used to sort
+**  the items pulled from the database.  The database can
+**  produce items in random order, and the 'date' is
+**  contained on the 'transaction' so sorting by date
+**  requires a lookup in to the transaction.
+**
+** The sorted vector_of_splits is used in the Account
+**  Register editor, whereby the items need to be in
+**  correct chronological order so as to be able to
+**  calculate a running balance.
+**
+*/
 void sort( GCW::Dbo::Splits::Item::Vector & _splitItems )
 {
   /*!
@@ -25,7 +40,7 @@ void sort( GCW::Dbo::Splits::Item::Vector & _splitItems )
        auto trans2 = GCW::Dbo::Transactions::byGuid( item2-> tx_guid() );
 
        /*
-       ** return if the .trans1. date is .less than. the .trans2. date
+       ** return .bool. if the .trans1. date is .less than. the .trans2. date
        **
        */
        return trans1-> post_date_as_date()

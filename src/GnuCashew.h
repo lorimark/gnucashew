@@ -43,7 +43,7 @@ std::string date_format();
 */
 std::string time_format();
 
-  } // endnamespace Config {
+  } // endnamespace CFG {
 } // endnamespace GCW {
 
 #endif // end#ifndef __GNUCASHEW_H___

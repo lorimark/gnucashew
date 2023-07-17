@@ -2,6 +2,8 @@
 #ifndef __CONFIG_H___
 #define __CONFIG_H___
 
+#include <string>
+
 namespace GCW {
 
 /*!
@@ -11,17 +13,28 @@ namespace GCW {
 **  The configuration includes multiples 'areas' followed by specific settings
 **  in each area.  The areas included are;
 **
-**  Global - stored for all applications
-**  App    - stored for the application specifically
-**  User   - stored for the currently logged in user
+**  -# Global - stored for all applications
+**  -# App    - stored for the application specifically
+**  -# User   - stored for the currently logged in user
 **
 */
 class Config
 {
+  enum Area
+  {
+    GLOBAL,
+    APP,
+    FILE,
+    USER
+  };
+
   public:
 
     Config();
+    Config( const Area _area );
 
+    std::string asString( const std::string & _field );
+    int asInt( const std::string & _field );
 
 };
 
