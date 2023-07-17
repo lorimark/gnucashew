@@ -76,6 +76,7 @@ class DateDelegate
     void setModelData ( const Wt::cpp17::any & _editState, Wt::WAbstractItemModel * _model, const Wt::WModelIndex & _index ) const;
 
     void doCloseEditor( Wt::WDateEdit * _dateEdit, bool save ) const;
+    void doTabAction( Wt::WKeyEvent _keyEvent ) const;
 
     mutable Wt::WDateEdit * m_dateEdit = nullptr;
 };
@@ -117,6 +118,7 @@ std::unique_ptr< Wt::WWidget > DateDelegate::createEditor
   dateEdit-> setDate( date );
   dateEdit-> enterPressed  ().connect( [&](){ doCloseEditor( dateEdit.get(), true  ); });
   dateEdit-> escapePressed ().connect( [&](){ doCloseEditor( dateEdit.get(), false ); });
+  dateEdit-> keyWentDown   ().connect( [&]( Wt::WKeyEvent _keyEvent ){ doTabAction( _keyEvent ); });
 
   /*
   ** Stuff it in to the layout
@@ -141,6 +143,14 @@ void DateDelegate::doCloseEditor( Wt::WDateEdit * _dateEdit, bool save ) const
 #endif
 
 } // endvoid DateDelegate::doCloseEditor( Wt::WDateEdit * _dateEdit, bool save ) const
+
+void DateDelegate::doTabAction( Wt::WKeyEvent _keyEvent ) const
+{
+  std::cout << __FILE__ << ":" << __LINE__ << " " << std::endl;
+
+}
+
+
 
 Wt::cpp17::any DateDelegate::editState( Wt::WWidget * _editor, const Wt::WModelIndex & _index ) const
 {
@@ -326,7 +336,7 @@ RegisterWidget( const std::string & _accountGuid )
   tableView()-> setSelectionMode        ( Wt::SelectionMode::Single                                     );
   tableView()-> setEditTriggers         ( Wt::EditTrigger::SingleClicked                                );
   tableView()-> setEditOptions          ( Wt::EditOption::SingleEditor | Wt::EditOption::SaveWhenClosed );
-  tableView()-> setHeaderItemDelegate   ( std::make_shared< HeaderDelegate       >()                    );
+  tableView()-> setHeaderItemDelegate   ( std::make_shared< HeaderDelegate >()                          );
 
   {
     auto delegate = std::make_shared< DateDelegate >();
@@ -413,20 +423,8 @@ RegisterWidget( const std::string & _accountGuid )
   */
   tableView()-> selectionChanged().connect( [=]()
   {
-    static bool selecting = false;
-    std::cout << __FILE__ << ":" << __LINE__ << " selecting:" << selecting << std::endl;
-#ifdef NEVER
-    if( !selecting )
-    {
-      selecting = true; // prevent-recursive-calls as we change the selection
-      auto selections = tableView()-> selectedIndexes();
-      tableView()-> closeEditors( true );
-      tableView()-> clearSelection();
-      tableView()-> select( *selections.begin() );
-      selecting = false;
-    }
-
-#endif
+    std::cout << __FILE__ << ":" << __LINE__ << " selecting:" << std::endl;
+    tableView()-> closeEditors( true );
   });
 
 #ifdef NEVER
@@ -468,21 +466,19 @@ RegisterWidget( const std::string & _accountGuid )
           addStyleClass( "active" );
       }
 
-#ifdef NEVER
       std::cout << __FILE__ << ":" << __LINE__ << " " << Wt::WApplication::instance()->theme()->activeClass() << std::endl;
 
 //      tableView()-> clearSelection();
 
 //      tableView()-> closeEditors();
-#endif
     });
-#endif
 
   tableView()-> keyPressed().connect( [=]( Wt::WKeyEvent _event )
   {
     std::cout << __FILE__ << ":" << __LINE__ << " " << _event.charCode() << std::endl;
 
   });
+#endif
 
   loadData();
 
@@ -604,11 +600,7 @@ refreshFromDisk()
   /*!
   ** In order to produce a proper 'register' of items, it is important
   **  to load the data from the 'splits' side of the transaction rather
-  **  than the transaction itself.  This is due to the fact that it is
-  **  possible to have a single transaction that has two splits on the
-  **  same account!  While there's no practical reason to enter a
-  **  transaction like that, it is still possible, and needs to be 
-  **  represented correctly in the view.
+  **  than the transaction itself.
   **
   ** Note that when the splits are loaded based on the account ID, they
   **  are returned in a std::vector that is sorted based on the transction
@@ -809,6 +801,7 @@ refreshFromDisk()
     else
       editable = true;
 
+#ifndef NEVER
     if( editable )
     {
       post_date   -> setFlags( Wt::ItemFlag::Editable );
@@ -818,6 +811,7 @@ refreshFromDisk()
       deposit     -> setFlags( Wt::ItemFlag::Editable );
       withdrawal  -> setFlags( Wt::ItemFlag::Editable );
     }
+#endif
 
     /*
     ** Add the row to the model
