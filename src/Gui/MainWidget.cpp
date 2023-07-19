@@ -4,10 +4,10 @@
 #include <Wt/WPushButton.h>
 #include <Wt/WVBoxLayout.h>
 
-#include "define.h"
+#include "../define.h"
 #include "MainWidget.h"
 
-GCW::MainWidget::
+GCW::Gui::MainWidget::
 MainWidget()
 {
   addStyleClass( "MainWidget" );
@@ -16,7 +16,7 @@ MainWidget()
 
   m_navBar        = lw-> addWidget( std::make_unique< Wt::WNavigationBar   >()    );
   m_toolBar       = lw-> addWidget( std::make_unique< Wt::WToolBar         >()    );
-  m_centralWidget = lw-> addWidget( std::make_unique< GCW::CentralWidget   >(), 1 );
+  m_centralWidget = lw-> addWidget( std::make_unique< GCW::Gui::CentralWidget   >(), 1 );
   m_statusBar     = lw-> addWidget( std::make_unique< Wt::WContainerWidget >()    );
 
   /*
@@ -114,14 +114,14 @@ MainWidget()
 
 } // endGCW::MainWidget::MainWidget()
 
-void GCW::MainWidget::
+void GCW::Gui::MainWidget::
 editSelectedAccount()
 {
   centralWidget()-> accountsWidget()-> editSelectedAccount();
 
 }
 
-void GCW::MainWidget::
+void GCW::Gui::MainWidget::
 test()
 {
   centralWidget()-> accountsWidget()-> test();

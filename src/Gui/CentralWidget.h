@@ -1,7 +1,7 @@
 #line 2 "src/CentralWidget.h"
 
-#ifndef __CENTRALWIDGET_H___
-#define __CENTRALWIDGET_H___
+#ifndef __GUI_CENTRALWIDGET_H___
+#define __GUI_CENTRALWIDGET_H___
 
 #include <Wt/WContainerWidget.h>
 #include <Wt/WTabWidget.h>
@@ -10,6 +10,7 @@
 #include "RegisterWidget.h"
 
 namespace GCW {
+  namespace Gui {
 
 /*!
 ** \brief Main UI Central Widget
@@ -27,8 +28,8 @@ class CentralWidget
 
     CentralWidget();
 
-    Wt::WTabWidget      * tabWidget()       { return m_tabWidget;      }
-    GCW::AccountsWidget * accountsWidget()  { return m_accountsWidget; }
+    Wt::WTabWidget           * tabWidget()       { return m_tabWidget;      }
+    GCW::Gui::AccountsWidget * accountsWidget()  { return m_accountsWidget; }
 
     void openAccountRegister( const std::string & _accountGuid );
 
@@ -45,11 +46,12 @@ class CentralWidget
 
   private:
 
-    Wt::WTabWidget      * m_tabWidget      = nullptr;
-    GCW::AccountsWidget * m_accountsWidget = nullptr;
+    Wt::WTabWidget           * m_tabWidget      = nullptr;
+    GCW::Gui::AccountsWidget * m_accountsWidget = nullptr;
 
 }; // endclass CentralWidget
 
+  } // endnamespace Gui {
 } // endnamespace GCW {
 
 #endif // end#ifndef __CENTRALWIDGET_H___

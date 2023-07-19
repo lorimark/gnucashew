@@ -1,6 +1,6 @@
 
-#ifndef __ACCOUNTSWIDGET_H___
-#define __ACCOUNTSWIDGET_H___
+#ifndef __GUI_ACCOUNTSWIDGET_H___
+#define __GUI_ACCOUNTSWIDGET_H___
 
 #include <Wt/Json/Object.h>
 #include <Wt/WContainerWidget.h>
@@ -8,10 +8,11 @@
 #include <Wt/WStandardItem.h>
 #include <Wt/WStandardItemModel.h>
 
-#include "Dbo/Session.h"
-#include "Dbo/Accounts.h"
+#include "../Dbo/Session.h"
+#include "../Dbo/Accounts.h"
 
 namespace GCW {
+  namespace Gui {
 
 /*!
 ** \brief AccountsWidget
@@ -78,8 +79,9 @@ class AccountsWidget
 
 };  // endclass AccountsWidget
 
+  } // endnamespace Gui {
 } // endnamespace GCW {
 
-#endif // end __ACCOUNTSWIDGET_H___
+#endif // end __GUI_ACCOUNTSWIDGET_H___
 
 

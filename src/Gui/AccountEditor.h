@@ -1,15 +1,16 @@
 
-#ifndef __ACCOUNTEDITOR_H___
-#define __ACCOUNTEDITOR_H___
+#ifndef __GUI_ACCOUNTEDITOR_H___
+#define __GUI_ACCOUNTEDITOR_H___
 
 #include <Wt/WContainerWidget.h>
 #include <Wt/WDialog.h>
 #include <Wt/WTabWidget.h>
 #include <Wt/WTemplateFormView.h>
 
-#include "GnuCashew.h"
+#include "../GnuCashew.h"
 
 namespace GCW {
+  namespace Gui {
 
 /*!
 ** \brief Account Editor
@@ -44,9 +45,10 @@ class AccountEditorDialog
 
 }; // endclass AccountEditorDialog
 
+  } //endnamespace Gui {
 } // endnamespace GCW {
 
-#endif // end __ACCOUNTSWIDGET_H___
+#endif // end __GUI_ACCOUNTSWIDGET_H___
 
 
 

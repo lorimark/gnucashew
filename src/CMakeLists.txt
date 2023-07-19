@@ -26,6 +26,8 @@ unset(dist_generated CACHE)
 unset(dist_generated_depends CACHE)
 
 add_subdirectory( Dbo )
+add_subdirectory( Eng )
+add_subdirectory( Gui )
 
 include_directories(
   /opt/Wt4/include
@@ -36,15 +38,9 @@ link_directories(/opt/Wt4/lib)
 add_executable (
   gnucashew-bin
   main.cpp
-  AccountEditor.cpp
-  AccountsWidget.cpp
   App.cpp
-  CentralWidget.cpp
   Config.cpp
   GnuCashew.cpp
-  MainWidget.cpp
-  RegisterWidget.cpp
-  TableView.cpp
   ${GCW_FILES}
   )
 

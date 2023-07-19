@@ -8,7 +8,7 @@
 
 #include "Dbo/Session.h"
 #include "Config.h"
-#include "MainWidget.h"
+#include "Gui/MainWidget.h"
 
 namespace GCW {
 
@@ -21,15 +21,15 @@ class App
 
     App( const Wt::WEnvironment & env );
 
-    Dbo::GnuCash::Session   & gnucash_session    () { return m_gnucash_session;    }
-    Dbo::GnuCashew::Session & gnucashew_session  () { return m_gnucashew_session;  }
-    MainWidget   * mainWidget () { return m_mainWidget; }
+    Dbo::GnuCash::Session   & gnucash_session   () { return m_gnucash_session;    }
+    Dbo::GnuCashew::Session & gnucashew_session () { return m_gnucashew_session;  }
+    GCW::Gui::MainWidget    * mainWidget        () { return m_mainWidget;         }
 
   private:
 
-    Dbo::GnuCash::Session     m_gnucash_session;
-    Dbo::GnuCashew::Session   m_gnucashew_session;
-    MainWidget              * m_mainWidget = nullptr;
+    Dbo::GnuCash::Session      m_gnucash_session;
+    Dbo::GnuCashew::Session    m_gnucashew_session;
+    GCW::Gui::MainWidget     * m_mainWidget = nullptr;
 
 }; // endclass App
 

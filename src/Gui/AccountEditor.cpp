@@ -2,7 +2,7 @@
 
 #include "AccountEditor.h"
 
-GCW::AccountEditor::
+GCW::Gui::AccountEditor::
 AccountEditor( const std::string & _accountGuid )
 : m_accountGuid( _accountGuid )
 {
@@ -44,7 +44,7 @@ AccountEditor( const std::string & _accountGuid )
 
 
 
-GCW::AccountEditorDialog::
+GCW::Gui::AccountEditorDialog::
 AccountEditorDialog( const std::string & _accountGuid )
 : Wt::WDialog( "Edit Account" )
 {
@@ -53,9 +53,9 @@ AccountEditorDialog( const std::string & _accountGuid )
   setClosable( true );
   setMinimumSize( "800px", "600px" );
 
-  contents()-> addNew< GCW::AccountEditor >( _accountGuid );
+  contents()-> addNew< GCW::Gui::AccountEditor >( _accountGuid );
 
-}; // endclass GCW::AccountEditorDialog::AccountEditorDialog( const std::string & _accountGuid )
+}; // endclass GCW::Gui::AccountEditorDialog::AccountEditorDialog( const std::string & _accountGuid )
 
 
 

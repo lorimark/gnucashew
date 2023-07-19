@@ -3,6 +3,54 @@
 
   <message id="gcw.language_file">English</message>
 
+  <message id="gcw.welcome.title">Welcome to GnuCashew</message>
+  <message id="gcw.welcome.body">
+    <p>
+      Welcome to GnuCashew!
+    </p>
+
+    <p>
+      This project is in development.
+    </p>
+
+    <p>
+      This is a running development-copy of the GnuCashew
+      program.  At this point, not much is working.  The main
+      'Accounts' tree-view is working, and double-clicking
+      on an account opens the 'Account Register'.  The Account
+      Register is working in view-mode only.  You can scroll
+      up and down, and the editing works, but it does not save
+      back to the database file.
+    </p>
+
+    <p>
+      The source-generated doxygen files can be found here;
+      <br />
+      <a href="https://gnucashew.lorimarksolutions.com/dox/html/index.html">
+               https://gnucashew.lorimarksolutions.com/dox/html/index.html
+      </a>
+    </p>
+
+    <p>
+      The source-code repository can be found here;
+      <br />
+      <a href="https://github.com/lorimark/gnucashew">
+               https://github.com/lorimark/gnucashew
+      </a>
+    </p>
+
+    <p>
+      This project uses Wt (<a href="https://www.webtoolkit.eu/">wthttps://www.webtoolkit.eu/wt</a>) as the web rendering library.
+    </p>
+
+    <p>
+      Feel free to poke around.<br />
+      Have fun! Let me know what you think!<br />
+      mark@lorimarksolutions.com
+    </p>
+    (press &lt;esc&gt; to continue)
+  </message>
+
   <message id="gcw.MainWidget.mu.file">File</message>
   <message id="gcw.MainWidget.mu.file.new">New File</message>
   <message id="gcw.MainWidget.mu.file.open">Open...</message>

@@ -7,13 +7,13 @@
 
 
 // Pixels
-const int GCW::TableView::kTableHeaderRowHeight = 30;
-const int GCW::TableView::kTableBodyRowHeight   = 25;
-const int GCW::TableView::kTableCellPadding     = 7;
-const int GCW::TableView::kScrollBarWidth       = 20;
-const int GCW::TableView::kDefaultDateTimeWidth = 120;
+const int GCW::Gui::TableView::kTableHeaderRowHeight = 30;
+const int GCW::Gui::TableView::kTableBodyRowHeight   = 25;
+const int GCW::Gui::TableView::kTableCellPadding     = 7;
+const int GCW::Gui::TableView::kScrollBarWidth       = 20;
+const int GCW::Gui::TableView::kDefaultDateTimeWidth = 120;
 
-GCW::TableView::TableView()
+GCW::Gui::TableView::TableView()
 : Wt::WTableView()
 {
   setHeaderHeight( kTableHeaderRowHeight );
@@ -21,9 +21,9 @@ GCW::TableView::TableView()
 
   setLayoutSizeAware( true );
 
-} // endGCW::TableView::TableView( Wt::WContainerWidget* parent )
+} // endGCW::Gui::TableView::TableView( Wt::WContainerWidget* parent )
 
-auto GCW::TableView::
+auto GCW::Gui::TableView::
 layoutSizeChanged( int width, int height ) -> void
 {
   // Calculate our fixed width columns
@@ -79,9 +79,9 @@ layoutSizeChanged( int width, int height ) -> void
   // Pass the call up the chain
   Wt::WTableView::layoutSizeChanged( width, height );
 
-} // endauto GCW::TableView::layoutSizeChanged( int width, int height ) -> void
+} // endauto GCW::Gui::TableView::layoutSizeChanged( int width, int height ) -> void
 
-auto GCW::TableView::
+auto GCW::Gui::TableView::
 setColumnWidth( int column, const Wt::WLength& width ) -> void
 {
     // Just save the data and pass the the work up
@@ -89,7 +89,7 @@ setColumnWidth( int column, const Wt::WLength& width ) -> void
 
     Wt::WTableView::setColumnWidth( column, width );
 
-} // endauto GCW::TableView::setColumnWidth(int column, const Wt::WLength& width) -> void
+} // endauto GCW::Gui::TableView::setColumnWidth(int column, const Wt::WLength& width) -> void
 
 /*!
 ** \brief Handle Click Event
@@ -111,7 +111,7 @@ setColumnWidth( int column, const Wt::WLength& width ) -> void
 **  not signal to the rest of the row that it should be 'selected'.
 **
 */
-void GCW::TableView::handleClick( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _event )
+void GCW::Gui::TableView::handleClick( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _event )
 {
 #ifndef NEVER
   std::cout << __FILE__ << ":" << __LINE__
@@ -208,7 +208,7 @@ void GCW::TableView::handleClick( const Wt::WModelIndex & _index, const Wt::WMou
   std::cout << __FILE__ << ":" << __LINE__ << " handleClick:<end>" << std::endl;
 #endif
 
-} // endvoid GCW::TableView::handleClick( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _event )
+} // endvoid GCW::Gui::TableView::handleClick( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _event )
 
 
 

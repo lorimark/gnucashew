@@ -5,8 +5,8 @@
 #include <Wt/WText.h>
 #include <Wt/WVBoxLayout.h>
 
-#include "define.h"
-#include "App.h"
+#include "../define.h"
+#include "../App.h"
 #include "CentralWidget.h"
 
 /*!
@@ -21,7 +21,7 @@
 **  as they are requested.
 **
 */
-GCW::CentralWidget::
+GCW::Gui::CentralWidget::
 CentralWidget()
 {
   addStyleClass( "CentralWidget" );
@@ -57,16 +57,16 @@ CentralWidget()
   **
   */
   {
-    auto widget = std::make_unique< GCW::AccountsWidget >();
+    auto widget = std::make_unique< GCW::Gui::AccountsWidget >();
     m_accountsWidget = widget.get();
     tabWidget()-> addTab( std::move( widget ), TR( "gcw.AccountsWidget.tabName" ) );
 
-    accountsWidget()-> doubleClicked().connect( this, &GCW::CentralWidget::openAccountRegister );
+    accountsWidget()-> doubleClicked().connect( this, &GCW::Gui::CentralWidget::openAccountRegister );
   }
 
 } // endGCW::CentralWidget::CentralWidget()
 
-int GCW::CentralWidget::
+int GCW::Gui::CentralWidget::
 tabIndex( const std::string & _text )
 {
   for( int i=0; i< tabWidget()-> count(); i++ )
@@ -75,9 +75,9 @@ tabIndex( const std::string & _text )
 
   return -1;
 
-} // endint GCW::CentralWidget::tabIndex( const std::string & _text )
+} // endint GCW::Gui::CentralWidget::tabIndex( const std::string & _text )
 
-void GCW::CentralWidget::
+void GCW::Gui::CentralWidget::
 openAccountRegister( const std::string & _accountGuid )
 {
   /*
@@ -109,7 +109,7 @@ openAccountRegister( const std::string & _accountGuid )
       tabWidget()->
         insertTab
         ( 1,
-          std::make_unique< GCW::RegisterWidget >( _accountGuid ),
+          std::make_unique< GCW::Gui::RegisterWidget >( _accountGuid ),
           accountItem-> name()
         );
 
@@ -123,17 +123,17 @@ openAccountRegister( const std::string & _accountGuid )
   */
   tabWidget()-> setCurrentIndex( tabIndex( accountItem-> name() ) );
 
-} // endvoid GCW::CentralWidget::openAccountRegister( const std::string & _accountGuid )
+} // endvoid GCW::Gui::CentralWidget::openAccountRegister( const std::string & _accountGuid )
 
-void GCW::CentralWidget::
+void GCW::Gui::CentralWidget::
 test()
 {
-  if( auto registerWidget = dynamic_cast< GCW::RegisterWidget* >( tabWidget()-> widget( tabWidget()-> currentIndex() ) ) )
+  if( auto registerWidget = dynamic_cast< GCW::Gui::RegisterWidget* >( tabWidget()-> widget( tabWidget()-> currentIndex() ) ) )
   {
     registerWidget-> test();
   }
 
-} // endvoid GCW::CentralWidget::test()
+} // endvoid GCW::Gui::CentralWidget::test()
 
 
 

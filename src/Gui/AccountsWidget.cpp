@@ -7,13 +7,13 @@
 #include <Wt/WTreeTableNode.h>
 #include <Wt/WVBoxLayout.h>
 
-#include "define.h"
-#include "GnuCashew.h"
+#include "../define.h"
+#include "../GnuCashew.h"
 #include "AccountEditor.h"
 #include "AccountsWidget.h"
 
 
-GCW::AccountsWidget::
+GCW::Gui::AccountsWidget::
 AccountsWidget()
 {
   addStyleClass( "AccountsWidget" );
@@ -27,7 +27,7 @@ AccountsWidget()
   treeView()-> setSelectionBehavior( Wt::SelectionBehavior::Rows );
   treeView()-> setSelectionMode(     Wt::SelectionMode::Single   );
   treeView()-> setAlternatingRowColors( true );
-  treeView()-> doubleClicked().connect( this, &GCW::AccountsWidget::doubleClicked );
+  treeView()-> doubleClicked().connect( this, &GCW::Gui::AccountsWidget::doubleClicked );
 
   m_columns.push_back( TR8( "gcw.AccountsWidget.column.accountcode"       ) );
   m_columns.push_back( TR8( "gcw.AccountsWidget.column.accountcolor"      ) );
@@ -60,12 +60,12 @@ AccountsWidget()
 
   setModel();
 
-} // endGCW::AccountsWidget::AccountsWidget()
+} // endGCW::Gui::AccountsWidget::AccountsWidget()
 
 /*!
 ** \return GUID String
 */
-std::string GCW::AccountsWidget::
+std::string GCW::Gui::AccountsWidget::
 selectedAccount() const
 {
   std::string retVal;
@@ -88,30 +88,30 @@ selectedAccount() const
 
   return retVal;
 
-} // endstd::string GCW::AccountsWidget::selectedAccount()
+} // endstd::string GCW::Gui::AccountsWidget::selectedAccount()
 
-void GCW::AccountsWidget::
+void GCW::Gui::AccountsWidget::
 editAccount( const std::string & _accountGuid )
 {
   if( _accountGuid == "" )
     return;
 
-  GCW::AccountEditorDialog dialog( "Edit Account" );
+  GCW::Gui::AccountEditorDialog dialog( "Edit Account" );
 
   dialog.exec();
 
-} // endvoid GCW::AccountsWidget::editAccount( const std::string & _accountGuid )
+} // endvoid GCW::Gui::AccountsWidget::editAccount( const std::string & _accountGuid )
 
 
-void GCW::AccountsWidget::
+void GCW::Gui::AccountsWidget::
 editSelectedAccount()
 {
   editAccount( selectedAccount() );
 
-} // endvoid GCW::AccountsWidget::editAccount( const std::string & _accountGuid )
+} // endvoid GCW::Gui::AccountsWidget::editAccount( const std::string & _accountGuid )
 
 
-void GCW::AccountsWidget::
+void GCW::Gui::AccountsWidget::
 setModel()
 {
   m_model = std::make_shared< Model >();
@@ -122,9 +122,9 @@ setModel()
 
   treeView()-> sortByColumn( 0, Wt::SortOrder::Ascending );
 
-} // endvoid GCW::AccountsWidget::setModel()
+} // endvoid GCW::Gui::AccountsWidget::setModel()
 
-Wt::Json::Object GCW::AccountsWidget::
+Wt::Json::Object GCW::Gui::AccountsWidget::
 toJson() const
 {
   Wt::Json::Object jobj;
@@ -136,22 +136,22 @@ toJson() const
   return jobj;
 }
 
-bool GCW::AccountsWidget::
+bool GCW::Gui::AccountsWidget::
 fromJson( const Wt::Json::Object & _jobj )
 {
   return true;
 }
 
-void GCW::AccountsWidget::
+void GCW::Gui::AccountsWidget::
 test()
 {
   std::cout << __FILE__ << ":" << __LINE__ << " " << std::endl;
 
   std::cout << __FILE__ << ":" << __LINE__ << " " << Wt::Json::serialize( toJson() ) << std::endl;
 
-} // endvoid GCW::AccountsWidget::test()
+} // endvoid GCW::Gui::AccountsWidget::test()
 
-void GCW::AccountsWidget::Model::
+void GCW::Gui::AccountsWidget::Model::
 load()
 {
   /*
@@ -172,9 +172,9 @@ load()
   setHeaderData( col++, TR( "gcw.AccountsWidget.column.futureminimumusd" ) );
   setHeaderData( col++, TR( "gcw.AccountsWidget.column.total"            ) );
 
-} // endvoid GCW::AccountsWidget::Model::load()
+} // endvoid GCW::Gui::AccountsWidget::Model::load()
 
-void GCW::AccountsWidget::Model::
+void GCW::Gui::AccountsWidget::Model::
 load( Wt::WStandardItem * _treeItem, GCW::Dbo::Accounts::Item::Ptr _parentAccount )
 {
   Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
@@ -219,7 +219,7 @@ load( Wt::WStandardItem * _treeItem, GCW::Dbo::Accounts::Item::Ptr _parentAccoun
 
 } // endvoid load( Wt::WStandardItem * _treeItem, Account::Ptr _parentAccount )
 
-void GCW::AccountsWidget::
+void GCW::Gui::AccountsWidget::
 doubleClicked( const Wt::WModelIndex & index, const Wt::WMouseEvent & event )
 {
 #ifdef NEVER
@@ -237,6 +237,6 @@ doubleClicked( const Wt::WModelIndex & index, const Wt::WMouseEvent & event )
   */
   m_doubleClicked.emit( Wt::asString( m_model-> data( index, Wt::ItemDataRole::User ) ).toUTF8() );
 
-} // endvoid GCW::AccountsWidget::doubleClicked( const Wt::WModelIndex & index, const Wt::WMouseEvent & event )
+} // endvoid GCW::Gui::AccountsWidget::doubleClicked( const Wt::WModelIndex & index, const Wt::WMouseEvent & event )
 
 

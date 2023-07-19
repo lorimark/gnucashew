@@ -1,11 +1,12 @@
 
 
-#ifndef __TABLEVIEW_H___
-#define __TABLEVIEW_H___
+#ifndef __GUI_TABLEVIEW_H___
+#define __GUI_TABLEVIEW_H___
 
 #include <Wt/WTableView.h>
 
 namespace GCW {
+  namespace Gui {
 
 /*!
 ** \brief Custom Table View Class
@@ -85,6 +86,7 @@ protected:
 
 }; // endclass TableView :
 
+  } // endnamespace Gui {
 } // endnamespace GCW {
 
 #endif // end#ifndef __TABLEVIEW_H___

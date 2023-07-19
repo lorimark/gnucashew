@@ -1,14 +1,17 @@
 #line 2 "src/App.cpp"
 
-#include <Wt/WEnvironment.h>
 #include <Wt/Date/tz.h>
 #include <Wt/WBootstrapTheme.h>
 #include <Wt/WDate.h>
-#include <Wt/WLocale.h>
-#include <Wt/WVBoxLayout.h>
+#include <Wt/WDialog.h>
+#include <Wt/WEnvironment.h>
 #include <Wt/WHBoxLayout.h>
+#include <Wt/WLocale.h>
+#include <Wt/WText.h>
+#include <Wt/WVBoxLayout.h>
 
 #include "App.h"
+#include "GnuCashew.h"
 
 extern std::string g_dbName;
 
@@ -46,6 +49,17 @@ void showEnvironment()
       std::cout << __FILE__ << ":" << __LINE__ << " " << pair.first << "=" << value << std::endl;
 
 } // endvoid showEnvironment()
+
+void showWelcome()
+{
+  wApp-> processEvents();
+
+  Wt::WDialog dialog( TR( "gcw.welcome.title" )  );
+  dialog.rejectWhenEscapePressed( true );
+  dialog.setClosable( true );
+  dialog.contents()-> addNew< Wt::WText >( TR( "gcw.welcome.body" ) );
+  dialog.exec();
+}
 
 } // endnamespace {
 
@@ -102,7 +116,10 @@ GCW::App::App( const Wt::WEnvironment & env )
   ** Build and install the main desktop widget.
   **
   */
-  m_mainWidget = lw-> addWidget( std::make_unique< GCW::MainWidget >() );
+  m_mainWidget = lw-> addWidget( std::make_unique< GCW::Gui::MainWidget >() );
+
+  if( bookmarkUrl() == "demo" )
+    showWelcome();
 
 } // endGnuCashew::App::App( const Wt::WEnvironment & env )
 
