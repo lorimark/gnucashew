@@ -147,40 +147,6 @@ CREATE TABLE billterms
  cutoff integer
 );
 
-CREATE TABLE customers
-(
- guid text(32) PRIMARY KEY NOT NULL,
- name text(2048) NOT NULL,
- id text(2048) NOT NULL,
- notes text(2048) NOT NULL,
- active integer NOT NULL,
- discount_num bigint NOT NULL,
- discount_denom bigint NOT NULL,
- credit_num bigint NOT NULL,
- credit_denom bigint NOT NULL,
- currency text(32) NOT NULL,
- tax_override integer NOT NULL,
- addr_name text(1024),
- addr_addr1 text(1024),
- addr_addr2 text(1024),
- addr_addr3 text(1024),
- addr_addr4 text(1024),
- addr_phone text(128),
- addr_fax text(128),
- addr_email text(256),
- shipaddr_name text(1024),
- shipaddr_addr1 text(1024),
- shipaddr_addr2 text(1024),
- shipaddr_addr3 text(1024),
- shipaddr_addr4 text(1024),
- shipaddr_phone text(128),
- shipaddr_fax text(128),
- shipaddr_email text(256),
- terms text(32),
- tax_included integer,
- taxtable text(32)
-);
-
 CREATE TABLE employees
 (
  guid text(32) PRIMARY KEY NOT NULL,

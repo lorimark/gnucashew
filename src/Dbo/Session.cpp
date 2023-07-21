@@ -5,6 +5,7 @@
 #include <Wt/Dbo/backend/Sqlite3.h>
 
 #include "Accounts.h"
+#include "Customers.h"
 #include "Splits.h"
 #include "Transactions.h"
 
@@ -72,6 +73,7 @@ bool GCW::Dbo::GnuCash::Session::open( const std::string & _path )
 void GCW::Dbo::GnuCash::Session::init()
 {
   mapClass< Accounts     ::Item >( "accounts"     );
+  mapClass< Customers    ::Item >( "customers"    );
   mapClass< Transactions ::Item >( "transactions" );
   mapClass< Splits       ::Item >( "splits"       );
 

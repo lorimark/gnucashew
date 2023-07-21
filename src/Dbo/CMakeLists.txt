@@ -2,6 +2,7 @@
 set( GCW_FILES ${GCW_FILES}
   ${CMAKE_CURRENT_SOURCE_DIR}/Account.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/Accounts.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/Customer.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/Session.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/Splits.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/Transactions.cpp
