@@ -7,6 +7,7 @@
 #include <Wt/WTabWidget.h>
 
 #include "AccountsWidget.h"
+#include "CustomersWidget.h"
 #include "RegisterWidget.h"
 
 namespace GCW {
@@ -28,8 +29,9 @@ class CentralWidget
 
     CentralWidget();
 
-    Wt::WTabWidget           * tabWidget()       { return m_tabWidget;      }
-    GCW::Gui::AccountsWidget * accountsWidget()  { return m_accountsWidget; }
+    Wt::WTabWidget            * tabWidget()        { return m_tabWidget;       }
+    GCW::Gui::AccountsWidget  * accountsWidget()   { return m_accountsWidget;  }
+    GCW::Gui::CustomersWidget * customersWidget()  { return m_customersWidget; }
 
     void open_AccountRegister( const std::string & _accountGuid );
     void open_CustomerOverview();
@@ -47,8 +49,9 @@ class CentralWidget
 
   private:
 
-    Wt::WTabWidget           * m_tabWidget      = nullptr;
-    GCW::Gui::AccountsWidget * m_accountsWidget = nullptr;
+    Wt::WTabWidget            * m_tabWidget       = nullptr;
+    GCW::Gui::AccountsWidget  * m_accountsWidget  = nullptr;
+    GCW::Gui::CustomersWidget * m_customersWidget = nullptr;
 
 }; // endclass CentralWidget
 

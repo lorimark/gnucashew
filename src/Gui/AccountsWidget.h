@@ -52,8 +52,8 @@ class AccountsWidget
 
     AccountsWidget();
 
-    std::shared_ptr< Model > model   () const { return m_model;    }
-    Wt::WTreeView          * treeView() const { return m_treeView; }
+    std::shared_ptr< Model >   model () const { return m_model; }
+    Wt::WTreeView            * view  () const { return m_view;  }
 
     Wt::Signal< std::string > & doubleClicked() { return m_doubleClicked; }
 
@@ -72,7 +72,7 @@ class AccountsWidget
     void setModel();
     void doubleClicked( const Wt::WModelIndex & index, const Wt::WMouseEvent & event );
 
-    Wt::WTreeView            * m_treeView = nullptr;
+    Wt::WTreeView            * m_view = nullptr;
     std::shared_ptr< Model >   m_model;
     std::vector< std::string > m_columns;
     Wt::Signal< std::string >  m_doubleClicked;

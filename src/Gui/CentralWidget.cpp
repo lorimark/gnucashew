@@ -8,7 +8,7 @@
 #include "../define.h"
 #include "../App.h"
 #include "CentralWidget.h"
-#include "CustomerOverviewWidget.h"
+#include "CustomersWidget.h"
 
 /*!
 ** \brief Central Widget
@@ -145,7 +145,7 @@ open_CustomerOverview()
       tabWidget()->
         insertTab
         ( 1,
-          std::make_unique< GCW::Gui::CustomerOverviewWidget >(),
+          std::make_unique< GCW::Gui::CustomersWidget >(),
           tabName
         );
 

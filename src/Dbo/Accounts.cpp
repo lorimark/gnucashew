@@ -1,6 +1,5 @@
 
 #include "../App.h"
-
 #include "Accounts.h"
 #include "Transactions.h"
 

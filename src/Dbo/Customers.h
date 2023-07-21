@@ -117,13 +117,69 @@ class Item
       Wt::Dbo::id   ( action, m_guid           , GCW::Dbo::Customer::Field::guid            ,   32 ); // text(32) PRIMARY KEY NOT NULL
       Wt::Dbo::field( action, m_name           , GCW::Dbo::Customer::Field::name            , 2048 ); // text(2048) NOT NULL
       Wt::Dbo::field( action, m_id             , GCW::Dbo::Customer::Field::id              , 2048 ); // text(2048) NOT NULL
-    }
+      Wt::Dbo::field( action, m_notes          , GCW::Dbo::Customer::Field::notes           , 2048 ); // text(2048) NOT NULL,
+      Wt::Dbo::field( action, m_active         , GCW::Dbo::Customer::Field::active                 ); // integer NOT NULL,
+      Wt::Dbo::field( action, m_discount_num   , GCW::Dbo::Customer::Field::discount_num           ); // bigint NOT NULL,
+      Wt::Dbo::field( action, m_discount_denom , GCW::Dbo::Customer::Field::discount_denom         ); // bigint NOT NULL,
+      Wt::Dbo::field( action, m_credit_num     , GCW::Dbo::Customer::Field::credit_num             ); // bigint NOT NULL,
+      Wt::Dbo::field( action, m_credit_denom   , GCW::Dbo::Customer::Field::credit_denom           ); // bigint NOT NULL,
+      Wt::Dbo::field( action, m_currency       , GCW::Dbo::Customer::Field::currency        ,   32 ); // text(32) NOT NULL,
+      Wt::Dbo::field( action, m_tax_override   , GCW::Dbo::Customer::Field::tax_override           ); // integer NOT NULL,
+      Wt::Dbo::field( action, m_addr_name      , GCW::Dbo::Customer::Field::addr_name       , 1024 ); // text(1024),
+      Wt::Dbo::field( action, m_addr_addr1     , GCW::Dbo::Customer::Field::addr_addr1      , 1024 ); // text(1024),
+      Wt::Dbo::field( action, m_addr_addr2     , GCW::Dbo::Customer::Field::addr_addr2      , 1024 ); // text(1024),
+      Wt::Dbo::field( action, m_addr_addr3     , GCW::Dbo::Customer::Field::addr_addr3      , 1024 ); // text(1024),
+      Wt::Dbo::field( action, m_addr_addr4     , GCW::Dbo::Customer::Field::addr_addr4      , 1024 ); // text(1024),
+      Wt::Dbo::field( action, m_addr_phone     , GCW::Dbo::Customer::Field::addr_phone      ,  128 ); // text(128),
+      Wt::Dbo::field( action, m_addr_fax       , GCW::Dbo::Customer::Field::addr_fax        ,  128 ); // text(128),
+      Wt::Dbo::field( action, m_addr_email     , GCW::Dbo::Customer::Field::addr_email      ,  256 ); // text(256),
+      Wt::Dbo::field( action, m_shipaddr_name  , GCW::Dbo::Customer::Field::shipaddr_name   , 1024 ); // text(1024),
+      Wt::Dbo::field( action, m_shipaddr_addr1 , GCW::Dbo::Customer::Field::shipaddr_addr1  , 1024 ); // text(1024),
+      Wt::Dbo::field( action, m_shipaddr_addr2 , GCW::Dbo::Customer::Field::shipaddr_addr2  , 1024 ); // text(1024),
+      Wt::Dbo::field( action, m_shipaddr_addr3 , GCW::Dbo::Customer::Field::shipaddr_addr3  , 1024 ); // text(1024),
+      Wt::Dbo::field( action, m_shipaddr_addr4 , GCW::Dbo::Customer::Field::shipaddr_addr4  , 1024 ); // text(1024),
+      Wt::Dbo::field( action, m_shipaddr_phone , GCW::Dbo::Customer::Field::shipaddr_phone  ,  128 ); // text(128),
+      Wt::Dbo::field( action, m_shipaddr_fax   , GCW::Dbo::Customer::Field::shipaddr_fax    ,  128 ); // text(128),
+      Wt::Dbo::field( action, m_shipaddr_email , GCW::Dbo::Customer::Field::shipaddr_email  ,  256 ); // text(256),
+      Wt::Dbo::field( action, m_terms          , GCW::Dbo::Customer::Field::terms           ,   32 ); // text(32),
+      Wt::Dbo::field( action, m_tax_included   , GCW::Dbo::Customer::Field::tax_included           ); // integer,
+      Wt::Dbo::field( action, m_taxtable       , GCW::Dbo::Customer::Field::taxtable        ,   32 ); // text(32)
+
+    } // endtemplate< class Action > void persist( Action & action )
 
   private:
 
     std::string m_guid           ;
     std::string m_name           ;
     std::string m_id             ;
+    std::string m_notes          ; // text(2048) NOT NULL,
+    int         m_active         ; // integer NOT NULL,
+    int         m_discount_num   ; // bigint NOT NULL,
+    int         m_discount_denom ; // bigint NOT NULL,
+    int         m_credit_num     ; // bigint NOT NULL,
+    int         m_credit_denom   ; // bigint NOT NULL,
+    std::string m_currency       ; // text(32) NOT NULL,
+    int         m_tax_override   ; // integer NOT NULL,
+    std::string m_addr_name      ; // text(1024),
+    std::string m_addr_addr1     ; // text(1024),
+    std::string m_addr_addr2     ; // text(1024),
+    std::string m_addr_addr3     ; // text(1024),
+    std::string m_addr_addr4     ; // text(1024),
+    std::string m_addr_phone     ; // text(128),
+    std::string m_addr_fax       ; // text(128),
+    std::string m_addr_email     ; // text(256),
+    std::string m_shipaddr_name  ; // text(1024),
+    std::string m_shipaddr_addr1 ; // text(1024),
+    std::string m_shipaddr_addr2 ; // text(1024),
+    std::string m_shipaddr_addr3 ; // text(1024),
+    std::string m_shipaddr_addr4 ; // text(1024),
+    std::string m_shipaddr_phone ; // text(128),
+    std::string m_shipaddr_fax   ; // text(128),
+    std::string m_shipaddr_email ; // text(256),
+    std::string m_terms          ; // text(32),
+    int         m_tax_included   ; // integer,
+    std::string m_taxtable       ; // text(32)
+
 
 }; // endclass Item
 

@@ -21,13 +21,13 @@ AccountsWidget()
   auto lw = setLayout( std::make_unique< Wt::WVBoxLayout >() );
 
   auto w = std::make_unique< Wt::WTreeView >();
-  m_treeView = w.get();
+  m_view = w.get();
   lw-> addWidget( std::move( w ) );
 
-  treeView()-> setSelectionBehavior( Wt::SelectionBehavior::Rows );
-  treeView()-> setSelectionMode(     Wt::SelectionMode::Single   );
-  treeView()-> setAlternatingRowColors( true );
-  treeView()-> doubleClicked().connect( this, &GCW::Gui::AccountsWidget::doubleClicked );
+  view()-> setSelectionBehavior( Wt::SelectionBehavior::Rows );
+  view()-> setSelectionMode(     Wt::SelectionMode::Single   );
+  view()-> setAlternatingRowColors( true );
+  view()-> doubleClicked().connect( this, &GCW::Gui::AccountsWidget::doubleClicked );
 
   m_columns.push_back( TR8( "gcw.AccountsWidget.column.accountcode"       ) );
   m_columns.push_back( TR8( "gcw.AccountsWidget.column.accountcolor"      ) );
@@ -76,7 +76,7 @@ selectedAccount() const
   **  GUID of the selected item.
   **
   */
-  auto selected = treeView()-> selectedIndexes();
+  auto selected = view()-> selectedIndexes();
   if( selected.size() == 1 )
     retVal =
       Wt::asString
@@ -118,9 +118,9 @@ setModel()
 
   m_model-> load();
 
-  treeView()-> setModel( m_model );
+  view()-> setModel( m_model );
 
-  treeView()-> sortByColumn( 0, Wt::SortOrder::Ascending );
+  view()-> sortByColumn( 0, Wt::SortOrder::Ascending );
 
 } // endvoid GCW::Gui::AccountsWidget::setModel()
 
@@ -131,7 +131,7 @@ toJson() const
   jobj["selectedAccount"] = Wt::WString( selectedAccount() );
 
   for( int col=0; col< 7; col++ )
-    jobj[ Wt::WString("columnWidth-{1}").arg( col ).toUTF8() ] = Wt::WString( treeView()-> columnWidth( col ).cssText() );
+    jobj[ Wt::WString("columnWidth-{1}").arg( col ).toUTF8() ] = Wt::WString( view()-> columnWidth( col ).cssText() );
 
   return jobj;
 }
