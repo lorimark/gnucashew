@@ -31,7 +31,8 @@ class CentralWidget
     Wt::WTabWidget           * tabWidget()       { return m_tabWidget;      }
     GCW::Gui::AccountsWidget * accountsWidget()  { return m_accountsWidget; }
 
-    void openAccountRegister( const std::string & _accountGuid );
+    void open_AccountRegister( const std::string & _accountGuid );
+    void open_CustomerOverview();
 
     /*!
     ** \brief Index of Tab matching 'text'

@@ -124,9 +124,18 @@ class Item
       return value() < 0;
     }
 
+    /*!
+    ** \brief Return Value as a formatted String
+    **
+    ** This uses the decimal.h library to format the number
+    **  as a std::string.
+    **
+    ** \sa GCW::CFG::decimal_format()
+    **
+    */
     std::string valueAsString() const
     {
-      return Wt::WString( "{1}" ).arg( toString( value(), GCW::CFG::decimal_format() ) ).toUTF8();
+      return toString( value(), GCW::CFG::decimal_format() );
     }
 
     /*!
@@ -145,7 +154,7 @@ class Item
 
     std::string quantityAsString() const
     {
-      return Wt::WString( "{1}" ).arg( toString( quantity(), GCW::CFG::decimal_format() ) ).toUTF8();
+      return toString( quantity(), GCW::CFG::decimal_format() );
     }
 
     bool quantityIsNegative() const

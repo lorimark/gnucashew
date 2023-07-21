@@ -21,6 +21,10 @@
       Register is working in view-mode only.  You can scroll
       up and down, and the editing works, but it does not save
       back to the database file.
+      The menu items are mostly disabled, execpt for any menu
+      item that is working.  The 'Business:Customer:Overview' is
+      working.  The 'Assets:Savings' account has a few transactions in
+      it for scrolling around.
     </p>
 
     <p>
@@ -85,6 +89,31 @@
   <message id="gcw.MainWidget.mu.view.filterby">Filter by...</message>
   <message id="gcw.MainWidget.mu.view.refresh">Refresh</message>
   <message id="gcw.MainWidget.mu.view.newaccounts">New Accounts Page</message>
+
+  <message id="gcw.MainWidget.mu.actions">Actions</message>
+  <message id="gcw.MainWidget.mu.actions.online">Online Actions</message>
+  <message id="gcw.MainWidget.mu.actions.scheduled">Scheduled Transactions</message>
+  <message id="gcw.MainWidget.mu.actions.budget">Budget</message>
+  <message id="gcw.MainWidget.mu.actions.resetwarnings">Reset Warnings...</message>
+  <message id="gcw.MainWidget.mu.actions.renamepage">Rename Page</message>
+
+  <message id="gcw.MainWidget.mu.business">Business</message>
+  <message id="gcw.MainWidget.mu.business.customer">Customer</message>
+  <message id="gcw.MainWidget.mu.business.vendor">Vendor</message>
+  <message id="gcw.MainWidget.mu.business.employee">Employee</message>
+  <message id="gcw.MainWidget.mu.business.linked">Linked Documents</message>
+  <message id="gcw.MainWidget.mu.business.salestax">Sales Tax Table</message>
+  <message id="gcw.MainWidget.mu.business.billingterms">Billing Terms Editor</message>
+
+  <message id="gcw.MainWidget.mu.business.customer.overview">Customers Overview</message>
+  <message id="gcw.MainWidget.mu.business.customer.newCustomer">New Customer...</message>
+  <message id="gcw.MainWidget.mu.business.customer.findCustomer">Find Customer...</message>
+  <message id="gcw.MainWidget.mu.business.customer.newInvoice">New Invoice...</message>
+  <message id="gcw.MainWidget.mu.business.customer.findInvoice">Find Invoice...</message>
+  <message id="gcw.MainWidget.mu.business.customer.newJob">New Job...</message>
+  <message id="gcw.MainWidget.mu.business.customer.findJob">Find Job...</message>
+  <message id="gcw.MainWidget.mu.business.customer.processPayment">Process Payment...</message>
+  <message id="gcw.MainWidget.mu.business.customer.invoicesDue">Invoices Due Reminder</message>
 
   <message id="gcw.MainWidget.mu.help">Help</message>
   <message id="gcw.MainWidget.mu.help.tutorial">Tutorial and Concepts Guide</message>

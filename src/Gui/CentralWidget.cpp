@@ -8,6 +8,7 @@
 #include "../define.h"
 #include "../App.h"
 #include "CentralWidget.h"
+#include "CustomerOverviewWidget.h"
 
 /*!
 ** \brief Central Widget
@@ -61,7 +62,7 @@ CentralWidget()
     m_accountsWidget = widget.get();
     tabWidget()-> addTab( std::move( widget ), TR( "gcw.AccountsWidget.tabName" ) );
 
-    accountsWidget()-> doubleClicked().connect( this, &GCW::Gui::CentralWidget::openAccountRegister );
+    accountsWidget()-> doubleClicked().connect( this, &GCW::Gui::CentralWidget::open_AccountRegister );
   }
 
 } // endGCW::CentralWidget::CentralWidget()
@@ -78,7 +79,7 @@ tabIndex( const std::string & _text )
 } // endint GCW::Gui::CentralWidget::tabIndex( const std::string & _text )
 
 void GCW::Gui::CentralWidget::
-openAccountRegister( const std::string & _accountGuid )
+open_AccountRegister( const std::string & _accountGuid )
 {
   /*
   ** Grab the account so we can fetch things from it.
@@ -123,7 +124,42 @@ openAccountRegister( const std::string & _accountGuid )
   */
   tabWidget()-> setCurrentIndex( tabIndex( accountItem-> name() ) );
 
-} // endvoid GCW::Gui::CentralWidget::openAccountRegister( const std::string & _accountGuid )
+} // endvoid GCW::Gui::CentralWidget::open_AccountRegister( const std::string & _accountGuid )
+
+void GCW::Gui::CentralWidget::
+open_CustomerOverview()
+{
+  auto tabName = "Customers";
+
+  /*
+  ** See if this tab exists, if not, then add it.
+  **
+  */
+  if( tabIndex( tabName ) == -1 )
+  {
+    /*
+    ** Open a new RegisterWidget tab that is connected to the account
+    **
+    */
+    auto tab =
+      tabWidget()->
+        insertTab
+        ( 1,
+          std::make_unique< GCW::Gui::CustomerOverviewWidget >(),
+          tabName
+        );
+
+    tab-> setCloseable( true );
+
+  } // endif( tabIndex( _account-> name() ) == -1 )
+
+  /*
+  ** Go straight to the tab.
+  **
+  */
+  tabWidget()-> setCurrentIndex( tabIndex( tabName ) );
+
+} // endvoid GCW::Gui::CentralWidget::open_CustomerOverview()
 
 void GCW::Gui::CentralWidget::
 test()
