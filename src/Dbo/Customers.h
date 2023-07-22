@@ -183,6 +183,12 @@ class Item
 
 }; // endclass Item
 
+/*!
+** \brief Load Customer by Guid
+**
+*/
+Item::Ptr byGuid( const std::string & _guid );
+
     } // endnamespace Customers {
   } // endnamespace Dbo {
 } // endnamespace GCW {

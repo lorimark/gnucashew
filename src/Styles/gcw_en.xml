@@ -180,5 +180,7 @@
     Account: {5}
   </message>
 
+  <message id="gcw.Customer">Customer</message>
+
 </messages>
 

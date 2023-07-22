@@ -8,6 +8,7 @@
 #include "../define.h"
 #include "../App.h"
 #include "CentralWidget.h"
+#include "CustomerReportWidget.h"
 #include "CustomersWidget.h"
 
 /*!
@@ -127,9 +128,28 @@ open_AccountRegister( const std::string & _accountGuid )
 } // endvoid GCW::Gui::CentralWidget::open_AccountRegister( const std::string & _accountGuid )
 
 void GCW::Gui::CentralWidget::
-open_CustomerOverview()
+open_CustomerReportWidget( const std::string & _customerGuid )
 {
-  auto tabName = "Customers";
+  /*
+  ** Grab the account so we can fetch things from it.
+  **
+  */
+  auto customerItem = GCW::Dbo::Customers::byGuid( _customerGuid );
+
+  /*
+  ** If we didn't get a customer (this shouldn't happen) then
+  **  there's nothing for us to do... perhaps pop an error dialog
+  **  or something.
+  **
+  */
+  if( !customerItem )
+    return;
+
+  /*
+  ** build a tab name
+  **
+  */
+  auto tabName = TR8( "gcw.Customer" ) + ": " + customerItem-> name();
 
   /*
   ** See if this tab exists, if not, then add it.
@@ -138,14 +158,16 @@ open_CustomerOverview()
   if( tabIndex( tabName ) == -1 )
   {
     /*
-    ** Open a new RegisterWidget tab that is connected to the account
+    ** Open a new CustomerReportWidget tab that is connected to the account.
+    **  When inserting the tab, insert it immediately after the currently
+    **  selected customer.
     **
     */
     auto tab =
       tabWidget()->
         insertTab
-        ( 1,
-          std::make_unique< GCW::Gui::CustomersWidget >(),
+        ( tabWidget()-> currentIndex() + 1,
+          std::make_unique< GCW::Gui::CustomerReportWidget >( _customerGuid ),
           tabName
         );
 
@@ -159,7 +181,56 @@ open_CustomerOverview()
   */
   tabWidget()-> setCurrentIndex( tabIndex( tabName ) );
 
-} // endvoid GCW::Gui::CentralWidget::open_CustomerOverview()
+} // endvoid GCW::Gui::CentralWidget::open_CustomerReportWidget( const std::string & _customerGuid )
+
+void GCW::Gui::CentralWidget::
+open_CustomersWidget()
+{
+  auto tabName = TR8( "gcw.Customer" );
+
+  /*
+  ** See if this tab exists, if not, then add it.
+  **
+  */
+  if( tabIndex( tabName ) == -1 )
+  {
+    /*
+    ** Open a new CustomersWidget tab that is connected to the account
+    **
+    */
+    auto widget = std::make_unique< GCW::Gui::CustomersWidget >();
+    auto w = widget.get();
+
+    /*
+    ** Double Clicking on a customer causes the customer report
+    **  widget to open.
+    **
+    */
+    w->
+      doubleClicked().connect( [=]( const std::string & _customerGuid )
+      {
+        open_CustomerReportWidget( _customerGuid );
+      });
+
+    auto tab =
+      tabWidget()->
+        insertTab
+        ( 1,
+          std::move( widget ),
+          tabName
+        );
+
+    tab-> setCloseable( true );
+
+  } // endif( tabIndex( _account-> name() ) == -1 )
+
+  /*
+  ** Go straight to the tab.
+  **
+  */
+  tabWidget()-> setCurrentIndex( tabIndex( tabName ) );
+
+} // endvoid GCW::Gui::CentralWidget::open_CustomersWidget()
 
 void GCW::Gui::CentralWidget::
 test()

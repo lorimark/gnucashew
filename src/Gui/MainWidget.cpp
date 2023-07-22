@@ -105,7 +105,7 @@ MainWidget()
     {
       auto m_uCustomer = popBusiness-> addItem( TR( "gcw.MainWidget.mu.business.customer" ) );
       auto popCustomer = std::make_unique< Wt::WPopupMenu >();
-      popCustomer-> addItem( TR( "gcw.MainWidget.mu.business.customer.overview"       ), centralWidget(), &GCW::Gui::CentralWidget::open_CustomerOverview );
+      popCustomer-> addItem( TR( "gcw.MainWidget.mu.business.customer.overview"       ), centralWidget(), &GCW::Gui::CentralWidget::open_CustomersWidget );
       popCustomer-> addItem( TR( "gcw.MainWidget.mu.business.customer.newCustomer"    ) )-> setDisabled( true );
       popCustomer-> addItem( TR( "gcw.MainWidget.mu.business.customer.findCustomer"   ) )-> setDisabled( true );
       popCustomer-> addItem( TR( "gcw.MainWidget.mu.business.customer.newInvoice"     ) )-> setDisabled( true );

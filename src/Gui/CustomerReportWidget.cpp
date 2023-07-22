@@ -1,0 +1,25 @@
+#line 2 "src/CustomerReportWidget.cpp"
+
+#include <Wt/WText.h>
+#include <Wt/WVBoxLayout.h>
+
+#include "../define.h"
+#include "../GnuCashew.h"
+#include "CustomerReportWidget.h"
+
+GCW::Gui::CustomerReportWidget::
+CustomerReportWidget( const std::string & _customerGuid )
+: m_customerGuid( _customerGuid )
+{
+  addStyleClass( "CustomerReportWidget" );
+
+  /*
+  ** Apply a layout so everything will fit in the window
+  **
+  */
+  auto lw = setLayout( std::make_unique< Wt::WVBoxLayout >() );
+
+} // endGCW::Gui::CustomerReportWidget::CustomerReportWidget()
+
+
+

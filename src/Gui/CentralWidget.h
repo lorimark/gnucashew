@@ -34,7 +34,8 @@ class CentralWidget
     GCW::Gui::CustomersWidget * customersWidget()  { return m_customersWidget; }
 
     void open_AccountRegister( const std::string & _accountGuid );
-    void open_CustomerOverview();
+    void open_CustomersWidget();
+    void open_CustomerReportWidget( const std::string & _customerGuid );
 
     /*!
     ** \brief Index of Tab matching 'text'

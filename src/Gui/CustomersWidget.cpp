@@ -59,8 +59,17 @@ CustomersWidget()
 void GCW::Gui::CustomersWidget::
 doubleClicked( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _event )
 {
+  /*
+  ** get to the customerItem that was clicked on
+  */
+  auto customerItem = model()-> resultRow( _index.row() );
 
-}
+  /*
+  ** emit the guid of the item
+  */
+  doubleClicked().emit( customerItem-> guid() );
+
+} // endvoid GCW::Gui::CustomersWidget::doubleClicked( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _event )
 
 
 

@@ -8,6 +8,7 @@
 #include <Wt/WToolBar.h>
 
 #include "CentralWidget.h"
+#include "ToolBar.h"
 
 namespace GCW {
   namespace Gui {
