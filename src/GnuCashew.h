@@ -6,6 +6,8 @@
 #include "define.h"
 #include "App.h"
 
+#include "Dbo/Vars.h"
+
 #define DEC_NAMESPACE DECIMAL
 #include "3rd/decimal.h"
 

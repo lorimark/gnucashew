@@ -341,6 +341,28 @@ class Session
     */
     bool open( const std::string & _path );
 
+    /*!
+    ** \brief Check GnuCashew Extensions
+    **
+    ** This examines the database tables to determine if the necessary
+    **  modifications have been made to the database to support the
+    **  GnuCashew Extensions.
+    **
+    */
+    bool hasGnuCashewExtensions();
+
+    /*!
+    ** \brief Add GnuCashew Extensions
+    **
+    ** This makes the necessary modifications to the database to include
+    **  the extensions necessary to support the GnuCashew attributes.
+    **
+    ** This function can be called repeatedly, as it will check for the
+    **  presense of each attribute before it is added.
+    **
+    */
+    bool addGnuCashewExtensions();
+
   private:
 
     void init();

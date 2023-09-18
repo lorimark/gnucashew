@@ -9,7 +9,7 @@
 
 #include "../Dbo/Session.h"
 #include "../Dbo/Accounts.h"
-#include "../Eng/RegisterModel.h"
+#include "../Eng/AccountRegisterModel.h"
 #include "TableView.h"
 
 namespace GCW {
@@ -49,7 +49,7 @@ class RegisterWidget
     ** An alias for the Model in case this interface changes.
     **
     */
-    using Model = GCW::Eng::RegisterModel;
+    using Model = GCW::Eng::AccountRegisterModel;
 
     /*!
     ** \brief Constructor

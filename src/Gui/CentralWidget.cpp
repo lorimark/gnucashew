@@ -1,4 +1,4 @@
-#line 2 "src/CentralWidget.cpp"
+#line 2 "src/Gui/CentralWidget.cpp"
 
 #include <Wt/WMenuItem.h>
 #include <Wt/WTabWidget.h>
@@ -7,6 +7,7 @@
 
 #include "../define.h"
 #include "../App.h"
+#include "BillPay/MainWidget.h"
 #include "CentralWidget.h"
 #include "CustomerReportWidget.h"
 #include "CustomersWidget.h"
@@ -54,7 +55,7 @@ CentralWidget()
     });
 
   /*
-  ** Attach the accounts widget as a non-closeable-tab, so that the
+  ** Attach the accounts widget tree view as a non-closeable-tab, so that the
   **  user can navigate around the accounts.
   **
   */
@@ -82,6 +83,8 @@ tabIndex( const std::string & _text )
 void GCW::Gui::CentralWidget::
 open_AccountRegister( const std::string & _accountGuid )
 {
+  Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
+
   /*
   ** Grab the account so we can fetch things from it.
   **
@@ -183,10 +186,11 @@ open_CustomerReportWidget( const std::string & _customerGuid )
 
 } // endvoid GCW::Gui::CentralWidget::open_CustomerReportWidget( const std::string & _customerGuid )
 
-void GCW::Gui::CentralWidget::
+void
+GCW::Gui::CentralWidget::
 open_CustomersWidget()
 {
-  auto tabName = TR8( "gcw.Customer" );
+  auto tabName = TR8( "gcw.tabName.Customer" );
 
   /*
   ** See if this tab exists, if not, then add it.
@@ -230,7 +234,46 @@ open_CustomersWidget()
   */
   tabWidget()-> setCurrentIndex( tabIndex( tabName ) );
 
-} // endvoid GCW::Gui::CentralWidget::open_CustomersWidget()
+} // endopen_CustomersWidget()
+
+void
+GCW::Gui::CentralWidget::
+open_BillPayWidget()
+{
+  auto tabName = TR8( "gcw.tabName.BillPay" );
+
+  /*
+  ** See if this tab exists, if not, then add it.
+  **
+  */
+  if( tabIndex( tabName ) == -1 )
+  {
+    /*
+    ** Open a new CustomersWidget tab that is connected to the account
+    **
+    */
+    auto widget = std::make_unique< GCW::Gui::BillPay::MainWidget >();
+    auto w = widget.get();
+
+    auto tab =
+      tabWidget()->
+        insertTab
+        ( 1,
+          std::move( widget ),
+          tabName
+        );
+
+    tab-> setCloseable( true );
+
+  } // endif( tabIndex( _account-> name() ) == -1 )
+
+  /*
+  ** Go straight to the tab.
+  **
+  */
+  tabWidget()-> setCurrentIndex( tabIndex( tabName ) );
+
+} // endopen_BillPayWidget()
 
 void GCW::Gui::CentralWidget::
 test()

@@ -117,6 +117,8 @@ class Item
 
 }; // endclass Item
 
+extern const char * s_tableName;
+
 /*!
 ** \brief Load Transaction by Guid
 **

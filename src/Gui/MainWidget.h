@@ -39,6 +39,7 @@ class MainWidget
   private:
 
     void open_customersOverview();
+    void open_properties();
     void editSelectedAccount();
     void test();
 

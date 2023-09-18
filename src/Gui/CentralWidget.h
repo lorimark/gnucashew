@@ -36,6 +36,7 @@ class CentralWidget
     void open_AccountRegister( const std::string & _accountGuid );
     void open_CustomersWidget();
     void open_CustomerReportWidget( const std::string & _customerGuid );
+    void open_BillPayWidget();
 
     /*!
     ** \brief Index of Tab matching 'text'

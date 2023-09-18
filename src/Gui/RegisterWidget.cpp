@@ -173,8 +173,8 @@ Wt::cpp17::any DateDelegate::editState( Wt::WWidget * _editor, const Wt::WModelI
 
 void DateDelegate::setEditState( Wt::WWidget * _editor, const Wt::WModelIndex & _index, const Wt::cpp17::any & _value ) const
 {
-  std::cout << __FILE__ << ":" << __LINE__ << " " << _editor    << std::endl;
-  std::cout << __FILE__ << ":" << __LINE__ << " " << m_dateEdit << std::endl;
+//  std::cout << __FILE__ << ":" << __LINE__ << " " << _editor    << std::endl;
+//  std::cout << __FILE__ << ":" << __LINE__ << " " << m_dateEdit << std::endl;
 
 } // endvoid DateDelegate::setEditState( Wt::WWidget * _editor, const Wt::WModelIndex & _index, const Wt::cpp17::any & _value ) const
 
@@ -309,6 +309,8 @@ GCW::Gui::RegisterWidget::
 RegisterWidget( const std::string & _accountGuid )
 : m_accountGuid( _accountGuid )
 {
+  std::cout << __FILE__ << ":" << __LINE__ << " " << _accountGuid << std::endl;
+
   /*
   ** Look in gcw.css for styling
   **
@@ -325,6 +327,7 @@ RegisterWidget( const std::string & _accountGuid )
   m_tableView = w.get();
   lw-> addWidget( std::move( w ), 1 );
   tableView()-> addStyleClass( "Gcw-TableView" );
+//  tableView()-> setRowHeight( "20px" );
 
   /*
   ** Configure the table view
@@ -521,6 +524,8 @@ fromJson( const Wt::Json::Object & _jobj )
 void GCW::Gui::RegisterWidget::
 loadData()
 {
+  std::cout << __FILE__ << ":" << __LINE__ << " " << m_accountGuid << std::endl;
+
   m_model = std::make_shared< Model >( m_accountGuid );
 
   tableView()-> setModel( m_model );

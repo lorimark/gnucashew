@@ -1,11 +1,14 @@
 
 #include <Wt/WMenu.h>
+#include <Wt/WDialog.h>
 #include <Wt/WPopupMenu.h>
 #include <Wt/WPushButton.h>
 #include <Wt/WVBoxLayout.h>
 
 #include "../define.h"
+#include "../GnuCashew.h"
 #include "MainWidget.h"
+#include "FilePropertiesWidget.h"
 
 GCW::Gui::MainWidget::
 MainWidget()
@@ -14,10 +17,10 @@ MainWidget()
 
   auto lw = setLayout( std::make_unique< Wt::WVBoxLayout >() );
 
-  m_navBar        = lw-> addWidget( std::make_unique< Wt::WNavigationBar   >()    );
-  m_toolBar       = lw-> addWidget( std::make_unique< Wt::WToolBar         >()    );
-  m_centralWidget = lw-> addWidget( std::make_unique< GCW::Gui::CentralWidget   >(), 1 );
-  m_statusBar     = lw-> addWidget( std::make_unique< Wt::WContainerWidget >()    );
+  m_navBar        = lw-> addWidget( std::make_unique< Wt::WNavigationBar      >()    );
+  m_toolBar       = lw-> addWidget( std::make_unique< Wt::WToolBar            >()    );
+  m_centralWidget = lw-> addWidget( std::make_unique< GCW::Gui::CentralWidget >(), 1 );
+  m_statusBar     = lw-> addWidget( std::make_unique< Wt::WContainerWidget    >()    );
 
   /*
   ** Set up the navbar
@@ -46,7 +49,7 @@ MainWidget()
     popFile-> addItem( TR( "gcw.MainWidget.mu.file.pagesetup"  ) )-> setDisabled( true );
     popFile-> addItem( TR( "gcw.MainWidget.mu.file.export"     ) )-> setDisabled( true );
     popFile-> addSeparator();
-    popFile-> addItem( TR( "gcw.MainWidget.mu.file.properties" ) )-> setDisabled( true );
+    popFile-> addItem( TR( "gcw.MainWidget.mu.file.properties" ), this, &GCW::Gui::MainWidget::open_properties );
     popFile-> addSeparator();
     popFile-> addItem( TR( "gcw.MainWidget.mu.file.close"      ) )-> setDisabled( true );
     popFile-> addItem( TR( "gcw.MainWidget.mu.file.quit"       ) )-> setDisabled( true );
@@ -92,6 +95,10 @@ MainWidget()
     popActions-> addItem( TR( "gcw.MainWidget.mu.actions.online"        ) )-> setDisabled( true );
     popActions-> addItem( TR( "gcw.MainWidget.mu.actions.scheduled"     ) )-> setDisabled( true );
     popActions-> addItem( TR( "gcw.MainWidget.mu.actions.budget"        ) )-> setDisabled( true );
+
+    if( GCW::app()-> gnucash_session().hasGnuCashewExtensions() )
+      popActions-> addItem( TR( "gcw.MainWidget.mu.actions.billpay"       ), centralWidget(), &GCW::Gui::CentralWidget::open_BillPayWidget );
+
     popActions-> addSeparator();
     popActions-> addItem( TR( "gcw.MainWidget.mu.actions.resetwarnings" ) )-> setDisabled( true );
     popActions-> addItem( TR( "gcw.MainWidget.mu.actions.renamepage"    ) )-> setDisabled( true );
@@ -151,7 +158,7 @@ MainWidget()
   toolBar()-> addButton( std::make_unique< Wt::WPushButton >( TR( "gcw.MainWidget.tb.delete" ) ) );
 
   {
-    auto b = std::make_unique< Wt::WPushButton >( "test" );
+    auto b = std::make_unique< Wt::WPushButton >( "devtest" );
     auto e = b.get();
     toolBar()-> addButton( std::move(b) );
     e-> clicked().connect( [=](){ test(); });
@@ -161,18 +168,45 @@ MainWidget()
 
 } // endGCW::MainWidget::MainWidget()
 
-void GCW::Gui::MainWidget::
+void
+GCW::Gui::MainWidget::
+open_properties()
+{
+  if( !GCW::app()-> gnucash_session().isOpen() )
+    return;
+
+  auto u_ = std::make_unique< Wt::WDialog >( TR( "gcw.PropertiesWidget.titleBar" ) );
+  auto dialog = u_.get();
+  addChild( std::move( u_ ) );
+
+  dialog-> rejectWhenEscapePressed( true );
+  dialog-> contents()-> addNew< GCW::Gui::FilePropertiesWidget >();
+
+  /*
+  ** Clean up after the dialog is closed.
+  **
+  */
+  dialog-> finished().connect( [&]( Wt::DialogCode _code ) { removeChild( dialog ); });
+  dialog-> show();
+
+} // endopen_properties()
+
+void
+GCW::Gui::MainWidget::
 editSelectedAccount()
 {
   centralWidget()-> accountsWidget()-> editSelectedAccount();
 
-}
+} // endeditSelectedAccount()
 
 
 
-void GCW::Gui::MainWidget::
+void
+GCW::Gui::MainWidget::
 test()
 {
-  centralWidget()-> accountsWidget()-> test();
-}
+  std::cout << __FILE__ << ":" << __LINE__ << " " << std::endl;
+
+
+} // endtest()
 

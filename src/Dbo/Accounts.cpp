@@ -1,94 +1,154 @@
 
 #include "../App.h"
+#include "../Glb/Core.h"
 #include "Accounts.h"
 #include "Transactions.h"
 
+namespace {
+
+/*!
+** \brief Accounts Sorter
+**
+**
+*/
+void sort( GCW::Dbo::Accounts::Item::Vector & _accountItems )
+{
+  /*!
+  ** Sort the vector of splits by transaction date so that they can be loaded
+  **  in to the model in proper sequential order.
+  **
+  */
+  std::sort
+  (
+   _accountItems.begin(),
+   _accountItems.end(),
+   []( const GCW::Dbo::Accounts::Item::Ptr item1,
+       const GCW::Dbo::Accounts::Item::Ptr item2
+     )
+     {
+       auto fullName1 = GCW::Dbo::Accounts::fullName( item1-> guid() );
+       auto fullName2 = GCW::Dbo::Accounts::fullName( item2-> guid() );
+
+       /*
+       ** return .bool. if the .trans1. date is .less than. the .trans2. date
+       **
+       */
+       return fullName1
+            < fullName2;
+     }
+  );
+
+} // endvoid sort( GCW::Dbo::Splits::Item::Vector & _splitItems )
+
+} // endnamespace {
+
+const char * GCW::Dbo::Accounts::s_tableName = "accounts";
+
 GCW::Dbo::Accounts::Item::Ptr
-GCW::Dbo::Accounts::root()
+GCW::Dbo::Accounts::
+root()
 {
   GCW::Dbo::Accounts::Item::Ptr retVal;
 
   /*
-  ** If the session isn't open then there's nothing to load.
+  ** Get a handle on the root account.  The root account is the only
+  **  account that has no parent, and has a name == "Root Account".
+  **  There should only be one of these.
   **
   */
-  if( GCW::app()-> gnucash_session().isOpen() )
+  auto results =
+    GCW::app()-> gnucash_session().find< GCW::Dbo::Accounts::Item >()
+    .where( "(parent_guid = '' OR parent_guid IS NULL) AND name = 'Root Account'" )
+    .resultList()
+    ;
+
+  if( results.size() == 1 )
   {
-
-    Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
-
-    /*
-    ** Get a handle on the root account.  The root account is the only
-    **  account that has no parent, and has a name == "Root Account".
-    **  There should only be one of these.
-    **
-    */
-    auto results =
-      GCW::app()-> gnucash_session().find< GCW::Dbo::Accounts::Item >()
-      .where( "(parent_guid = '' OR parent_guid IS NULL) AND name = 'Root Account'" )
-      .resultList()
-      ;
-
-    if( results.size() == 1 )
-    {
-      retVal = *results.begin();
-    }
-
-  } // endif( GCW::app()-> gnucash_session().isOpen() )
+    retVal = *results.begin();
+  }
 
   return retVal;
 
 } // endGCW::Dbo::Accounts::Item::Ptr GCW::Dbo::Accounts::root()
 
 GCW::Dbo::Accounts::Item::Ptr
-GCW::Dbo::Accounts::byGuid( const std::string & _guid )
+GCW::Dbo::Accounts::
+byGuid( const std::string & _guid )
+{
+  GCW::Dbo::Accounts::Item::Ptr retVal;
+
+  Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
+
+  retVal =
+    GCW::app()-> gnucash_session().load< GCW::Dbo::Accounts::Item >( _guid )
+    ;
+
+  return retVal;
+
+} // endbyGuid( const std::string & _guid )
+
+GCW::Dbo::Accounts::Item::Ptr
+GCW::Dbo::Accounts::
+byChildName( const std::string & _parentGuid, const std::string & _childName )
+{
+  GCW::Dbo::Accounts::Item::Ptr retVal;
+
+  retVal =
+    GCW::app()-> gnucash_session().find< GCW::Dbo::Accounts::Item >()
+    .where( "parent_guid = ? AND name = ?" )
+    .bind( _parentGuid )
+    .bind( _childName )
+    .resultValue()
+    ;
+
+  return retVal;
+
+} // endbyChildName( const std::string & _parentGuid, const std::string & _childName )
+
+GCW::Dbo::Accounts::Item::Ptr
+GCW::Dbo::Accounts::
+byFullName( const std::string & _fullName )
 {
   GCW::Dbo::Accounts::Item::Ptr retVal;
 
   /*
-  ** If the session isn't open then there's nothing to load.
+  ** Here we split the account full-name, so we can dive in
+  **  to the accounts table and lope our way up to this
+  **  account.
   **
   */
-  if( GCW::app()-> gnucash_session().isOpen() )
-  {
+  auto split = Wtx::Core::split( _fullName, ':' );
 
-    Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
-
-    retVal =
-      GCW::app()-> gnucash_session().load< GCW::Dbo::Accounts::Item >( _guid )
-      ;
-
-  } // endif( GCW::app()-> gnucash_session().isOpen() )
+  /*
+  ** Start at the root and lope on up.  The return value
+  **  will be filled-in as we go.  We should end on the final
+  **  account, which is the one we wanted.
+  **
+  */
+  retVal = root();
+  for( int i=0; i< split.size(); i++ )
+    retVal = byChildName( retVal-> guid(), split.at(i) );
 
   return retVal;
 
-} // endGCW::Dbo::Accounts::Item::Ptr GCW::Dbo::Accounts::byGuid( const std::string & _guid )
+} // endGCW::Dbo::Accounts::Item::Ptr GCW::Dbo::Accounts::byFullName( const std::string & _guid )
 
 
 GCW::Dbo::Accounts::Item::Vector
-GCW::Dbo::Accounts::allAccounts()
+GCW::Dbo::Accounts::
+allAccounts()
 {
   GCW::Dbo::Accounts::Item::Vector retVal;
 
-  /*
-  ** If the session isn't open then there's nothing to load.
-  **
-  */
-  if( GCW::app()-> gnucash_session().isOpen() )
-  {
+  auto results =
+    GCW::app()-> gnucash_session().find< GCW::Dbo::Accounts::Item >()
+    .resultList()
+    ;
 
-    Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
+  for( auto result : results )
+    retVal.push_back( result );
 
-    auto results =
-      GCW::app()-> gnucash_session().find< GCW::Dbo::Accounts::Item >()
-      .resultList()
-      ;
-
-    for( auto result : results )
-      retVal.push_back( result );
-
-  } // endif( GCW::app()-> gnucash_session().isOpen() )
-
+  sort( retVal );
 
   return retVal;
 
@@ -96,31 +156,21 @@ GCW::Dbo::Accounts::allAccounts()
 
 
 GCW::Dbo::Accounts::Item::Vector
-GCW::Dbo::Accounts::activeAccounts()
+GCW::Dbo::Accounts::
+activeAccounts()
 {
   GCW::Dbo::Accounts::Item::Vector retVal;
 
-  /*
-  ** If the session isn't open then there's nothing to load.
-  **
-  */
-  if( GCW::app()-> gnucash_session().isOpen() )
-  {
+  auto results =
+    GCW::app()-> gnucash_session().find< GCW::Dbo::Accounts::Item >()
+    .resultList()
+    ;
 
-    Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
-
-    auto results =
-      GCW::app()-> gnucash_session().find< GCW::Dbo::Accounts::Item >()
-      .resultList()
-      ;
-
-    for( auto result : results )
-      if( !result-> hidden()
-       && !result-> placeHolder()
-        )
-      retVal.push_back( result );
-
-  } // endif( GCW::app()-> gnucash_session().isOpen() )
+  for( auto result : results )
+    if( !result-> hidden()
+     && !result-> placeHolder()
+      )
+    retVal.push_back( result );
 
   return retVal;
 
@@ -128,7 +178,8 @@ GCW::Dbo::Accounts::activeAccounts()
 
 
 GCW::Dbo::Accounts::Item::Vector
-GCW::Dbo::Accounts::Children::vector( const std::string & _parentGuid )
+GCW::Dbo::Accounts::Children::
+vector( const std::string & _parentGuid )
 {
   GCW::Dbo::Accounts::Item::Vector retVal;
 
@@ -145,7 +196,8 @@ GCW::Dbo::Accounts::Children::vector( const std::string & _parentGuid )
 **
 */
 std::string
-GCW::Dbo::Accounts::fullName( const std::string & _accountGuid )
+GCW::Dbo::Accounts::
+fullName( const std::string & _accountGuid )
 {
   /*!
   ** If the provided account guid is blank, then just return

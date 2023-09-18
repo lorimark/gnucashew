@@ -28,9 +28,11 @@ unset(dist_generated_depends CACHE)
 add_subdirectory( Dbo )
 add_subdirectory( Eng )
 add_subdirectory( Gui )
+add_subdirectory( Glb )
 
 include_directories(
   /opt/Wt4/include
+  Glb
 )
 
 link_directories(/opt/Wt4/lib)

@@ -28,7 +28,8 @@ namespace GCW {
 
   namespace Dbo {
 
-template <class C> class BaseItem
+template <class C>
+  class BaseItem
 : public Wt::Dbo::Dbo< C >
 {
   public:
@@ -39,11 +40,10 @@ template <class C> class BaseItem
 
     BaseItem():Wt::Dbo::Dbo<C>() {}
 
-};
+}; // endclass BaseItem
 
-
-  }
-}
+  } // endnamespace Dbo
+} // endnamespace GCW {
 
 #endif // end#ifndef __BASEITEM_H___
 

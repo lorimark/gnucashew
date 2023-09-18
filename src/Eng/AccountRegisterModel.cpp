@@ -1,11 +1,11 @@
 
-#include "RegisterModel.h"
+#include "AccountRegisterModel.h"
 #include "../Dbo/Splits.h"
 #include "../Dbo/Transactions.h"
 
-GCW::Eng::RegisterModel::
-RegisterModel( const std::string & _accountGuid )
-: Wt::WStandardItemModel( 0, 8 ),
+GCW::Eng::AccountRegisterModel::
+AccountRegisterModel( const std::string & _accountGuid )
+: Wt::WStandardItemModel( 0, 8 ), // 8-columns
   m_accountGuid( _accountGuid )
 {
   refreshFromDisk();
@@ -25,7 +25,7 @@ RegisterModel( const std::string & _accountGuid )
 
   });
 
-} // endGCW::Eng::RegisterModel::RegisterModel( const std::string & _accountGuid )
+} // endGCW::Eng::AccountRegisterModel::AccountRegisterModel( const std::string & _accountGuid )
 
 /*!
 ** \brief Refresh From Disk
@@ -38,7 +38,7 @@ RegisterModel( const std::string & _accountGuid )
 **
 */
 void
-GCW::Eng::RegisterModel::
+GCW::Eng::AccountRegisterModel::
 refreshFromDisk()
 {
   /*!
@@ -303,21 +303,21 @@ refreshFromDisk()
   setHeaderData( col++, TR( "gcw.RegisterWidget.column.withdrawal" ) );
   setHeaderData( col++, TR( "gcw.RegisterWidget.column.balance"    ) );
 
-} // endGCW::Eng::RegisterModel::refreshFromDisk()
+} // endGCW::Eng::AccountRegisterModel::refreshFromDisk()
 
 
-GCW::Eng::RegisterModel::RowItem
-GCW::Eng::RegisterModel::
+GCW::Eng::AccountRegisterModel::RowItem
+GCW::Eng::AccountRegisterModel::
 makeRow( const std::string & _splitGuid )
 {
   RowItem rowItem;
 
   return rowItem;
 
-} // endGCW::Eng::RegisterModel::RowItem GCW::Eng::RegisterModel::makeRow( const std::string & _splitGuid )
+} // endGCW::Eng::AccountRegisterModel::RowItem GCW::Eng::AccountRegisterModel::makeRow( const std::string & _splitGuid )
 
 std::set< std::string >
-GCW::Eng::RegisterModel::
+GCW::Eng::AccountRegisterModel::
 suggestionsFromColumn( int _column ) const
 {
   std::set< std::string > retVal;
@@ -327,6 +327,6 @@ suggestionsFromColumn( int _column ) const
 
   return retVal;
 
-} // endstd::set< std::string > GCW::Eng::RegisterModel::suggestionsFromColumn( int _column ) const
+} // endstd::set< std::string > GCW::Eng::AccountRegisterModel::suggestionsFromColumn( int _column ) const
 
 

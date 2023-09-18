@@ -4,14 +4,18 @@
 
 #include <Wt/Dbo/backend/Sqlite3.h>
 
+#include <gcwglobal.h>
+
 #include "Accounts.h"
 #include "Customers.h"
 #include "Splits.h"
 #include "Transactions.h"
-
+#include "Vars.h"
 #include "Session.h"
 
-bool GCW::Dbo::Session::open( const std::string & _path )
+bool
+GCW::Dbo::Session::
+open( const std::string & _path )
 {
   /*
   ** Clear this so that if we don't get opened, then we don't
@@ -34,7 +38,9 @@ bool GCW::Dbo::Session::open( const std::string & _path )
 
 } // endbool GCW::Dbo::Session::open( const std::string & _path )
 
-bool GCW::Dbo::GnuCash::Session::open( const std::string & _path )
+bool
+GCW::Dbo::GnuCash::Session::
+open( const std::string & _path )
 {
   /*
   ** Call the base class.
@@ -49,6 +55,8 @@ bool GCW::Dbo::GnuCash::Session::open( const std::string & _path )
   try
   {
     auto connection = std::make_unique< Wt::Dbo::backend::Sqlite3 >( _path );
+
+//    connection-> setProperty( "show-queries", "true" );
 
     setConnection( std::move( connection ) );
 
@@ -66,25 +74,128 @@ bool GCW::Dbo::GnuCash::Session::open( const std::string & _path )
     std::cout << __FILE__ << ":" << __LINE__ << " " << e.what() << std::endl;
   }
 
+
+
   return isOpen();
 
 } // endbool GCW::Dbo::Session::open_gnucash( const std::string & _path )
 
-void GCW::Dbo::GnuCash::Session::init()
+void
+GCW::Dbo::GnuCash::Session::
+init()
 {
-  mapClass< Accounts     ::Item >( "accounts"     );
-  mapClass< Customers    ::Item >( "customers"    );
-  mapClass< Transactions ::Item >( "transactions" );
-  mapClass< Splits       ::Item >( "splits"       );
+  mapClass< GCW::Dbo:: Accounts     ::Item >( GCW::Dbo:: Accounts     ::s_tableName );
+  mapClass< GCW::Dbo:: Customers    ::Item >( GCW::Dbo:: Customers    ::s_tableName );
+  mapClass< GCW::Dbo:: Transactions ::Item >( GCW::Dbo:: Transactions ::s_tableName );
+  mapClass< GCW::Dbo:: Splits       ::Item >( GCW::Dbo:: Splits       ::s_tableName );
+  mapClass< GCW::Dbo:: Vars         ::Item >( GCW::Dbo:: Vars         ::s_tableName );
 
   m_isOpen = true;
 
 } // endvoid GCW::Dbo::Session::GnuCash::init()
 
-bool GCW::Dbo::GnuCashew::Session::open( const std::string & _path )
+bool
+GCW::Dbo::GnuCash::Session::
+hasGnuCashewExtensions()
 {
+  /*
+  ** assume no extensions
+  */
+  bool retVal = false;
+
+  /*
+  **  query the list of tables
+  */
+  Wt::Dbo::Transaction t( *this );
+  auto results =
+    query< std::tuple< std::string, std::string, std::string, int, std::string > >
+    (
+     "select type,name,tbl_name,rootpage,sql from sqlite_master"
+    )
+    .resultList()
+    ;
+
+  /*
+  ** loop the list, looking for the extension tables
+  */
+  for( auto result : results )
+  {
+    std::string _type;
+    std::string _name;
+    std::string tbl_name;
+    int         rootpage;
+    std::string _text;
+
+    std::tie( _type, _name, tbl_name, rootpage, _text ) = result;
+
+    if( _type != "table" )
+      continue;
+
+    if( _name == GCW::Dbo::Vars::s_tableName )
+    {
+      retVal = true;
+      break;
+    }
+
+#ifdef NEVER
+    std::cout << __FILE__ << ":" << __LINE__
+      << " type:" << _type
+      << " name:" << _name
+//      << " tbln:" << tbl_name
+//      << " root:" << rootpage
+//      << " text:" << _text
+      << std::endl
+      ;
+#endif
+
+  } // endfor( auto result : results )
+
+  return retVal;
+
+} // endhasGnuCashewExtensions() const
+
+bool
+GCW::Dbo::GnuCash::Session::
+addGnuCashewExtensions()
+{
+  if( hasGnuCashewExtensions() )
+    return true;
+
+  Wt::Dbo::Transaction t( *this );
+
+  /*
+  ** Add a table to contain the vars
+  **
+  */
+  auto sql =
+    Wt::WString( TR("gcw_sql.create_vars") )
+    .arg( GCW::Dbo::Vars::s_tableName )
+    .toUTF8()
+    ;
+
+  execute( sql );
+
+  /*
+  ** poke some initial values in to the vars table
+  **
+  */
+  auto item = GCW::Dbo::Vars::get( "gnucashew","sys" );
+
+  item.modify()-> setVar( "createdOn",  Wt::WDateTime::currentDateTime().toString( ISO_DATE_FORMAT ) );
+  item.modify()-> setVar( "gcwVersion", 1 );
+
+  return true;
+
+} // endaddGnuCashewExtensions()
+
+bool
+GCW::Dbo::GnuCashew::Session::
+open( const std::string & _path )
+{
+
   return false;
 
 } // endbool GCW::Dbo::GnuCashew::Session::open( const std::string & _path )
+
 
 

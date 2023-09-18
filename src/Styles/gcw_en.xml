@@ -94,6 +94,7 @@
   <message id="gcw.MainWidget.mu.actions.online">Online Actions</message>
   <message id="gcw.MainWidget.mu.actions.scheduled">Scheduled Transactions</message>
   <message id="gcw.MainWidget.mu.actions.budget">Budget</message>
+  <message id="gcw.MainWidget.mu.actions.billpay">Bill Pay</message>
   <message id="gcw.MainWidget.mu.actions.resetwarnings">Reset Warnings...</message>
   <message id="gcw.MainWidget.mu.actions.renamepage">Rename Page</message>
 
@@ -128,6 +129,8 @@
   <message id="gcw.MainWidget.tb.edit">edit</message>
   <message id="gcw.MainWidget.tb.new">new</message>
   <message id="gcw.MainWidget.tb.delete">delete</message>
+
+  <message id="gcw.PropertiesWidget.titleBar">Properties</message>
 
   <message id="gcw.AccountsWidget.tabName">Accounts</message>
   <message id="gcw.AccountsWidget.column.accountcode">Account Code</message>
@@ -180,7 +183,8 @@
     Account: {5}
   </message>
 
-  <message id="gcw.Customer">Customer</message>
+  <message id="gcw.tabName.Customer">Customer</message>
+  <message id="gcw.tabName.BillPay">Bill Pay</message>
 
 </messages>
 

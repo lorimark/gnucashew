@@ -1,20 +1,20 @@
 
-#ifndef __ENG_REGISTERMODEL_H___
-#define __ENG_REGISTERMODEL_H___
+#ifndef __ENG_ACCOUNTREGISTERMODEL_H___
+#define __ENG_ACCOUNTREGISTERMODEL_H___
 
 #include <Wt/WStandardItemModel.h>
 
 namespace GCW {
   namespace Eng {
 
-class RegisterModel
+class AccountRegisterModel
 : public Wt::WStandardItemModel
 {
   using RowItem = std::vector< std::unique_ptr< Wt::WStandardItem > >;
 
   public:
 
-    RegisterModel( const std::string & _accountGuid );
+    AccountRegisterModel( const std::string & _accountGuid );
 
     void refreshFromDisk();
 
@@ -45,7 +45,7 @@ balance
 
     std::string m_accountGuid;
 
-}; // endclass RegisterModel
+}; // endclass AccountRegisterModel
 
   } //  namespace Eng {
 } // endnamespace GCW {

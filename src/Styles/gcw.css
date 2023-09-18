@@ -99,4 +99,29 @@
   background-color:yellow;
 }
 
+.billpayedit
+{
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  padding: 5px;
+}
+
+.billpayedit
+ .t1
+{
+  border-collapse: collapse;
+  width: 75%;
+}
+
+.billpayedit
+ .t1
+  td
+{
+  padding-left: 3px;
+  padding-right: 3px;
+  text-align: left;
+}
+
+
 

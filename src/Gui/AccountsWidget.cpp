@@ -161,6 +161,8 @@ load()
   if( !GCW::app()-> gnucash_session().isOpen() )
     return;
 
+  Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
+
   load( invisibleRootItem(), GCW::Dbo::Accounts::root() );
 
   int col = 0;

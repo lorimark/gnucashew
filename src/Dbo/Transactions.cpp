@@ -2,8 +2,11 @@
 #include "../App.h"
 #include "Transactions.h"
 
+const char * GCW::Dbo::Transactions::s_tableName = "transactions";
+
 GCW::Dbo::Transactions::Item::Ptr
-GCW::Dbo::Transactions::byGuid( const std::string & _txGuid )
+GCW::Dbo::Transactions::
+byGuid( const std::string & _txGuid )
 {
   GCW::Dbo::Transactions::Item::Ptr retVal;
 
@@ -28,7 +31,8 @@ GCW::Dbo::Transactions::byGuid( const std::string & _txGuid )
 } // endGCW::Dbo::Transactions::Item::Ptr GCW::Dbo::Transactions::byGuid( const std::string & _txGuid )
 
 GCW::Dbo::Transactions::Item::Vector
-GCW::Dbo::Transactions::byAccount( const std::string & _accountGuid )
+GCW::Dbo::Transactions::
+byAccount( const std::string & _accountGuid )
 {
   GCW::Dbo::Transactions::Item::Vector retVal;
 

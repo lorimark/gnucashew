@@ -183,6 +183,8 @@ class Item
 
 }; // endclass Item
 
+extern const char * s_tableName;
+
 /*!
 ** \brief Load Customer by Guid
 **

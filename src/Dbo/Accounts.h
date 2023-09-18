@@ -124,6 +124,8 @@ class Item
 
 }; // endclass Item
 
+extern const char * s_tableName;
+
 /*!
 ** \brief Load Root Account
 **
@@ -136,6 +138,8 @@ Item::Ptr root();
 **
 */
 Item::Ptr byGuid( const std::string & _guid );
+Item::Ptr byChildName( const std::string & _parentGuid, const std::string & _childName );
+Item::Ptr byFullName( const std::string & _fullName );
 
 std::string fullName( const std::string & _guid );
 

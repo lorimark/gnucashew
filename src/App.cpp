@@ -121,6 +121,18 @@ GCW::App::App( const Wt::WEnvironment & env )
   if( bookmarkUrl() == "demo" )
     showWelcome();
 
+  /*
+  ** If we have the gnucashew extensions, then record that we logged on.
+  **
+  */
+  if( gnucash_session().hasGnuCashewExtensions() )
+  {
+    Wt::Dbo::Transaction t( gnucash_session() );
+    auto item = GCW::Dbo::Vars::get( "logon","sys" );
+    item.modify()-> setVar( "logonOn", Wt::WDateTime::currentDateTime().toString( "yyyy-MM-ddThh:mm:ss.zzzZ" ) );
+    item.modify()-> setVar( "logonBy", "dev(0)" );
+  }
+
 } // endGnuCashew::App::App( const Wt::WEnvironment & env )
 
 
