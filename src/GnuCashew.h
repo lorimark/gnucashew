@@ -5,7 +5,7 @@
 
 #include "define.h"
 #include "App.h"
-
+#include "Glb/gcwglobal.h"
 #include "Dbo/Vars.h"
 
 #define DEC_NAMESPACE DECIMAL

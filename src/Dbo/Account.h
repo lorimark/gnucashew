@@ -1,4 +1,4 @@
-
+#line 2 "src/Dbo/Account.h"
 
 #ifndef __ACCOUNT_H___
 #define __ACCOUNT_H___
@@ -22,9 +22,9 @@ extern Wt::WFormModel::Field description    ; // text(2048)
 extern Wt::WFormModel::Field hidden         ; // integer
 extern Wt::WFormModel::Field placeHolder    ; // integer
 
-      }
-    }
-  }
+      } // endnamespace Field {
+    } // endnamespace Account {
+  } // endnamespace Dbo {
 } // endnamespace GCW {
 
 #endif // end#ifndef __ACCOUNT_H___

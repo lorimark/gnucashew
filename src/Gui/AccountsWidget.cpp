@@ -1,4 +1,4 @@
-#line 2 "src/AccountsWidget.cpp"
+#line 2 "src/Gui/AccountsWidget.cpp"
 
 #include <any>
 

@@ -96,13 +96,14 @@ openEditor( const std::string & _accountGuid )
       m_dialog.release();
     });
 
-}
+} // endopenEditor( const std::string & _accountGuid )
 
 
 void
 GCW::Gui::BillPay::MainWidget::
 addClicked()
 {
+  Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
   openEditor( "" );
 
 } // endaddClicked()
@@ -121,7 +122,6 @@ editClicked( Table * _table, Wt::WModelIndex _index )
   */
   auto zcolIndex = _index.model()-> index( _index.row(), 0 );
   auto accountGuid = Wt::asString( _table-> model()-> itemFromIndex( zcolIndex )-> data() ).toUTF8();
-
   openEditor( accountGuid );
 
 } // endeditClicked( Wt::WModelIndex _index, Wt::WMouseEvent _event )
@@ -130,6 +130,22 @@ void
 GCW::Gui::BillPay::MainWidget::
 buttonChanged( Wt::WRadioButton * _button )
 {
+  /*
+  ** If there is a button (sometimes there is not), then there's
+  **  nothing to do.
+  **
+  ** This function can get called from a selection of one of the
+  **  monthly buttons in the tool bar, or it can get called from a
+  **  detailForm .save. event.  It shouldn't happen, but it's possible
+  **  to add an item without having a month selected.  The button
+  **  is going to get defaulted to 1, to help mitigate the issue, but
+  **  it's still a problem if we pass a nullptr for the button.  So,
+  **  to be safe, just deal with it.
+  **
+  */
+  if( !_button )
+    return;
+
   if( m_paidView     ) m_paidView     -> setMonth( std::stoi( _button-> text().toUTF8() ) );
   if( m_unpaidView   ) m_unpaidView   -> setMonth( std::stoi( _button-> text().toUTF8() ) );
   if( m_disabledView ) m_disabledView -> setMonth( std::stoi( _button-> text().toUTF8() ) );

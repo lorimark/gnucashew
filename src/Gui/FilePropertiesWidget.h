@@ -1,3 +1,4 @@
+#line 2 "src/Gui/FilePropertiesWidget.h"
 
 #ifndef __GUI_FILEPROPERTIESWIDGET_H___
 #define __GUI_FILEPROPERTIESWIDGET_H___

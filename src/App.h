@@ -5,6 +5,7 @@
 
 #include <Wt/WApplication.h>
 #include <Wt/WEnvironment.h>
+#include <Wt/WTimer.h>
 
 #include "Dbo/Session.h"
 #include "Config.h"
@@ -27,9 +28,12 @@ class App
 
   private:
 
-    Dbo::GnuCash::Session      m_gnucash_session;
-    Dbo::GnuCashew::Session    m_gnucashew_session;
-    GCW::Gui::MainWidget     * m_mainWidget = nullptr;
+    void showWelcome();
+
+    std::unique_ptr< Wt::WTimer > m_timer;
+    Dbo::GnuCash::Session         m_gnucash_session;
+    Dbo::GnuCashew::Session       m_gnucashew_session;
+    GCW::Gui::MainWidget        * m_mainWidget = nullptr;
 
 }; // endclass App
 

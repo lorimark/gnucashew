@@ -1,3 +1,4 @@
+#line 2 "src/Gui/AccountsWidget.h"
 
 #ifndef __GUI_ACCOUNTSWIDGET_H___
 #define __GUI_ACCOUNTSWIDGET_H___

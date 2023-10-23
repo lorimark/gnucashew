@@ -1,3 +1,4 @@
+#line 2 "src/Gui/AccountEditor.h"
 
 #ifndef __GUI_ACCOUNTEDITOR_H___
 #define __GUI_ACCOUNTEDITOR_H___

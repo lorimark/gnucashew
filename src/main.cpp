@@ -393,8 +393,6 @@ int main( int argc, char ** argv )
   */
   g_dbName = argv[1];
 
-  std::cout << __FILE__ << ":" << __LINE__ << " using:" << g_dbName << std::endl;
-
   /*
   ** Set the layout to employ the services that
   **  are compatible with embedded table views.  Right now, only

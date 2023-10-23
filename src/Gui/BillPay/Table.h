@@ -12,7 +12,9 @@ namespace GCW {
   namespace Gui {
     namespace BillPay {
 
-/*
+/*!
+** \brief Table View
+**
 ** A view to the data model
 **
 */

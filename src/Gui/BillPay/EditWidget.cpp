@@ -65,12 +65,19 @@ EditWidget( const std::string & _accountGuid )
 : Wt::WContainerWidget(),
   m_accountGuid( _accountGuid )
 {
-  std::cout << __FILE__ << ":" << __LINE__ << " " << _accountGuid << std::endl;
-
   addStyleClass( "BillPay_EditWidget" );
 
+  /*
+  ** use a layout.
+  */
   auto lw = setLayout( std::make_unique< Wt::WVBoxLayout >() );
 
+  /*
+  ** This is a complex widget, with a header area with a
+  **  handful of fields, then a tab widget with a couple
+  **  pages.
+  **
+  */
   auto templtMain =
     lw->
     addWidget
@@ -78,29 +85,52 @@ EditWidget( const std::string & _accountGuid )
      std::make_unique< Wt::WTemplate >( TR("gcw_gui.billpay.editwidget.form.main") )
     );
 
-  m_pbSave    = templtMain-> bindNew< Wt::WPushButton >( "save"      , "save"       );
-  m_pbCancel  = templtMain-> bindNew< Wt::WPushButton >( "cancel"    , "cancel"     );
-  m_key       = templtMain-> bindNew< ComboBox        >( "key"                      );
-  m_dueDay    = templtMain-> bindNew< Wt::WLineEdit   >( "dueDay"                   );
-  m_minimum   = templtMain-> bindNew< Wt::WLineEdit   >( "minimum"                  );
-  m_budget    = templtMain-> bindNew< Wt::WLineEdit   >( "budget"                   );
-  m_nickname  = templtMain-> bindNew< Wt::WLineEdit   >( "nickname"                 );
-  m_group     = templtMain-> bindNew< Wt::WLineEdit   >( "group"                    );
-  m_limit     = templtMain-> bindNew< Wt::WLineEdit   >( "limit"                    );
-  m_actual    = templtMain-> bindNew< Wt::WLineEdit   >( "actual"                   );
-  m_ap        = templtMain-> bindNew< Wt::WCheckBox   >( "ap"        , "AP"         );
-  m_isActive  = templtMain-> bindNew< Wt::WCheckBox   >( "isActive"  , "is Active"  );
-  m_isVisible = templtMain-> bindNew< Wt::WCheckBox   >( "isVisible" , "is Visible" );
-  m_autoPay   = templtMain-> bindNew< Wt::WCheckBox   >( "autoPay"   , "Auto Pay"   );
-  m_payNow    = templtMain-> bindNew< Wt::WCheckBox   >( "payNow"    , "Pay Now"    );
+  /*
+  ** add all the widgets
+  **
+  */
+  m_pbSave    = templtMain-> bindNew< Wt::WPushButton >( "save"      , TR("gcw.billPay.pb.save")      );
+  m_pbCancel  = templtMain-> bindNew< Wt::WPushButton >( "cancel"    , TR("gcw.billPay.pb.cancel")    );
+  m_pbDelete  = templtMain-> bindNew< Wt::WPushButton >( "delete"    , TR("gcw.billPay.pb.delete")    );
+  m_key       = templtMain-> bindNew< ComboBox        >( "key"                                        );
+  m_dueDay    = templtMain-> bindNew< Wt::WLineEdit   >( "dueDay"                                     );
+  m_minimum   = templtMain-> bindNew< Wt::WLineEdit   >( "minimum"                                    );
+  m_budget    = templtMain-> bindNew< Wt::WLineEdit   >( "budget"                                     );
+  m_nickname  = templtMain-> bindNew< Wt::WLineEdit   >( "nickname"                                   );
+  m_group     = templtMain-> bindNew< Wt::WLineEdit   >( "group"                                      );
+  m_limit     = templtMain-> bindNew< Wt::WLineEdit   >( "limit"                                      );
+  m_actual    = templtMain-> bindNew< Wt::WLineEdit   >( "actual"                                     );
+  m_ap        = templtMain-> bindNew< Wt::WCheckBox   >( "ap"        , TR("gcw.billPay.pb.ap")        );
+  m_isActive  = templtMain-> bindNew< Wt::WCheckBox   >( "isActive"  , TR("gcw.billPay.pb.isActive")  );
+  m_isVisible = templtMain-> bindNew< Wt::WCheckBox   >( "isVisible" , TR("gcw.billPay.pb.isVisible") );
+  m_autoPay   = templtMain-> bindNew< Wt::WCheckBox   >( "autoPay"   , TR("gcw.billPay.pb.autoPay")   );
+  m_payNow    = templtMain-> bindNew< Wt::WCheckBox   >( "payNow"    , TR("gcw.billPay.pb.payNow")    );
 
+  /*
+  ** Once an account is assigned we can't change it.  This is
+  **  somewhat of a technical reason due to the setup of this item.
+  **  We don't want to start with one account on this billPay item
+  **  and then switch it to a different account.
+  **
+  */
+  if( _accountGuid != "" )
+    m_key-> setDisabled( true );
+
+  /*
+  ** this is the tab widget.
+  */
   m_tabWidget = templtMain-> bindNew< Wt::WTabWidget >( "tabWidget" );
 
+  /*
+  ** This is the payment template.  It will get added to
+  **  the first page of the tab widget.
+  **
+  */
   Wt::WTemplate * templtPayment;
   {
     auto u_ = std::make_unique< Wt::WTemplate >( TR( "gcw_gui.billpayeditor.form.tab1" ) );
     templtPayment = u_.get();
-    m_tabWidget-> addTab( std::move( u_ ), "Payment" );
+    m_tabWidget-> addTab( std::move( u_ ), TR("gcw.billPay.tabName.payment")  );
 
     for( int cb = 0; cb < 12; cb++ )
       m_cbx.push_back( templtPayment-> bindNew< Wt::WCheckBox >( "cb" + toString( cb+1 ), toString( cb+1 ) ) );
@@ -111,8 +141,8 @@ EditWidget( const std::string & _accountGuid )
     m_label-> setMinimumSize( "160px", "160px" );
     m_label-> resize( "160px", "160px" );
 
-    auto pbClear = templtPayment-> bindNew< Wt::WPushButton >( "clear", "clear" );
-    pbClear-> setToolTip( "Clear all the payment check-boxes" );
+    auto pbClear = templtPayment-> bindNew< Wt::WPushButton >( "clear", TR("gcw.billPay.pb.clear") );
+    pbClear-> setToolTip( TR("gcw.billPay.pb.clear.toolTip") );
     pbClear->
       clicked().connect( [&]()
       {
@@ -122,6 +152,12 @@ EditWidget( const std::string & _accountGuid )
 
   } // endWt::WTemplate * templtPayment;
 
+  /*
+  ** This is the history widget.  It contains
+  **  a registry table for this widget.  It get added to
+  **  the second page of the tab widget.
+  **
+  */
   Wt::WTemplate * templtHistory;
   {
     /*
@@ -135,16 +171,20 @@ EditWidget( const std::string & _accountGuid )
     auto u_ = std::make_unique< Wt::WTemplate >( TR( "gcw_gui.billpayeditor.form.tab2" ) );
     templtHistory = u_.get();
     lw_-> addWidget( std::move( u_ ) );
-    m_tabWidget-> addTab( std::move( cw_ ), "History" );
+    m_tabWidget-> addTab( std::move( cw_ ), TR("gcw.billPay.tabName.history") );
 
 
     templtHistory-> bindNew< GCW::Gui::RegisterWidget >( "accountRegister", _accountGuid );
 
   } // endWt::WTemplate * templtHistory;
 
-  m_pbSave  -> clicked().connect( [&](){ saveData(); });
+  m_pbSave  -> clicked().connect( [&](){ saveData();      });
   m_pbCancel-> clicked().connect( [&](){ m_cancel.emit(); });
+  m_pbDelete-> clicked().connect( [&](){ m_delete.emit(); });
 
+  /*
+  ** get all the data loaded
+  */
   loadData();
 
 } // endEditWidget( const std::string & _accountGuid )
@@ -153,34 +193,45 @@ void
 GCW::Gui::BillPay::EditWidget::
 loadData()
 {
+  /*
+  ** be safe
+  */
   if( m_accountGuid == "" )
     return;
 
-  Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
-
-  auto varItem = GCW::Gui::BillPay::bpItem( m_accountGuid );
-
+  /*
+  ** format the 'name' to be something readable
+  */
   auto fullName = GCW::Dbo::Accounts::fullName( m_accountGuid );
 
+  /*
+  ** Get the item that carries the bill-pay info
+  */
+  Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
+  auto bpItem = GCW::Gui::BillPay::bpItem( m_accountGuid );
+
+  /*
+  ** populate the form
+  */
   m_key       -> setValueText( fullName );
-  m_dueDay    -> setValueText( varItem-> getVarString( FN_DUEDAY    ) );
-  m_minimum   -> setValueText( varItem-> getVarString( FN_MINIMUM   ) );
-  m_budget    -> setValueText( varItem-> getVarString( FN_BUDGET    ) );
-  m_nickname  -> setValueText( varItem-> getVarString( FN_NICKNAME  ) );
-  m_group     -> setValueText( varItem-> getVarString( FN_GROUP     ) );
-  m_limit     -> setValueText( varItem-> getVarString( FN_LIMIT     ) );
-  m_actual    -> setValueText( varItem-> getVarString( FN_ACTUAL    ) );
-  m_ap        -> setValueText( varItem-> getVarString( FN_AP        ) );
-  m_isActive  -> setValueText( varItem-> getVarString( FN_ISACTIVE  ) );
-  m_isVisible -> setValueText( varItem-> getVarString( FN_ISVISIBLE ) );
-  m_autoPay   -> setValueText( varItem-> getVarString( FN_AUTOPAY   ) );
-  m_payNow    -> setValueText( varItem-> getVarString( FN_PAYNOW    ) );
-  m_last4     -> setValueText( varItem-> getVarString( FN_LAST4     ) );
-  m_note      -> setValueText( varItem-> getVarString( FN_NOTE      ) );
+  m_dueDay    -> setValueText( bpItem-> getVarString( FN_DUEDAY    ) );
+  m_minimum   -> setValueText( bpItem-> getVarString( FN_MINIMUM   ) );
+  m_budget    -> setValueText( bpItem-> getVarString( FN_BUDGET    ) );
+  m_nickname  -> setValueText( bpItem-> getVarString( FN_NICKNAME  ) );
+  m_group     -> setValueText( bpItem-> getVarString( FN_GROUP     ) );
+  m_limit     -> setValueText( bpItem-> getVarString( FN_LIMIT     ) );
+  m_actual    -> setValueText( bpItem-> getVarString( FN_ACTUAL    ) );
+  m_ap        -> setValueText( bpItem-> getVarString( FN_AP        ) );
+  m_isActive  -> setValueText( bpItem-> getVarString( FN_ISACTIVE  ) );
+  m_isVisible -> setValueText( bpItem-> getVarString( FN_ISVISIBLE ) );
+  m_autoPay   -> setValueText( bpItem-> getVarString( FN_AUTOPAY   ) );
+  m_payNow    -> setValueText( bpItem-> getVarString( FN_PAYNOW    ) );
+  m_last4     -> setValueText( bpItem-> getVarString( FN_LAST4     ) );
+  m_note      -> setValueText( bpItem-> getVarString( FN_NOTE      ) );
 
   int i = 1;
   for( auto cb : m_cbx )
-    cb-> setValueText( varItem-> getVarString( "cb" + toString( i++ ) ) );
+    cb-> setValueText( bpItem-> getVarString( "cb" + toString( i++ ) ) );
 
 } // endloadData( const std::string & _accountGuid )
 
@@ -220,6 +271,8 @@ saveData()
   */
   else
   {
+    std::cout << __FILE__ << ":" << __LINE__ << " " << std::endl;
+
     accountItem = GCW::Dbo::Accounts::byGuid( m_accountGuid );
   }
 
@@ -254,8 +307,6 @@ saveData()
 GCW::Gui::BillPay::EditWidgetDialog::
 EditWidgetDialog( const std::string & _accountGuid )
 {
-  std::cout << __FILE__ << ":" << __LINE__ << " " << _accountGuid << std::endl;
-
   addStyleClass( "EditWidgetDialog" );
   setWindowTitle( "Bill Pay Account" );
 

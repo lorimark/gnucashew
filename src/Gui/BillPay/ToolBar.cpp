@@ -32,7 +32,15 @@ ToolBar()
 
   pbAdd-> clicked().connect( [=](){ m_addClicked.emit(); } );
 
-  m_group-> setCheckedButton( m_group-> button( configItem()-> getVarInt( "selectedMonth" ) ) );
+  /*
+  ** Make sure a month is selected.
+  **
+  */
+  auto selectedMonth = configItem()-> getVarInt( "selectedMonth" );
+  if( selectedMonth < 1 )
+      selectedMonth = 1;
+
+  m_group-> setCheckedButton( m_group-> button( selectedMonth ) );
   m_group->
     checkedChanged().connect( [&]( Wt::WRadioButton * _button )
     {

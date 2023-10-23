@@ -1,4 +1,4 @@
-
+#line 2 "src/Dbo/BaseItem.h"
 
 #ifndef __BASEITEM_H___
 #define __BASEITEM_H___

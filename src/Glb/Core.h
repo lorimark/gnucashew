@@ -1,3 +1,4 @@
+#line 2 "src/Glb/Core.h"
 
 #ifndef __WTX_CORE_H_234e0174_6b7d_11e8_b503_fb1ef3651ec0__
 #define __WTX_CORE_H_234e0174_6b7d_11e8_b503_fb1ef3651ec0__

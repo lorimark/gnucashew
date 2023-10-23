@@ -9,8 +9,17 @@
 GCW::Gui::BillPay::Table::
 Table( int _selectedMonth, const Status _status )
 {
+  /*
+  ** Add 'Unpaid', 'Paid', 'Disabled' to the style class of this
+  **  table for styling and such as.
+  **
+  */
   addStyleClass( asString( _status ) );
 
+  /*
+  ** Set up some controls
+  **
+  */
   setSortingEnabled   ( false                       );
   setSelectionBehavior( Wt::SelectionBehavior::Rows );
   setSelectionMode    ( Wt::SelectionMode::Single   );

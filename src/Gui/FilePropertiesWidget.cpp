@@ -1,4 +1,4 @@
-#line 2 "src/PropertiesWidget.cpp"
+#line 2 "src/Gui/FilePropertiesWidget.cpp"
 
 #include <Wt/WText.h>
 #include <Wt/WVBoxLayout.h>
@@ -11,7 +11,7 @@
 GCW::Gui::FilePropertiesWidget::
 FilePropertiesWidget()
 {
-  addStyleClass( "PropertiesWidget" );
+  addStyleClass( "FilePropertiesWidget" );
 
   /*
   ** Apply a layout so everything will fit in the window

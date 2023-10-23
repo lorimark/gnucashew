@@ -1,3 +1,4 @@
+#line 2 "src/Gui/MainWidget.cpp"
 
 #include <Wt/WMenu.h>
 #include <Wt/WDialog.h>

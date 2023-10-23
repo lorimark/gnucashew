@@ -1,4 +1,4 @@
-#line 2 "src/CustomersWidget.cpp"
+#line 2 "src/Gui/CustomersWidget.cpp"
 
 #include <Wt/WText.h>
 #include <Wt/WVBoxLayout.h>

@@ -1,3 +1,4 @@
+#line 2 "src/Dbo/Vars.h"
 
 #ifndef __DBO_VARS_H___
 #define __DBO_VARS_H___

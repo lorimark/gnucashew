@@ -20,8 +20,10 @@ namespace GCW {
   namespace Gui {
     namespace BillPay {
 
-/*
-** A view to the data model
+/*!
+** \brief Edit Widget
+**
+** Bill Pay Detail Form editor container.
 **
 */
 class EditWidget
@@ -48,11 +50,13 @@ class EditWidget
 
     Wt::Signal<> m_save;
     Wt::Signal<> m_cancel;
+    Wt::Signal<> m_delete;
 
     std::string m_accountGuid;
 
     Wt::WPushButton * m_pbSave    = nullptr;
     Wt::WPushButton * m_pbCancel  = nullptr;
+    Wt::WPushButton * m_pbDelete  = nullptr;
     ComboBox        * m_key       = nullptr;
     Wt::WLineEdit   * m_dueDay    = nullptr;
     Wt::WLineEdit   * m_minimum   = nullptr;
@@ -75,6 +79,12 @@ class EditWidget
 
 }; // endclass EditWidget
 
+/*!
+** \brief Edit Widget Dialog
+**
+** Bill Pay Detail Form editor dialog.
+**
+*/
 class EditWidgetDialog
 : public Wt::WDialog
 {
@@ -84,7 +94,7 @@ class EditWidgetDialog
 
   private:
 
-};
+}; // endclass EditWidgetDialog
 
     } // endnamespace BillPay {
   } // endnamespace Gui {

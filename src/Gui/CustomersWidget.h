@@ -1,3 +1,4 @@
+#line 2 "src/Gui/CustomersWidget.h"
 
 #ifndef __GUI_CUSTOMERSWIDGET_H___
 #define __GUI_CUSTOMERSWIDGET_H___

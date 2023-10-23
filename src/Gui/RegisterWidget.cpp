@@ -1,4 +1,4 @@
-#line 2 "src/RegisterWidget.cpp"
+#line 2 "src/Gui/RegisterWidget.cpp"
 
 #include <Wt/WDateEdit.h>
 #include <Wt/WItemDelegate.h>
@@ -297,9 +297,6 @@ std::unique_ptr< Wt::WWidget > AccountDelegate::createEditor
 
 } // endstd::unique_ptr< Wt::WWidget > AccountDelegate::createEditor
 
-
-
-
 } // endnamespace {
 
 
@@ -309,8 +306,6 @@ GCW::Gui::RegisterWidget::
 RegisterWidget( const std::string & _accountGuid )
 : m_accountGuid( _accountGuid )
 {
-  std::cout << __FILE__ << ":" << __LINE__ << " " << _accountGuid << std::endl;
-
   /*
   ** Look in gcw.css for styling
   **
@@ -396,9 +391,9 @@ RegisterWidget( const std::string & _accountGuid )
 #endif
   }
 
-  tableView()-> setItemDelegateForColumn ( 1, std::make_shared< SuggestionDelegate   >()                 );
-  tableView()-> setItemDelegateForColumn ( 2, std::make_shared< SuggestionDelegate   >()                 );
-  tableView()-> setItemDelegateForColumn ( 3, std::make_shared< AccountDelegate      >()                 );
+  tableView()-> setItemDelegateForColumn ( 1, std::make_shared< SuggestionDelegate >() );
+  tableView()-> setItemDelegateForColumn ( 2, std::make_shared< SuggestionDelegate >() );
+  tableView()-> setItemDelegateForColumn ( 3, std::make_shared< AccountDelegate    >() );
 
   tableView()-> headerClicked().connect( [=]( int col, Wt::WMouseEvent event )
   {
@@ -426,7 +421,6 @@ RegisterWidget( const std::string & _accountGuid )
   */
   tableView()-> selectionChanged().connect( [=]()
   {
-    std::cout << __FILE__ << ":" << __LINE__ << " selecting:" << std::endl;
     tableView()-> closeEditors( true );
   });
 
@@ -524,8 +518,6 @@ fromJson( const Wt::Json::Object & _jobj )
 void GCW::Gui::RegisterWidget::
 loadData()
 {
-  std::cout << __FILE__ << ":" << __LINE__ << " " << m_accountGuid << std::endl;
-
   m_model = std::make_shared< Model >( m_accountGuid );
 
   tableView()-> setModel( m_model );
@@ -571,7 +563,6 @@ loadData()
   tableView()-> setColumnAlignment ( 7, Wt::AlignmentFlag::Right  );
 
 //  auto lastIndex = model()-> rowCount();
-  std::cout << __FILE__ << ":" << __LINE__ << " last:" << model()-> rowCount() << std::endl;
 
   auto lastIndex = model()-> index( model()-> rowCount() -1, 0 );
   tableView()-> scrollTo( lastIndex );

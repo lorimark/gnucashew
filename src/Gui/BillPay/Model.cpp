@@ -16,7 +16,7 @@ namespace {
 void sort( std::vector< GCW::Dbo::Vars::Item::Ptr > & _varItems )
 {
   /*!
-  ** Sort the vector of accounts by accountName
+  ** Sort the vector of accounts by nickName
   **
   */
   std::sort
@@ -81,7 +81,14 @@ Model( int _selectedMonth, const Status _status )
   m_status( _status )
 {
   /*
-  ** Load the header only on the 'unpaid' view
+  ** Load the header only on the 'unpaid' view.
+  **
+  ** The unpaid view is represented first in the widget so that
+  **  bills that are unpaid appear at the top of the browser
+  **  window.  The unpaid view, therefore, is the only view
+  **  that includes the header.  If the other two remaining
+  **  views (Paid, Disabled) also had a header the gui would
+  **  get too cluttered.
   **
   */
   if( m_status == GCW::Gui::BillPay::Status::Unpaid )
@@ -91,6 +98,9 @@ Model( int _selectedMonth, const Status _status )
       setHeaderData( col, Wt::Orientation::Horizontal, columns[col].toolTip , Wt::ItemDataRole::ToolTip );
     }
 
+  /*
+  ** Load the data based on the month selected.
+  */
   loadData( _selectedMonth );
 
 } // endModel( const Status _status )
@@ -99,12 +109,15 @@ void
 GCW::Gui::BillPay::Model::
 loadData( int _selectedMonth )
 {
+  /*
+  ** Remove all the rows.
+  **
+  */
   while( rowCount() > 0 )
     takeRow( 0 );
 
   /*
-  ** Get all the var items that are for the managed bill pay (mbpi)
-  **
+  ** Get all the var items that are for the managed bill pay (mbpi).
   */
   Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
   auto items =
@@ -114,51 +127,95 @@ loadData( int _selectedMonth )
       ;
 
   /*
-  ** Calculate our yes/no status for grabbing items
-  **
+  ** Calculate our yes/no status for grabbing items.
   */
   std::string yesNo = "yes";
   if( m_status == GCW::Gui::BillPay::Status::Unpaid )
     yesNo = "no";
 
   /*
-  ** move the correct items (based on yes/no, disabled/not) in to a vector and sort them by name
-  **
+  ** move the correct items (based on yes/no, disabled/not) in to a vector and sort them by name.
   */
   std::vector< GCW::Dbo::Vars::Item::Ptr > varItems;
   for( auto i : items )
   {
+    /*
+    ** Calculate these boolean.
+    **
+    */
     auto isActive  = i-> getVarString( "isActive"  ) == "yes";
     auto isVisible = i-> getVarString( "isVisible" ) == "yes";
 
+    /*
+    ** This is for Paid and Unpaid (not Disabled).
+    **
+    */
     if( m_status != GCW::Gui::BillPay::Status::Disabled )
     {
+      /*
+      ** The item ~must~ be active and visible.
+      **
+      */
       if( isActive && isVisible )
+
+        /*
+        ** Get the .var. string that has the combo-box values for the monthly
+        **  indicators of what has been paid and what has not.  Depending on the
+        **  value of that payment status, it must therefore match the yes/no clause
+        **  we calculated above.  If it's a match, we grab it.
+        **
+        */
         if( i-> getVarString( "cb" + GCW::Gui::BillPay::toString( _selectedMonth ) ) == yesNo )
           varItems.push_back( i );
-    }
 
+    } // endif( m_status != GCW::Gui::BillPay::Status::Disabled )
+
+    /*
+    ** This is for Disabled.
+    **
+    */
     else // capture disabled items here
     {
-      if(  !isActive
-       ||  !isVisible
-        )
+      /*
+      ** Disabled items are either notActive ~or~ notVisible.
+      **
+      */
+      if( !isActive || !isVisible )
           varItems.push_back( i );
-    }
-  }
+
+    } // endelse( .disabled. )
+
+  } // endfor( auto i : items )
+
+  /*
+  ** Sort all the items by the account nickname.  (The
+  **  user is not allowed to sort these views so we do it)
+  **
+  */
   ::sort( varItems );
 
   /*
-  ** Walk through all the items and post them to the table
-  **
+  ** Walk through all the items and post them to the table.
   */
   for( auto varItem : varItems )
   {
+    /*
+    ** Grab a few handles.
+    **
+    */
     auto accountGuid = varItem-> keyField();
     auto accountItem = GCW::Dbo::Accounts::byGuid( accountGuid );
 
+    /*
+    ** The columns are pushed in to this.
+    **
+    */
     std::vector< std::unique_ptr< Wt::WStandardItem > > columns;
 
+    /*
+    ** Build each column.
+    **
+    */
     auto name = std::make_unique< Wt::WStandardItem >( accountItem-> name() );
          name-> setToolTip( GCW::Dbo::Accounts::fullName( accountGuid ) );
          name-> setData( accountGuid );
@@ -194,6 +251,10 @@ loadData( int _selectedMonth )
       columns.push_back( std::move( cb ) );
     }
 
+    /*
+    ** Push everything in to the model.
+    **
+    */
     appendRow( std::move( columns ) );
 
   } // endfor( auto varItem : varItems )
@@ -206,6 +267,4 @@ columnDef( int col )
 {
   return columns[col];
 }
-
-
 

@@ -14,7 +14,9 @@ namespace GCW {
   namespace Gui {
     namespace BillPay {
 
-/*
+/*!
+** \brief Control Bar
+**
 ** Control Bar with buttons
 **
 */

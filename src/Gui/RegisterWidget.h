@@ -1,3 +1,4 @@
+#line 2 "src/Gui/RegisterWidget.h"
 
 #ifndef __GUI_REGISTERWIDGET_H___
 #define __GUI_REGISTERWIDGET_H___

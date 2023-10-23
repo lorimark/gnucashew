@@ -6,14 +6,25 @@ std::string
 GCW::Gui::BillPay::
 asString( Status _status )
 {
-  // BUGBUG: it would be better to put this in the gcw_en.xml language
-  //          translation files
-  //
   std::string values[] =
   {
-    "Paid",
-    "Unpaid",
-    "Disabled"
+    TR8( "gcw.tableName.Paid"     ),
+    TR8( "gcw.tableName.Unpaid"   ),
+    TR8( "gcw.tableName.Disabled" )
+  };
+
+  return values[ static_cast<int>( _status ) ];
+}
+
+std::string
+GCW::Gui::BillPay::
+asStyle( Status _status )
+{
+  std::string values[] =
+  {
+    TR8( "Paid"     ),
+    TR8( "Unpaid"   ),
+    TR8( "Disabled" )
   };
 
   return values[ static_cast<int>( _status ) ];

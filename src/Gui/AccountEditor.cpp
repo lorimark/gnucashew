@@ -1,4 +1,4 @@
-
+#line 2 "src/Gui/AccountEditor.cpp"
 
 #include "AccountEditor.h"
 

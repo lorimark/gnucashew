@@ -1,4 +1,4 @@
-#line 2 "src/MainWidget.h"
+#line 2 "src/Gui/ToolBar.h"
 
 #ifndef __GUI_TOOLBAR_H___
 #define __GUI_TOOLBAR_H___

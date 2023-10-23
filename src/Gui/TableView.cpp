@@ -1,4 +1,4 @@
-
+#line 2 "src/Gui/TableView.cpp"
 
 #include <Wt/WStandardItem.h>
 #include <Wt/WStandardItemModel.h>

@@ -1,4 +1,4 @@
-
+#line 2 "src/Glb/gcwglobal.h"
 
 #ifndef __GLOBAL_H___
 #define __GLOBAL_H___

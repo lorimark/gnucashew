@@ -1,3 +1,4 @@
+#line 2 "src/Glb/Core.cpp"
 
 #include <sstream>
 #include <algorithm>

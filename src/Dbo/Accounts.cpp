@@ -1,3 +1,4 @@
+#line 2 "src/Dbo/Accounts.cpp"
 
 #include "../App.h"
 #include "../Glb/Core.h"
@@ -79,9 +80,16 @@ byGuid( const std::string & _guid )
 
   Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
 
-  retVal =
-    GCW::app()-> gnucash_session().load< GCW::Dbo::Accounts::Item >( _guid )
-    ;
+  try
+  {
+    retVal =
+      GCW::app()-> gnucash_session().load< GCW::Dbo::Accounts::Item >( _guid )
+      ;
+  }
+  catch( std::exception & e )
+  {
+    std::cout << __FILE__ << ":" << __LINE__ << " " << e.what() << std::endl;
+  }
 
   return retVal;
 

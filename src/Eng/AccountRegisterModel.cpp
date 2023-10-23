@@ -1,3 +1,4 @@
+#line 2 "src/Eng/AccountRegisterModel.cpp"
 
 #include "AccountRegisterModel.h"
 #include "../Dbo/Splits.h"
@@ -176,8 +177,15 @@ refreshFromDisk()
       case 1:
       {
         auto txSplitItem = *transactionSplits.begin();
+
         auto splitAccountItem = GCW::Dbo::Accounts::byGuid( txSplitItem-> account_guid() );
-        account = _addColumn( columns, GCW::Dbo::Accounts::fullName( splitAccountItem-> guid() ) );
+
+        if( splitAccountItem )
+          account = _addColumn( columns, GCW::Dbo::Accounts::fullName( splitAccountItem-> guid() ) );
+
+        else
+          account = _addColumn( columns, txSplitItem-> account_guid() );
+
         break;
       }
 

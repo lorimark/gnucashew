@@ -50,17 +50,6 @@ void showEnvironment()
 
 } // endvoid showEnvironment()
 
-void showWelcome()
-{
-  wApp-> processEvents();
-
-  Wt::WDialog dialog( TR( "gcw.welcome.title" )  );
-  dialog.rejectWhenEscapePressed( true );
-  dialog.setClosable( true );
-  dialog.contents()-> addNew< Wt::WText >( TR( "gcw.welcome.body" ) );
-  dialog.exec();
-}
-
 } // endnamespace {
 
 GCW::App * GCW::app()
@@ -118,8 +107,19 @@ GCW::App::App( const Wt::WEnvironment & env )
   */
   m_mainWidget = lw-> addWidget( std::make_unique< GCW::Gui::MainWidget >() );
 
+  /*
+  ** If this is the demo, wait a second and pop a welcome screen.
+  **
+  ** For whatever reason, just firing off this pop-up dialog at the
+  **  beginning of the program start causes the widget to not display
+  **  properly.  Instead of resizing the dialog to fit the available
+  **  space in the browser, it makes a super-wide dialog with all the
+  **  text on just one line.  By delaying the dialog just a bit, it
+  **  seems to mitigate this issue.
+  **
+  */
   if( bookmarkUrl() == "demo" )
-    showWelcome();
+    Wt::WTimer::singleShot( std::chrono::seconds(1), this, &App::showWelcome );
 
   /*
   ** If we have the gnucashew extensions, then record that we logged on.
@@ -129,10 +129,22 @@ GCW::App::App( const Wt::WEnvironment & env )
   {
     Wt::Dbo::Transaction t( gnucash_session() );
     auto item = GCW::Dbo::Vars::get( "logon","sys" );
-    item.modify()-> setVar( "logonOn", Wt::WDateTime::currentDateTime().toString( "yyyy-MM-ddThh:mm:ss.zzzZ" ) );
+    item.modify()-> setVar( "logonOn", Wt::WDateTime::currentDateTime().toString( ISO_DATE_FORMAT ) );
     item.modify()-> setVar( "logonBy", "dev(0)" );
   }
 
-} // endGnuCashew::App::App( const Wt::WEnvironment & env )
+} // endGCW::App::App( const Wt::WEnvironment & env )
+
+void
+GCW::App::
+showWelcome()
+{
+  Wt::WDialog dialog( TR( "gcw.welcome.title" )  );
+  dialog.rejectWhenEscapePressed( true );
+  dialog.setClosable( true );
+  dialog.contents()-> addNew< Wt::WText >( TR( "gcw.welcome.body" ) );
+  dialog.exec();
+
+} // endvoid showWelcome()
 
 

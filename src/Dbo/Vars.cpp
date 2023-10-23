@@ -1,3 +1,4 @@
+#line 2 "src/Dbo/Vars.cpp"
 
 #include <Wt/Json/Parser.h>
 #include <Wt/Json/Object.h>
@@ -149,6 +150,7 @@ setVar( const std::string & _field, const std::string & _value )
   Wt::Json::Object jobj;
   try {
     Wt::Json::parse( varField(), jobj );
+
   }
   catch( std::exception & e )
   {

@@ -1,4 +1,4 @@
-#line 2 "src/CentralWidget.h"
+#line 2 "src/Gui/CentralWidget.h"
 
 #ifndef __GUI_CENTRALWIDGET_H___
 #define __GUI_CENTRALWIDGET_H___

@@ -152,7 +152,7 @@ open_CustomerReportWidget( const std::string & _customerGuid )
   ** build a tab name
   **
   */
-  auto tabName = TR8( "gcw.Customer" ) + ": " + customerItem-> name();
+  auto tabName = TR8( "gcw.cw.tabName.Customer" ) + ": " + customerItem-> name();
 
   /*
   ** See if this tab exists, if not, then add it.
@@ -190,7 +190,7 @@ void
 GCW::Gui::CentralWidget::
 open_CustomersWidget()
 {
-  auto tabName = TR8( "gcw.tabName.Customer" );
+  auto tabName = TR8( "gcw.cw.tabName.Customer" );
 
   /*
   ** See if this tab exists, if not, then add it.
@@ -240,7 +240,7 @@ void
 GCW::Gui::CentralWidget::
 open_BillPayWidget()
 {
-  auto tabName = TR8( "gcw.tabName.BillPay" );
+  auto tabName = TR8( "gcw.cw.tabName.BillPay" );
 
   /*
   ** See if this tab exists, if not, then add it.

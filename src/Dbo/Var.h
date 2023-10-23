@@ -1,4 +1,4 @@
-
+#line 2 "src/Dbo/Var.h"
 
 #ifndef __VAR_H___
 #define __VAR_H___

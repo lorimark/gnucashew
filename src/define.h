@@ -1,3 +1,4 @@
+#line 2 "src/define.h"
 
 #ifndef __DEFINE_H___
 #define __DEFINE_H___
