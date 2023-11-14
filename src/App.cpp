@@ -7,6 +7,7 @@
 #include <Wt/WEnvironment.h>
 #include <Wt/WHBoxLayout.h>
 #include <Wt/WLocale.h>
+#include <Wt/WServer.h>
 #include <Wt/WText.h>
 #include <Wt/WVBoxLayout.h>
 
@@ -118,7 +119,8 @@ GCW::App::App( const Wt::WEnvironment & env )
   **  seems to mitigate this issue.
   **
   */
-  if( bookmarkUrl() == "demo" )
+//  if( bookmarkUrl() == "demo" )
+  if( g_dbName.find( "LorimarkSolutions" ) == std::string::npos )
     Wt::WTimer::singleShot( std::chrono::seconds(1), this, &App::showWelcome );
 
   /*

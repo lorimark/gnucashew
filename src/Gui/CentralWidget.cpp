@@ -118,6 +118,8 @@ open_AccountRegister( const std::string & _accountGuid )
           accountItem-> name()
         );
 
+    tabWidget()-> setTabToolTip( 1, fullName( accountItem ) );
+
     tab-> setCloseable( true );
 
   } // endif( tabIndex( _account-> name() ) == -1 )
@@ -190,7 +192,7 @@ void
 GCW::Gui::CentralWidget::
 open_CustomersWidget()
 {
-  auto tabName = TR8( "gcw.cw.tabName.Customer" );
+  auto tabName = TR8( "gcw.cw.tabName.Customers" );
 
   /*
   ** See if this tab exists, if not, then add it.

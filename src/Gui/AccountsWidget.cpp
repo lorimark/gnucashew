@@ -2,6 +2,8 @@
 
 #include <any>
 
+#include <Wt/Json/Array.h>
+#include <Wt/Json/Parser.h>
 #include <Wt/Json/Serializer.h>
 #include <Wt/WText.h>
 #include <Wt/WTreeTableNode.h>
@@ -27,7 +29,7 @@ AccountsWidget()
   view()-> setSelectionBehavior( Wt::SelectionBehavior::Rows );
   view()-> setSelectionMode(     Wt::SelectionMode::Single   );
   view()-> setAlternatingRowColors( true );
-  view()-> doubleClicked().connect( this, &GCW::Gui::AccountsWidget::doubleClicked );
+  view()-> doubleClicked().connect( this, &AccountsWidget::doubleClicked );
 
   m_columns.push_back( TR8( "gcw.AccountsWidget.column.accountcode"       ) );
   m_columns.push_back( TR8( "gcw.AccountsWidget.column.accountcolor"      ) );
@@ -60,12 +62,19 @@ AccountsWidget()
 
   setModel();
 
+  loadConfig();
+
+  view()-> collapsed        ().connect( this, &AccountsWidget::saveConfig    );
+  view()-> expanded         ().connect( this, &AccountsWidget::saveConfig    );
+  view()-> selectionChanged ().connect( this, &AccountsWidget::saveConfig    );
+
 } // endGCW::Gui::AccountsWidget::AccountsWidget()
 
 /*!
 ** \return GUID String
 */
-std::string GCW::Gui::AccountsWidget::
+std::string
+GCW::Gui::AccountsWidget::
 selectedAccount() const
 {
   std::string retVal;
@@ -90,7 +99,8 @@ selectedAccount() const
 
 } // endstd::string GCW::Gui::AccountsWidget::selectedAccount()
 
-void GCW::Gui::AccountsWidget::
+void
+GCW::Gui::AccountsWidget::
 editAccount( const std::string & _accountGuid )
 {
   if( _accountGuid == "" )
@@ -103,7 +113,8 @@ editAccount( const std::string & _accountGuid )
 } // endvoid GCW::Gui::AccountsWidget::editAccount( const std::string & _accountGuid )
 
 
-void GCW::Gui::AccountsWidget::
+void
+GCW::Gui::AccountsWidget::
 editSelectedAccount()
 {
   editAccount( selectedAccount() );
@@ -111,7 +122,8 @@ editSelectedAccount()
 } // endvoid GCW::Gui::AccountsWidget::editAccount( const std::string & _accountGuid )
 
 
-void GCW::Gui::AccountsWidget::
+void
+GCW::Gui::AccountsWidget::
 setModel()
 {
   m_model = std::make_shared< Model >();
@@ -124,25 +136,214 @@ setModel()
 
 } // endvoid GCW::Gui::AccountsWidget::setModel()
 
-Wt::Json::Object GCW::Gui::AccountsWidget::
+GCW::Dbo::Vars::Item::Ptr
+GCW::Gui::AccountsWidget::
+configItem()
+{
+  Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
+
+  auto retVal = GCW::Dbo::Vars::get( "config", "AccountsWidget" );
+
+  return retVal;
+
+} // endconfigItem()
+
+
+void
+GCW::Gui::AccountsWidget::
+saveConfig()
+{
+  Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
+  configItem().modify()-> setVarField( Wt::Json::serialize( toJson() ) );
+
+} // endsaveConfig()
+
+void
+GCW::Gui::AccountsWidget::
+loadConfig()
+{
+  Wt::Json::Object jobj;
+  try {
+    Wt::Json::parse( configItem()-> varField(), jobj );
+  }
+  catch( std::exception & e )
+  {
+//    std::cout << __FILE__ << ":" << __LINE__ << " " << e.what() << std::endl;
+  }
+
+  fromJson( jobj );
+
+} // endloadConfig()
+
+/*
+** This will iterate a single a WTreeView and fill
+**  a vector of every node which is the .last-expanded.
+**  node of every branch.
+**
+*/
+bool
+GCW::Gui::AccountsWidget::
+iterate( Wt::Json::Array & _jary, Wt::WModelIndex _parent ) const
+{
+  /*
+  ** If this _parent node is not expanded, then we're basically done.
+  **
+  */
+  if( !view()-> isExpanded( _parent ) )
+    return false;
+
+  /*
+  ** This _parent node is expanded, so loop through all the
+  **  child nodes checking if any of them are expanded.
+  **
+  */
+  bool expanded = false;
+  for( int row=0; row< view()-> model()-> rowCount( _parent ); row++ )
+    expanded |= iterate( _jary, view()-> model()-> index( row, 0, _parent ) );
+
+  /*
+  ** None of the child nodes are expanded, so record this _parent
+  **  node as the 'last' node in the tree
+  **
+  */
+  if( !expanded )
+  {
+    /*
+    ** The true root node is not associated with an actual account,
+    **  it is simply the invisibleRoot of the tree itself, and only
+    **  contains the set of first-root nodes that actually get
+    **  displayed.  So, there is no User data in this one, don't record it.
+    **
+    */
+    auto accountGuid = Wt::asString( _parent.data( Wt::ItemDataRole::User ) );
+    if( accountGuid != "" )
+      _jary.push_back( accountGuid );
+
+  } // endif( !expanded )
+
+  /*
+  ** Something is expanded.  Either we are expanded, or
+  **  one of the sub-nodes are expanded, so return that 'someone' is
+  **  expanded.
+  **
+  */
+  return true;
+
+} // endvoid iterate( Wt::WModelIndex _index ) const
+
+
+Wt::Json::Object
+GCW::Gui::AccountsWidget::
 toJson() const
 {
   Wt::Json::Object jobj;
-  jobj["selectedAccount"] = Wt::WString( selectedAccount() );
+
+  jobj["selected"] = Wt::WString( selectedAccount() );
 
   for( int col=0; col< 7; col++ )
-    jobj[ Wt::WString("columnWidth-{1}").arg( col ).toUTF8() ] = Wt::WString( view()-> columnWidth( col ).cssText() );
+    jobj[ Wt::WString("cw{1}").arg( col ).toUTF8() ] = Wt::WString( view()-> columnWidth( col ).cssText() );
+
+  Wt::Json::Array jary;
+  iterate( jary );
+  jobj["expanded"] = jary;
 
   return jobj;
+
 }
 
-bool GCW::Gui::AccountsWidget::
-fromJson( const Wt::Json::Object & _jobj )
+int indent = 0;
+bool
+GCW::Gui::AccountsWidget::
+expandNode( const std::string & _accountGuid, Wt::WModelIndex _parent )
 {
-  return true;
-}
+  bool retVal = false;
 
-void GCW::Gui::AccountsWidget::
+  indent++;
+
+  Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
+
+  /*
+  ** Loop through all the children in this node
+  **
+  */
+  for( int row=0; row< view()-> model()-> rowCount( _parent ); row++ )
+  {
+    auto index = view()-> model()-> index( row, 0, _parent );
+
+    auto nodeGuid = Wt::asString( index.data( Wt::ItemDataRole::User ) ).toUTF8();
+
+#ifdef NEVER
+    std::cout << __FILE__ << ":" << __LINE__
+      << " row:"  << row << "of" << view()-> model()-> rowCount( _parent )
+      << " ind:"  << indent
+      << " a->n:" << _accountGuid << "->" << nodeGuid
+      << " "      << GCW::Dbo::Accounts::fullName( nodeGuid )
+      << std::endl;
+#endif
+
+    /*
+    ** if this node matches the account, expand it and return
+    **
+    */
+    if( nodeGuid == _accountGuid )
+    {
+#ifdef NEVER
+      std::cout << __FILE__ << ":" << __LINE__
+        << " expanding:" << Wt::asString( index.data() )
+        << std::endl;
+#endif
+
+      view()-> expand( index );
+      retVal |= true;
+    }
+
+    /*
+    ** remember if any of the sub-nodes get expanded.
+    **
+    */
+    retVal |= expandNode( _accountGuid, index );
+
+  } // endfor( int row=0; row< view()-> model()-> rowCount( _parent ); row++ )
+
+  indent--;
+
+  if( retVal )
+  {
+#ifdef NEVER
+    std::cout << __FILE__ << ":" << __LINE__
+      << " expanding:" << Wt::asString( _parent.data() )
+      << std::endl;
+#endif
+
+    view()-> expand( _parent );
+  }
+
+  /*
+  ** None of the nodes here got expanded
+  **
+  */
+  return retVal;
+
+} // endexpandNode( const std::string & _accountGuid, Wt::WModelIndex _parent )
+
+bool
+GCW::Gui::AccountsWidget::
+fromJson( Wt::Json::Object & _jobj )
+{
+  auto jary = _jobj.get("expanded").orIfNull( Wt::Json::Array() );
+
+  for( auto value : jary )
+  {
+    indent = 0;
+    expandNode( value.orIfNull( "" ) );
+  }
+
+  return true;
+
+} // endfromJson( const Wt::Json::Object & _jobj )
+
+void
+GCW::Gui::AccountsWidget::
 test()
 {
   std::cout << __FILE__ << ":" << __LINE__ << " " << std::endl;
@@ -151,7 +352,8 @@ test()
 
 } // endvoid GCW::Gui::AccountsWidget::test()
 
-void GCW::Gui::AccountsWidget::Model::
+void
+GCW::Gui::AccountsWidget::Model::
 load()
 {
   /*
@@ -176,7 +378,8 @@ load()
 
 } // endvoid GCW::Gui::AccountsWidget::Model::load()
 
-void GCW::Gui::AccountsWidget::Model::
+void
+GCW::Gui::AccountsWidget::Model::
 load( Wt::WStandardItem * _treeItem, GCW::Dbo::Accounts::Item::Ptr _parentAccount )
 {
   Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
@@ -186,6 +389,7 @@ load( Wt::WStandardItem * _treeItem, GCW::Dbo::Accounts::Item::Ptr _parentAccoun
     std::vector< std::unique_ptr< Wt::WStandardItem > > columns;
 
     auto accountName = std::make_unique< Wt::WStandardItem >( _accountItem-> name() );
+    accountName-> setToolTip( _accountItem-> guid() );
 
     /*
     ** set the 'model->data::User' element to contain the guid of the account, so
@@ -221,7 +425,8 @@ load( Wt::WStandardItem * _treeItem, GCW::Dbo::Accounts::Item::Ptr _parentAccoun
 
 } // endvoid load( Wt::WStandardItem * _treeItem, Account::Ptr _parentAccount )
 
-void GCW::Gui::AccountsWidget::
+void
+GCW::Gui::AccountsWidget::
 doubleClicked( const Wt::WModelIndex & index, const Wt::WMouseEvent & event )
 {
 #ifdef NEVER

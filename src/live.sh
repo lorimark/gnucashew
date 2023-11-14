@@ -1,8 +1,10 @@
-#ps aux | grep 8077 | grep artecams | awk '{print $2}' | xargs kill -9
-# sleep 1
 
 while :
 do
+
+echo "killing previous task"
+killall gnucashew-live
+sleep 1
 
 echo "running"
 # valgrind -v --leak-check=full --show-leak-kinds=all \

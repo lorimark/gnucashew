@@ -99,6 +99,30 @@
   background-color:yellow;
 }
 
+/*
+** Selected 'month' columns are highlighted
+**  important overrides the alternating row colors
+*/
+.billpay .colsel
+{
+  background-color:#1aeaff !important;
+}
+
+.billpay.unpaid.Wt-tableview .Wt-header
+{
+  background-color:#ffb6c194;
+}
+
+.billpay.paid.Wt-tableview .Wt-header
+{
+  background-color:#90ee909e;
+}
+
+.billpay.disabled.Wt-tableview .Wt-header
+{
+  background-color:lightgray;
+}
+
 .billpayedit
 {
   display: flex;

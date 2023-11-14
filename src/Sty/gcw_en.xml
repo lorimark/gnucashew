@@ -132,6 +132,8 @@
 
   <message id="gcw.PropertiesWidget.titleBar">Properties</message>
 
+  <message id="gcw.AccountRegisterModel.orphan">Orphan (USD)</message>
+
   <message id="gcw.AccountsWidget.tabName">Accounts</message>
   <message id="gcw.AccountsWidget.column.accountcode">Account Code</message>
   <message id="gcw.AccountsWidget.column.accountcolor">Account Color</message>
@@ -175,6 +177,7 @@
   <message id="gcw.RegisterWidget.account.multisplit">~~ Split Transaction ~~</message>
   <message id="gcw.RegisterWidget.account.imbalanceUSD">Imbalance-USD</message>
   <message id="gcw.RegisterWidget.account.imbalanceUSD.toolTip">This transaction is incomplete without a complete split.  Assign a split account to this transaction to clear this message.</message>
+  <message id="gcw.RegisterWidget.account.invalidTarget.toolTip">This transaction is split, but the target account does not exist.</message>
   <message id="gcw.RegisterWidget.account.tooltip">
     Split: {1}
     Date: {2}
@@ -184,6 +187,7 @@
   </message>
 
   <message id="gcw.cw.tabName.Customer">Customer</message>
+  <message id="gcw.cw.tabName.Customers">Customers</message>
   <message id="gcw.cw.tabName.BillPay">Bill Pay</message>
 
   <message id="gcw.billPay.tableName.Paid">Paid</message>

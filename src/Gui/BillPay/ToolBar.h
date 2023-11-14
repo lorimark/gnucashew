@@ -30,15 +30,15 @@ class ToolBar
     Wt::Signal<> & addClicked() { return m_addClicked; }
     Wt::Signal<> m_addClicked;
 
-    int selectedMonth() const;
+//    int selectedMonth() const;
 
-    std::shared_ptr< Wt::WButtonGroup > buttonGroup    () const { return m_group;    }
+//    std::shared_ptr< Wt::WButtonGroup > buttonGroup    () const { return m_group;    }
     Wt::WCheckBox *                     disabledButton () const { return m_disabled; }
     bool                                showDisabled   () const;
 
   private:
 
-    std::shared_ptr< Wt::WButtonGroup > m_group;
+//    std::shared_ptr< Wt::WButtonGroup > m_group;
     Wt::WCheckBox * m_disabled = nullptr;
     Wt::WCheckBox * m_summary  = nullptr;
 

@@ -1,5 +1,8 @@
 #line 2 "src/Gui/BillPay/MainWidget.cpp"
 
+//#define EDIT_FORM_AS_POPUP_DIALOG
+#define EDIT_FORM_AS_SPLIT_PAGE
+
 #include <Wt/WVBoxLayout.h>
 #include <Wt/WPushButton.h>
 
@@ -20,33 +23,42 @@ buildContent()
 
   addStyleClass( "MainWidget" );
 
-  auto lw = setLayout( std::make_unique< Wt::WVBoxLayout >() );
+  m_gridLayout = setLayout( std::make_unique< Wt::WGridLayout >() );
 
   // toolbar
   {
     auto u_ = std::make_unique< ToolBar >();
     m_toolBar = u_.get();
-    lw-> addWidget( std::move( u_ ) );
+    m_gridLayout-> addWidget( std::move( u_ ), 0, 0 );
 
     m_toolBar-> addClicked().connect( this, &GCW::Gui::BillPay::MainWidget::addClicked );
-    m_toolBar-> buttonGroup()-> checkedChanged().connect( this, &MainWidget::buttonChanged );
+//    m_toolBar-> buttonGroup()-> checkedChanged().connect( this, &MainWidget::buttonChanged );
     m_toolBar-> disabledButton()-> clicked().connect( this, &MainWidget::disabledClicked );
 
   } // toolbar
+
+  /*
+  ** recall
+  **
+  */
+  m_selectedMonth = configItem()-> getVarInt( "selectedMonth" );
+  if( m_selectedMonth < 1 )
+      m_selectedMonth = 1;
 
   Wt::WVBoxLayout      * lw2;
   Wt::WContainerWidget * cw;
   {
     auto u_ = std::make_unique< Wt::WContainerWidget >();
     cw = u_.get();
-    lw-> addWidget( std::move( u_ ), 1 );
+    m_gridLayout-> addWidget( std::move( u_ ), 1, 0 );
+    m_gridLayout-> setRowStretch( 1, 1 );
 
     lw2 = cw-> setLayout( std::make_unique< Wt::WVBoxLayout >() );
   }
 
   // unpaid items
   {
-    auto u_ = std::make_unique< Table >( m_toolBar-> selectedMonth(), Status::Unpaid );
+    auto u_ = std::make_unique< Table >( m_selectedMonth, Status::Unpaid );
     m_unpaidView = u_.get();
     lw2-> addWidget( std::move( u_ ) );
     m_unpaidView->
@@ -54,11 +66,17 @@ buildContent()
       {
         editClicked( m_unpaidView, _index );
       });
+
+    /*
+    ** clicking on the header changes the selected month
+    */
+    m_unpaidView->
+      headerClicked().connect( this, &MainWidget::on_headerClicked );
   }
 
   // paid items
   {
-    auto u_ = std::make_unique< Table >( m_toolBar-> selectedMonth(), Status::Paid );
+    auto u_ = std::make_unique< Table >( m_selectedMonth, Status::Paid );
     m_paidView = u_.get();
     lw2-> addWidget( std::move( u_ ), m_toolBar-> showDisabled()? 0:1 );
     m_paidView->
@@ -71,7 +89,7 @@ buildContent()
   // disabled items
   if( m_toolBar-> showDisabled() )
   {
-    auto u_ = std::make_unique< Table >( m_toolBar-> selectedMonth(), Status::Disabled );
+    auto u_ = std::make_unique< Table >( m_selectedMonth, Status::Disabled );
     m_disabledView = u_.get();
     lw2-> addWidget( std::move( u_ ), 1 );
     m_disabledView->
@@ -81,12 +99,19 @@ buildContent()
       });
   }
 
-}
+} // endbuildContent()
 
 void
 GCW::Gui::BillPay::MainWidget::
 openEditor( const std::string & _accountGuid )
 {
+
+#ifdef EDIT_FORM_AS_POPUP_DIALOG
+
+  /*
+  ** Add a dialog to open/edit this item
+  **
+  */
   m_dialog = std::make_unique< GCW::Gui::BillPay::EditWidgetDialog >( _accountGuid );
   m_dialog-> show();
   m_dialog->
@@ -95,6 +120,47 @@ openEditor( const std::string & _accountGuid )
       refreshViews();
       m_dialog.release();
     });
+
+#endif
+
+#ifdef EDIT_FORM_AS_SPLIT_PAGE
+
+  /*
+  **
+  **
+  */
+  if( m_editWidget )
+  {
+//    m_gridLayout-> removeWidget( m_editWidget );
+//    m_editWidget = nullptr;
+    return;
+  }
+
+  /*
+  ** Split the page to open/edit this item
+  **
+  */
+  auto u_ = std::make_unique< GCW::Gui::BillPay::EditWidget >( _accountGuid );
+  m_editWidget = u_.get();
+  m_gridLayout-> addWidget( std::move( u_), 1, 1 );
+  m_gridLayout-> setColumnResizable( 0, true, "30%" );
+
+  m_editWidget->
+    save().connect( [=]()
+    {
+      refreshViews();
+      m_gridLayout-> removeWidget( m_editWidget );
+      m_editWidget = nullptr;
+    });
+
+  m_editWidget->
+    cancel().connect( [=]()
+    {
+      refreshViews();
+      m_gridLayout-> removeWidget( m_editWidget );
+      m_editWidget = nullptr;
+    });
+#endif
 
 } // endopenEditor( const std::string & _accountGuid )
 
@@ -146,9 +212,7 @@ buttonChanged( Wt::WRadioButton * _button )
   if( !_button )
     return;
 
-  if( m_paidView     ) m_paidView     -> setMonth( std::stoi( _button-> text().toUTF8() ) );
-  if( m_unpaidView   ) m_unpaidView   -> setMonth( std::stoi( _button-> text().toUTF8() ) );
-  if( m_disabledView ) m_disabledView -> setMonth( std::stoi( _button-> text().toUTF8() ) );
+  setMonth( std::stoi( _button-> text().toUTF8() ) );
 
 } // endbuttonChanged( Wt::WRadioButton * _button )
 
@@ -159,11 +223,34 @@ disabledClicked()
   buildContent();
 }
 
+void
+GCW::Gui::BillPay::MainWidget::
+setMonth( int _month )
+{
+  if( m_paidView     ) m_paidView     -> setMonth( _month );
+  if( m_unpaidView   ) m_unpaidView   -> setMonth( _month );
+  if( m_disabledView ) m_disabledView -> setMonth( _month );
+
+  m_selectedMonth = _month;
+
+  configItem().modify()-> setVar( "selectedMonth", m_selectedMonth );
+
+} // endsetMonth( int _month )
 
 void
 GCW::Gui::BillPay::MainWidget::
 refreshViews()
 {
-  buttonChanged( m_toolBar-> buttonGroup()-> checkedButton() );
+  setMonth( m_selectedMonth );
 }
+
+void
+GCW::Gui::BillPay::MainWidget::
+on_headerClicked( int _col, const Wt::WMouseEvent _me )
+{
+  if( _col >= 9 )
+    setMonth( _col - 8 );
+
+} // endon_headerClicked( int _col, const Wt::WMouseEvent _me )
+
 

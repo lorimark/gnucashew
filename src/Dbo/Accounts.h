@@ -142,6 +142,7 @@ Item::Ptr byChildName( const std::string & _parentGuid, const std::string & _chi
 Item::Ptr byFullName( const std::string & _fullName );
 
 std::string fullName( const std::string & _guid );
+std::string fullName( Item::Ptr _item );
 
 Item::Vector allAccounts();
 Item::Vector activeAccounts();

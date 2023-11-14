@@ -56,7 +56,6 @@
         <tr><td> ${payNow}    </td></tr>
       </table>
     </div>
-    ${tabWidget}
   </message>
 
   <message id="gcw_gui.billpayeditor.form.tab1">

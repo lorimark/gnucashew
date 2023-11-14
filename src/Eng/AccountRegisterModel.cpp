@@ -5,10 +5,18 @@
 #include "../Dbo/Transactions.h"
 
 GCW::Eng::AccountRegisterModel::
-AccountRegisterModel( const std::string & _accountGuid )
+AccountRegisterModel( const std::string & _accountGuid, bool _editable )
 : Wt::WStandardItemModel( 0, 8 ), // 8-columns
-  m_accountGuid( _accountGuid )
+  m_accountGuid( _accountGuid ),
+  m_editable( _editable )
 {
+  /*
+  ** set the lastDate to match the todays date, so when first
+  **  opening the register, the date is automatically set.
+  **
+  */
+  m_lastDate = Wt::WDate::currentDate().toString( GCW::CFG::date_format() ).toUTF8();
+
   refreshFromDisk();
 
   dataChanged().connect( [=]( Wt::WModelIndex _index1, Wt::WModelIndex _index2 )
@@ -180,14 +188,36 @@ refreshFromDisk()
 
         auto splitAccountItem = GCW::Dbo::Accounts::byGuid( txSplitItem-> account_guid() );
 
+        // yes account item
         if( splitAccountItem )
           account = _addColumn( columns, GCW::Dbo::Accounts::fullName( splitAccountItem-> guid() ) );
 
+        // no account item
         else
-          account = _addColumn( columns, txSplitItem-> account_guid() );
+        {
+          /*!
+          ** \par Another Imbalance
+          ** This is another problem... We have another split, but the account
+          **  we are split-to doesn't exist.
+          **
+          */
+          account = _addColumn( columns, TR("gcw.RegisterWidget.account.imbalanceUSD") );
+          account-> setStyleClass( "errval" );
+
+          auto toolTip =
+            Wt::WString("target guid:{1}\n{2}")
+            .arg( txSplitItem-> account_guid() )
+            .arg( TR("gcw.RegisterWidget.account.invalidTarget.toolTip") )
+            .toUTF8()
+            ;
+
+          account-> setToolTip( toolTip );
+
+        } // endelse no account item
 
         break;
-      }
+
+      } // endcase 1:
 
       /*!
       ** \par Multi-Split
@@ -288,16 +318,17 @@ refreshFromDisk()
   **  is included at the end of the vector, for coding new entries.
   **
   */
+  if( m_editable )
   {
     RowItem columns;
-    _addColumn( columns, ""  )-> setFlags( Wt::ItemFlag::Editable ); // Date
-    _addColumn( columns, ""  )-> setFlags( Wt::ItemFlag::Editable ); // Num
-    _addColumn( columns, ""  )-> setFlags( Wt::ItemFlag::Editable ); // Memo
-    _addColumn( columns, ""  )-> setFlags( Wt::ItemFlag::Editable ); // Account
-    _addColumn( columns, "n" )                                     ; // R
-    _addColumn( columns, ""  )-> setFlags( Wt::ItemFlag::Editable ); // Deposit
-    _addColumn( columns, ""  )-> setFlags( Wt::ItemFlag::Editable ); // Withdrawal
-    _addColumn( columns, ""  )                                     ; // Balance
+    _addColumn( columns, m_lastDate  )-> setFlags( Wt::ItemFlag::Editable ); // Date
+    _addColumn( columns, ""          )-> setFlags( Wt::ItemFlag::Editable ); // Num
+    _addColumn( columns, ""          )-> setFlags( Wt::ItemFlag::Editable ); // Memo
+    _addColumn( columns, ""          )-> setFlags( Wt::ItemFlag::Editable ); // Account
+    _addColumn( columns, "n"         )                                     ; // R
+    _addColumn( columns, ""          )-> setFlags( Wt::ItemFlag::Editable ); // Deposit
+    _addColumn( columns, ""          )-> setFlags( Wt::ItemFlag::Editable ); // Withdrawal
+    _addColumn( columns, ""          )                                     ; // Balance
     appendRow( std::move( columns ) );
   }
 

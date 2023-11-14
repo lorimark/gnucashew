@@ -8,9 +8,9 @@ asString( Status _status )
 {
   std::string values[] =
   {
-    TR8( "gcw.tableName.Paid"     ),
-    TR8( "gcw.tableName.Unpaid"   ),
-    TR8( "gcw.tableName.Disabled" )
+    TR8( "gcw.billPay.tableName.Paid"     ),
+    TR8( "gcw.billPay.tableName.Unpaid"   ),
+    TR8( "gcw.billPay.tableName.Disabled" )
   };
 
   return values[ static_cast<int>( _status ) ];
@@ -18,13 +18,13 @@ asString( Status _status )
 
 std::string
 GCW::Gui::BillPay::
-asStyle( Status _status )
+asStyleClass( Status _status )
 {
   std::string values[] =
   {
-    TR8( "Paid"     ),
-    TR8( "Unpaid"   ),
-    TR8( "Disabled" )
+    "billpay paid"     ,
+    "billpay unpaid"   ,
+    "billpay disabled"
   };
 
   return values[ static_cast<int>( _status ) ];

@@ -15,7 +15,7 @@ class AccountRegisterModel
 
   public:
 
-    AccountRegisterModel( const std::string & _accountGuid );
+    AccountRegisterModel( const std::string & _accountGuid, bool _editable = true );
 
     void refreshFromDisk();
 
@@ -44,7 +44,9 @@ balance
 
   private:
 
+    bool        m_editable = false;
     std::string m_accountGuid;
+    std::string m_lastDate;
 
 }; // endclass AccountRegisterModel
 

@@ -6,6 +6,8 @@
 #include <string>
 #include <vector>
 
+#include <Wt/Json/Object.h>
+
 //#define COUT_FLF  __FILE__, __LINE__, __FUNCTION__
 //#define COUT_BEG  std::cout << __FILE__ << ":" << __LINE__ << "(" << __PRETTY_FUNCTION__ << ") "
 //#define COUT_END  std::endl
@@ -30,6 +32,8 @@ std::string & ltrim( std::string & s, const char* t = trim_ws );
 std::string & trim( std::string & s, const char* t = trim_ws );
 std::string toupper( const std::string & s );
 std::string tolower( const std::string & s );
+
+Wt::Json::Object toJson( Wt::WTreeView * _view );
 
   } // endnamespace Core
 } // endnamespace Wtx

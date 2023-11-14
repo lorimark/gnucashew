@@ -158,6 +158,7 @@ Wt::cpp17::any DateDelegate::editState( Wt::WWidget * _editor, const Wt::WModelI
 
   auto de = dynamic_cast< Wt::WDateEdit* >( cw-> layout()-> widget() );
 
+#ifdef NEVER
   std::cout << __FILE__ << ":" << __LINE__
     << " " << _index.row()
     << " " << _index.column()
@@ -165,6 +166,7 @@ Wt::cpp17::any DateDelegate::editState( Wt::WWidget * _editor, const Wt::WModelI
     << " " << m_dateEdit-> text()
     << std::endl
     ;
+#endif
 
 //  return "";
   return m_dateEdit-> text();
@@ -180,7 +182,6 @@ void DateDelegate::setEditState( Wt::WWidget * _editor, const Wt::WModelIndex & 
 
 void DateDelegate::setModelData( const Wt::cpp17::any & _editState, Wt::WAbstractItemModel * _model, const Wt::WModelIndex & _index ) const
 {
-  std::cout << __FILE__ << ":" << __LINE__ << " " << Wt::asString( _editState ) << std::endl;
 
 }
 
@@ -285,13 +286,12 @@ std::unique_ptr< Wt::WWidget > AccountDelegate::createEditor
   auto model = dynamic_cast< const GCW::Gui::RegisterWidget::Model* >( _index.model() );
 
   std::set< std::string > items;
+  Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
   for( auto accountItem : GCW::Dbo::Accounts::activeAccounts() )
     items.insert( GCW::Dbo::Accounts::fullName( accountItem-> guid() ) );
 
   for( auto item : items )
-  {
     popup-> addSuggestion( item );
-  }
 
   return retVal;
 

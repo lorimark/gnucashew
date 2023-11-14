@@ -5,6 +5,7 @@
 #include <Wt/WPopupMenu.h>
 #include <Wt/WPushButton.h>
 #include <Wt/WVBoxLayout.h>
+#include <Wt/Json/Serializer.h>
 
 #include "../define.h"
 #include "../GnuCashew.h"
@@ -19,9 +20,12 @@ MainWidget()
   auto lw = setLayout( std::make_unique< Wt::WVBoxLayout >() );
 
   m_navBar        = lw-> addWidget( std::make_unique< Wt::WNavigationBar      >()    );
+  m_navBar-> addStyleClass( "NavBar" );
   m_toolBar       = lw-> addWidget( std::make_unique< Wt::WToolBar            >()    );
+  m_toolBar-> addStyleClass( "ToolBar" );
   m_centralWidget = lw-> addWidget( std::make_unique< GCW::Gui::CentralWidget >(), 1 );
   m_statusBar     = lw-> addWidget( std::make_unique< Wt::WContainerWidget    >()    );
+  m_statusBar-> addStyleClass( "StatusBar" );
 
   /*
   ** Set up the navbar
@@ -201,13 +205,29 @@ editSelectedAccount()
 } // endeditSelectedAccount()
 
 
-
 void
 GCW::Gui::MainWidget::
 test()
 {
-  std::cout << __FILE__ << ":" << __LINE__ << " " << std::endl;
+  auto w = centralWidget()-> accountsWidget();
 
+  w-> loadConfig();
 
+#ifdef NEVER
+  for( int row=0; row< model-> rowCount(); row++ )
+  {
+    auto index = model-> index( row, 0 );
+
+    std::cout << __FILE__ << ":" << __LINE__ << " " << iterate( view, index ) << std::endl;
+
+  } // endfor( int row=0; row< model-> rowCount(); row++ )
+#endif
 } // endtest()
+
+
+
+
+
+
+
 

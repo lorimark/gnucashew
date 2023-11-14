@@ -113,7 +113,7 @@ setColumnWidth( int column, const Wt::WLength& width ) -> void
 */
 void GCW::Gui::TableView::handleClick( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _event )
 {
-#ifndef NEVER
+#ifdef NEVER
   std::cout << __FILE__ << ":" << __LINE__
     << " handleClick:<start>"
     << " row:" << _index.row()
@@ -202,9 +202,7 @@ void GCW::Gui::TableView::handleClick( const Wt::WModelIndex & _index, const Wt:
 
   Wt::WTableView::handleClick( _index, _event );
 
-
-
-#ifndef NEVER
+#ifdef NEVER
   std::cout << __FILE__ << ":" << __LINE__ << " handleClick:<end>" << std::endl;
 #endif
 

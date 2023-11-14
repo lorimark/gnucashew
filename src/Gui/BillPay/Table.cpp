@@ -14,15 +14,16 @@ Table( int _selectedMonth, const Status _status )
   **  table for styling and such as.
   **
   */
-  addStyleClass( asString( _status ) );
+  addStyleClass( asStyleClass( _status ) );
 
   /*
   ** Set up some controls
   **
   */
-  setSortingEnabled   ( false                       );
-  setSelectionBehavior( Wt::SelectionBehavior::Rows );
-  setSelectionMode    ( Wt::SelectionMode::Single   );
+  setSortingEnabled      ( false                       );
+  setSelectionBehavior   ( Wt::SelectionBehavior::Rows );
+  setSelectionMode       ( Wt::SelectionMode::Single   );
+  setAlternatingRowColors( true                        );
 
   /*
   ** Make a data model
@@ -54,6 +55,7 @@ GCW::Gui::BillPay::Table::
 setMonth( int _month )
 {
   m_model-> loadData( _month );
-}
+
+} // endsetMonth( int _month )
 
 

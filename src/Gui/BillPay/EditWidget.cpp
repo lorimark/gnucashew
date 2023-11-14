@@ -1,5 +1,6 @@
 #line 2 "src/Gui/BillPay/EditWidget.cpp"
 
+#include <Wt/WMenuItem.h>
 #include <Wt/WVBoxLayout.h>
 
 #include "BillPay.h"
@@ -119,7 +120,7 @@ EditWidget( const std::string & _accountGuid )
   /*
   ** this is the tab widget.
   */
-  m_tabWidget = templtMain-> bindNew< Wt::WTabWidget >( "tabWidget" );
+  m_tabWidget = lw-> addWidget( std::make_unique< Wt::WTabWidget >(), 1 );
 
   /*
   ** This is the payment template.  It will get added to
@@ -154,27 +155,39 @@ EditWidget( const std::string & _accountGuid )
 
   /*
   ** This is the history widget.  It contains
-  **  a registry table for this widget.  It get added to
+  **  a registry table for this widget.  It gets added to
   **  the second page of the tab widget.
   **
   */
   Wt::WTemplate * templtHistory;
   {
+
+#ifdef DOES_NOT_HONOR_LAYOUT
     /*
     ** BUGBUG: this code isn't honoring the layout stuff, to keep
     **  the register table within the boundary of the widget.
     **
     */
     auto cw_ = std::make_unique< Wt::WContainerWidget >();
-    cw_-> setMaximumSize( "Auto", "200px" );
+    cw_-> setMaximumSize( "Auto", "260px" );
     auto lw_ = cw_-> setLayout( std::make_unique< Wt::WVBoxLayout >() );
     auto u_ = std::make_unique< Wt::WTemplate >( TR( "gcw_gui.billpayeditor.form.tab2" ) );
     templtHistory = u_.get();
     lw_-> addWidget( std::move( u_ ) );
     m_tabWidget-> addTab( std::move( cw_ ), TR("gcw.billPay.tabName.history") );
 
+    auto accountRegister = templtHistory-> bindNew< GCW::Gui::RegisterWidget >( "accountRegister", _accountGuid );
 
-    templtHistory-> bindNew< GCW::Gui::RegisterWidget >( "accountRegister", _accountGuid );
+    accountRegister-> setMaximumSize( "Auto", "2060px" );
+#endif
+
+    /*
+    ** This does a better job of honoring the layout, but we still have
+    **  to set the widget height.
+    **
+    */
+    auto tab = m_tabWidget-> addTab( std::make_unique< GCW::Gui::RegisterWidget >( _accountGuid ), TR("gcw.billPay.tabName.history") );
+    tab-> contents()-> setMaximumSize( Wt::WLength::Auto, "300px" );
 
   } // endWt::WTemplate * templtHistory;
 

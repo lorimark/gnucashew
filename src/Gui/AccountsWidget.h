@@ -11,6 +11,7 @@
 
 #include "../Dbo/Session.h"
 #include "../Dbo/Accounts.h"
+#include "../Dbo/Vars.h"
 
 namespace GCW {
   namespace Gui {
@@ -29,6 +30,8 @@ namespace GCW {
 class AccountsWidget
 : public Wt::WContainerWidget
 {
+  public:
+
   class ColDef
   {
     public:
@@ -49,8 +52,6 @@ class AccountsWidget
       void load( Wt::WStandardItem * _treeItem, GCW::Dbo::Accounts::Item::Ptr _parentAccount );
   };
 
-  public:
-
     AccountsWidget();
 
     std::shared_ptr< Model >   model () const { return m_model; }
@@ -63,8 +64,20 @@ class AccountsWidget
     void editAccount( const std::string & _accountGuid );
     void editSelectedAccount();
 
+    /*!
+    ** \brief Config Item
+    **
+    ** This returns the single 'config item' that contains the properties of the
+    **  tree view.
+    **
+    */
+    GCW::Dbo::Vars::Item::Ptr configItem();
+
+    void saveConfig();
+    void loadConfig();
+
     Wt::Json::Object toJson() const;
-    bool fromJson( const Wt::Json::Object & _jobj );
+    bool fromJson( Wt::Json::Object & _jobj );
 
     void test();
 
@@ -72,6 +85,8 @@ class AccountsWidget
 
     void setModel();
     void doubleClicked( const Wt::WModelIndex & index, const Wt::WMouseEvent & event );
+    bool iterate( Wt::Json::Array & _jary, Wt::WModelIndex _parent = Wt::WModelIndex() ) const;
+    bool expandNode( const std::string & _accountGuid, Wt::WModelIndex _parent = Wt::WModelIndex() );
 
     Wt::WTreeView            * m_view = nullptr;
     std::shared_ptr< Model >   m_model;

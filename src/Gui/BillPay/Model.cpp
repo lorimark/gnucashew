@@ -6,6 +6,9 @@
 #include "../Dbo/Vars.h"
 #include "BillPay.h"
 
+//#define NO_HEADER_ON_SUBSEQUENT_TABLES
+#define HEADER_COL0_HAS_TABLE_TYPE_NAME
+
 namespace {
 
 /*!
@@ -80,6 +83,7 @@ Model( int _selectedMonth, const Status _status )
 : Wt::WStandardItemModel( 0, COLUMN_COUNT ),
   m_status( _status )
 {
+
   /*
   ** Load the header only on the 'unpaid' view.
   **
@@ -92,7 +96,7 @@ Model( int _selectedMonth, const Status _status )
   **
   */
   if( m_status == GCW::Gui::BillPay::Status::Unpaid )
-    for( int col = 0; col< COLUMN_COUNT; col++ )
+    for( int col = 1; col< COLUMN_COUNT; col++ )
     {
       setHeaderData( col, Wt::Orientation::Horizontal, columns[col].name    , Wt::ItemDataRole::Display );
       setHeaderData( col, Wt::Orientation::Horizontal, columns[col].toolTip , Wt::ItemDataRole::ToolTip );
@@ -109,15 +113,37 @@ void
 GCW::Gui::BillPay::Model::
 loadData( int _selectedMonth )
 {
-  /*
-  ** Remove all the rows.
+  /*!
+  ** On load, the first column is set to indicate the
+  **  model type as well as the month selected.
+  **
+  ** \code
+  ** Change the label on the column-0
+  **   "03 Unpaid"
+  **   "06 Paid"
+  **   "12 Disabled"
+  ** \endcode
+  **
+  */
+  setHeaderData
+  (
+   0,
+   Wt::Orientation::Horizontal,
+   toString( _selectedMonth ) + " " + asString( m_status ),
+   Wt::ItemDataRole::Display
+  );
+
+  /*!
+  ** On load, all existing data in the model is first dumped.
   **
   */
   while( rowCount() > 0 )
     takeRow( 0 );
 
-  /*
-  ** Get all the var items that are for the managed bill pay (mbpi).
+  /*!
+  ** Get all the var items that are for the 'managed bill pay item' (mbpi)
+  **  in to a resultList that will then be used to load the
+  **  resulting model.
   */
   Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
   auto items =
@@ -133,8 +159,11 @@ loadData( int _selectedMonth )
   if( m_status == GCW::Gui::BillPay::Status::Unpaid )
     yesNo = "no";
 
-  /*
-  ** move the correct items (based on yes/no, disabled/not) in to a vector and sort them by name.
+  /*!
+  ** Run the resultList collection through an analyzer that will
+  **  extract billpay items that match the selection criteria of
+  **  paid/unpaid/disabled accordingly.
+  **
   */
   std::vector< GCW::Dbo::Vars::Item::Ptr > varItems;
   for( auto i : items )
@@ -150,7 +179,9 @@ loadData( int _selectedMonth )
     ** This is for Paid and Unpaid (not Disabled).
     **
     */
-    if( m_status != GCW::Gui::BillPay::Status::Disabled )
+    if( m_status == GCW::Gui::BillPay::Status::Paid
+     || m_status == GCW::Gui::BillPay::Status::Unpaid
+      )
     {
       /*
       ** The item ~must~ be active and visible.
@@ -174,7 +205,7 @@ loadData( int _selectedMonth )
     ** This is for Disabled.
     **
     */
-    else // capture disabled items here
+    else if( m_status == GCW::Gui::BillPay::Status::Disabled ) // capture disabled items here
     {
       /*
       ** Disabled items are either notActive ~or~ notVisible.
@@ -187,15 +218,16 @@ loadData( int _selectedMonth )
 
   } // endfor( auto i : items )
 
-  /*
-  ** Sort all the items by the account nickname.  (The
+  /*!
+  ** All items get sorted Sort all the items by the account nickname.  (The
   **  user is not allowed to sort these views so we do it)
   **
   */
   ::sort( varItems );
 
-  /*
-  ** Walk through all the items and post them to the table.
+  /*!
+  ** Each item is processed out of the sorted vector and placed
+  **  in to the item model.
   */
   for( auto varItem : varItems )
   {
@@ -221,35 +253,34 @@ loadData( int _selectedMonth )
          name-> setData( accountGuid );
     columns.push_back( std::move( name ) );
 
-    auto last4 = std::make_unique< Wt::WStandardItem >( varItem-> getVarString( "last4" ) );
-    columns.push_back( std::move( last4 ) );
+    columns.push_back( std::make_unique< Wt::WStandardItem >( varItem-> getVarString( "last4"    ) ) );
+    columns.push_back( std::make_unique< Wt::WStandardItem >( varItem-> getVarString( "nickname" ) ) );
+    columns.push_back( std::make_unique< Wt::WStandardItem >( varItem-> getVarString( "group"    ) ) );
+    columns.push_back( std::make_unique< Wt::WStandardItem >( varItem-> getVarString( "dueDay"   ) ) );
+    columns.push_back( std::make_unique< Wt::WStandardItem >( varItem-> getVarString( "minimum"  ) ) );
+    columns.push_back( std::make_unique< Wt::WStandardItem >( varItem-> getVarString( "budget"   ) ) );
+    columns.push_back( std::make_unique< Wt::WStandardItem >( varItem-> getVarString( "actual"   ) ) );
+    columns.push_back( std::make_unique< Wt::WStandardItem >( varItem-> getVarString( "autoPay"  ) ) );
 
-    auto nickname = std::make_unique< Wt::WStandardItem >( varItem-> getVarString( "nickname" ) );
-    columns.push_back( std::move( nickname ) );
-
-    auto group = std::make_unique< Wt::WStandardItem >( varItem-> getVarString( "group" ) );
-    columns.push_back( std::move( group ) );
-
-    auto dueDay = std::make_unique< Wt::WStandardItem >( varItem-> getVarString( "dueDay" ) );
-    columns.push_back( std::move( dueDay ) );
-
-    auto minimum = std::make_unique< Wt::WStandardItem >( varItem-> getVarString( "minimum" ) );
-    columns.push_back( std::move( minimum ) );
-
-    auto budget = std::make_unique< Wt::WStandardItem >( varItem-> getVarString( "budget" ) );
-    columns.push_back( std::move( budget ) );
-
-    auto actual = std::make_unique< Wt::WStandardItem >( varItem-> getVarString( "actual" ) );
-    columns.push_back( std::move( actual ) );
-
-    auto autoPay = std::make_unique< Wt::WStandardItem >( varItem-> getVarString( "autoPay" ) );
-    columns.push_back( std::move( autoPay ) );
-
-    for( int i=1; i<= 12; i++ )
+    for( int month=1; month<= 12; month++ )
     {
-      auto cb = std::make_unique< Wt::WStandardItem >( varItem-> getVarString( "cb" + toString( i ) ) );
+      auto cb = std::make_unique< Wt::WStandardItem >( varItem-> getVarString( "cb" + toString( month ) ) );
+
+      /*!
+      ** While building the 'month columns', apply a style class to the
+      **  column of items according to the month selected.  This causes
+      **  the current selected column to be highlighted within the table
+      **  view in the browser.
+      **
+      ** \image html BillPayColumnSelector.png
+      **
+      */
+      if( _selectedMonth == month )
+        cb-> setStyleClass( "colsel" );
+
       columns.push_back( std::move( cb ) );
-    }
+
+    } // endfor( int i=1; i<= 12; i++ )
 
     /*
     ** Push everything in to the model.

@@ -261,4 +261,12 @@ fullName( const std::string & _accountGuid )
 } // endstd::string fullName( const std::string * _guid );
 
 
+std::string
+GCW::Dbo::Accounts::
+fullName( Item::Ptr _item )
+{
+  return fullName( _item-> guid() );
+
+} // endfullName( Item::Ptr _item )
+
 

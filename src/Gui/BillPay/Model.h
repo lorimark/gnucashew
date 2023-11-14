@@ -97,6 +97,14 @@ class Model
 
   private:
 
+    /*!
+    ** \brief Model Status
+    **
+    ** Each model represents items of a partcular status.  The model set
+    **  contains, therefore, only items that match the selected status
+    **  and the selected month.
+    **
+    */
     Status m_status;
 
 }; // endclass Model

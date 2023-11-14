@@ -36,7 +36,7 @@ enum class Status
 **
 */
 std::string asString( Status _status );
-std::string asStyle( Status _status );
+std::string asStyleClass( Status _status );
 
     } // endnamespace BillPay {
   } // endnamespace Gui {
