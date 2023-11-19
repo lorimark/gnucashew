@@ -64,7 +64,6 @@ class DateDelegate
 {
   public:
 
-
     std::unique_ptr< Wt::WWidget > createEditor
     (
      const Wt::WModelIndex & _index,
@@ -87,6 +86,12 @@ std::unique_ptr< Wt::WWidget > DateDelegate::createEditor
   Wt::WFlags< Wt::ViewItemRenderFlag > _flags
 ) const
 {
+  std::cout << __FILE__ << ":" << __LINE__
+    << " createEditor()"
+    << " r:" << _index.row()
+    << " c:" << _index.column()
+    << std::endl;
+
   /*
   ** The editor is placed in to a container for layout
   **  management
@@ -134,6 +139,8 @@ std::unique_ptr< Wt::WWidget > DateDelegate::createEditor
 
 void DateDelegate::doCloseEditor( Wt::WDateEdit * _dateEdit, bool save ) const
 {
+  std::cout << __FILE__ << ":" << __LINE__ << " " << std::endl;
+
   closeEditor().emit( _dateEdit, save );
 
 #ifdef NEVER
@@ -150,20 +157,24 @@ void DateDelegate::doTabAction( Wt::WKeyEvent _keyEvent ) const
 
 }
 
-
-
 Wt::cpp17::any DateDelegate::editState( Wt::WWidget * _editor, const Wt::WModelIndex & _index ) const
 {
   auto cw = dynamic_cast< Wt::WContainerWidget* >( _editor );
 
-  auto de = dynamic_cast< Wt::WDateEdit* >( cw-> layout()-> widget() );
+  auto de = dynamic_cast< Wt::WDateEdit* >( cw-> children().at(0) );
 
-#ifdef NEVER
+#ifndef NEVER
   std::cout << __FILE__ << ":" << __LINE__
-    << " " << _index.row()
-    << " " << _index.column()
-    << " " << de
-    << " " << m_dateEdit-> text()
+    << " editState()"
+    << " r:" << _index.row()
+    << " c:" << _index.column()
+    << " i:" << cw-> id()
+    << " n:" << cw-> objectName()
+    << " s:" << cw-> children().size()
+    << " t:" << typeid( cw-> children().at(0) ).name()
+    << " d:" << de
+    << " m:" << m_dateEdit
+    << " t:" << m_dateEdit-> text()
     << std::endl
     ;
 #endif
@@ -175,15 +186,23 @@ Wt::cpp17::any DateDelegate::editState( Wt::WWidget * _editor, const Wt::WModelI
 
 void DateDelegate::setEditState( Wt::WWidget * _editor, const Wt::WModelIndex & _index, const Wt::cpp17::any & _value ) const
 {
-//  std::cout << __FILE__ << ":" << __LINE__ << " " << _editor    << std::endl;
-//  std::cout << __FILE__ << ":" << __LINE__ << " " << m_dateEdit << std::endl;
+  std::cout << __FILE__ << ":" << __LINE__ << " " << _editor    << std::endl;
+  std::cout << __FILE__ << ":" << __LINE__ << " " << m_dateEdit << std::endl;
 
 } // endvoid DateDelegate::setEditState( Wt::WWidget * _editor, const Wt::WModelIndex & _index, const Wt::cpp17::any & _value ) const
 
 void DateDelegate::setModelData( const Wt::cpp17::any & _editState, Wt::WAbstractItemModel * _model, const Wt::WModelIndex & _index ) const
 {
+  std::cout << __FILE__ << ":" << __LINE__
+    << " setModelData()"
+    << " " << _index.row()
+    << " " << _index.column()
+    << " " << Wt::asString( _editState )
+    << " " << _model
+    << std::endl;
 
-}
+
+} // endvoid DateDelegate::setModelData( const Wt::cpp17::any & _editState, Wt::WAbstractItemModel * _model, const Wt::WModelIndex & _index ) const
 
 
 
@@ -222,7 +241,7 @@ std::unique_ptr< Wt::WWidget > SuggestionDelegate::createEditor
     "</b>",        // highlightEndTag
     ',',           // listSeparator      (for multiple addresses)
     " \n",         // whitespace
-    "-., \"@\n;",  // wordSeparators     (within an address)
+    ":-., \"@\n;", // wordSeparators     (within an address)
     ""             // appendReplacedText (prepare next email address)
    };
 
@@ -233,6 +252,8 @@ std::unique_ptr< Wt::WWidget > SuggestionDelegate::createEditor
 
   for( auto item : model-> suggestionsFromColumn( _index.column() ) )
   {
+    std::cout << __FILE__ << ":" << __LINE__ << " " << item << std::endl;
+
     popup-> addSuggestion( item, item );
   }
 
@@ -300,8 +321,6 @@ std::unique_ptr< Wt::WWidget > AccountDelegate::createEditor
 } // endnamespace {
 
 
-
-
 GCW::Gui::RegisterWidget::
 RegisterWidget( const std::string & _accountGuid )
 : m_accountGuid( _accountGuid )
@@ -337,10 +356,10 @@ RegisterWidget( const std::string & _accountGuid )
   tableView()-> setHeaderItemDelegate   ( std::make_shared< HeaderDelegate >()                          );
 
   {
-    auto delegate = std::make_shared< DateDelegate >();
-    tableView()-> setItemDelegateForColumn( 0, delegate  );
+    auto dateDelegate = std::make_shared< DateDelegate >();
+    tableView()-> setItemDelegateForColumn( 0, dateDelegate  );
 
-    delegate->
+    dateDelegate->
       closeEditor().connect( [&]( Wt::WWidget* _widget, bool _save )
       {
         std::cout << __FILE__ << ":" << __LINE__ << " " << std::endl;
@@ -389,6 +408,7 @@ RegisterWidget( const std::string & _accountGuid )
 
       });
 #endif
+
   }
 
   tableView()-> setItemDelegateForColumn ( 1, std::make_shared< SuggestionDelegate >() );
@@ -400,6 +420,7 @@ RegisterWidget( const std::string & _accountGuid )
     std::cout << __FILE__ << ":" << __LINE__ << " " << col << std::endl;
   });
 
+#ifdef NEVER
   /*
   ** This 'selectionChanged' procedure is 'clunky'.
   **
@@ -419,10 +440,38 @@ RegisterWidget( const std::string & _accountGuid )
   **  to sort that out.
   **
   */
-  tableView()-> selectionChanged().connect( [=]()
-  {
-    tableView()-> closeEditors( true );
-  });
+  tableView()->
+    selectionChanged().connect( [=]()
+    {
+      std::cout << __FILE__ << ":" << __LINE__ << " selectionChanged" << std::endl;
+
+      tableView()-> closeEditors( true );
+    });
+#endif
+
+#ifdef CLICKED_FIRES_FROM_THE_TABLEVIEW_HANDLECLICK_EVENT_HANDLER_MIGHT_NOT_BE_USEFUL_HERE
+  /*
+  ** the 'clicked()' signal seems to fire even when an editor is open
+  **
+  */
+  tableView()->
+    clicked().connect( [=]( Wt::WModelIndex _index, Wt::WMouseEvent _event )
+    {
+      std::cout << __FILE__ << ":" << __LINE__ << " clicked"
+        << " row:" << _index.row()
+        << " col:" << _index.column()
+        << std::endl
+        ;
+    });
+#endif
+
+#ifdef KEYPRESSED_ONLY_FIRES_WHEN_EDITORS_ARE_NOT_OPEN
+  tableView()->
+    keyPressed().connect( [=]( Wt::WKeyEvent _event )
+    {
+      std::cout << __FILE__ << ":" << __LINE__ << " " << _event.charCode() << std::endl;
+    });
+#endif
 
 #ifdef NEVER
   tableView()->
@@ -469,12 +518,6 @@ RegisterWidget( const std::string & _accountGuid )
 
 //      tableView()-> closeEditors();
     });
-
-  tableView()-> keyPressed().connect( [=]( Wt::WKeyEvent _event )
-  {
-    std::cout << __FILE__ << ":" << __LINE__ << " " << _event.charCode() << std::endl;
-
-  });
 #endif
 
   loadData();

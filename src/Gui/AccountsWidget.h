@@ -87,6 +87,9 @@ class AccountsWidget
     void doubleClicked( const Wt::WModelIndex & index, const Wt::WMouseEvent & event );
     bool iterate( Wt::Json::Array & _jary, Wt::WModelIndex _parent = Wt::WModelIndex() ) const;
     bool expandNode( const std::string & _accountGuid, Wt::WModelIndex _parent = Wt::WModelIndex() );
+    bool expandTreeNodes( Wt::Json::Object & _jobj );
+    bool setSelected( const std::string & _accountGuid );
+    Wt::WModelIndex findIndex( const std::string & _accountGuid, Wt::WModelIndex _parentIndex = Wt::WModelIndex() );
 
     Wt::WTreeView            * m_view = nullptr;
     std::shared_ptr< Model >   m_model;

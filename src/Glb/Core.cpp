@@ -133,8 +133,10 @@ iterate( Wt::Json::Array & _jary, Wt::WModelIndex _parent )
   **  expanded.
   **
   */
-  return true;
 #endif
+
+  return true;
+
 } // endvoid iterate( Wt::WModelIndex _index ) const
 
 Wt::Json::Object

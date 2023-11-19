@@ -8,6 +8,14 @@
 namespace GCW {
   namespace Eng {
 
+/*!
+** \brief Account Register Model
+**
+** This model is used to present account details to the
+**  'editor register' (the book-like-looking thing that
+**  the user posts transactions through.
+**
+*/
 class AccountRegisterModel
 : public Wt::WStandardItemModel
 {
@@ -22,6 +30,8 @@ class AccountRegisterModel
     RowItem makeRow( const std::string & _splitGuid );
 
     std::set< std::string > suggestionsFromColumn( int _column ) const;
+
+    bool setData( const Wt::WModelIndex & _index, const Wt::cpp17::any & _value, Wt::ItemDataRole _role );
 
 /*
 balance

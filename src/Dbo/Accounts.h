@@ -82,45 +82,50 @@ class Item
 {
   public:
 
-    const std::string & guid           () const { return m_guid           ; }
-    const std::string & name           () const { return m_name           ; }
-    const std::string & accountType    () const { return m_account_type   ; }
-    const std::string & commodity_guid () const { return m_commodity_guid ; }
-    const int           commodity_scu  () const { return m_commodity_scu  ; }
-    const std::string & parent_guid    () const { return m_parent_guid    ; }
-    const std::string & code           () const { return m_code           ; }
-    const std::string & description    () const { return m_description    ; }
-    const int           hidden         () const { return m_hidden         ; }
-    const int           placeHolder    () const { return m_placeHolder    ; }
+    const GCW::Dbo::Account::AccountDef_t & accountDef() const;
+
+    GCW::Dbo::Account::DrCr         accountDrCr() const;
+    GCW::Dbo::Account::Type         accountType() const;
+
+    const std::string & guid            () const { return m_guid             ; }
+    const std::string & name            () const { return m_name             ; }
+    const std::string & accountTypeName () const { return m_account_typeName ; }
+    const std::string & commodity_guid  () const { return m_commodity_guid   ; }
+    const int           commodity_scu   () const { return m_commodity_scu    ; }
+    const std::string & parent_guid     () const { return m_parent_guid      ; }
+    const std::string & code            () const { return m_code             ; }
+    const std::string & description     () const { return m_description      ; }
+    const int           hidden          () const { return m_hidden           ; }
+    const int           placeHolder     () const { return m_placeHolder      ; }
 
     template< class Action > void persist( Action & action )
     {
-      Wt::Dbo::id   ( action, m_guid           , GCW::Dbo::Account::Field::guid            ,   32 ); // text(32) PRIMARY KEY NOT NULL
-      Wt::Dbo::field( action, m_name           , GCW::Dbo::Account::Field::name            , 2048 ); // text(2048) NOT NULL
-      Wt::Dbo::field( action, m_account_type   , GCW::Dbo::Account::Field::account_type    , 2048 ); // text(2048) NOT NULL
-      Wt::Dbo::field( action, m_commodity_guid , GCW::Dbo::Account::Field::commodity_guid  ,   32 ); // text(32)
-      Wt::Dbo::field( action, m_commodity_scu  , GCW::Dbo::Account::Field::commodity_scu          ); // integer NOT NULL
-      Wt::Dbo::field( action, m_non_std_scu    , GCW::Dbo::Account::Field::non_std_scu            ); // integer NOT NULL
-      Wt::Dbo::field( action, m_parent_guid    , GCW::Dbo::Account::Field::parent_guid     ,   32 ); // text(32)
-      Wt::Dbo::field( action, m_code           , GCW::Dbo::Account::Field::code            , 2048 ); // text(2048)
-      Wt::Dbo::field( action, m_description    , GCW::Dbo::Account::Field::description     , 2048 ); // text(2048)
-      Wt::Dbo::field( action, m_hidden         , GCW::Dbo::Account::Field::hidden                 ); // integer
-      Wt::Dbo::field( action, m_placeHolder    , GCW::Dbo::Account::Field::placeHolder            ); // integer
+      Wt::Dbo::id   ( action, m_guid             , GCW::Dbo::Account::Field::guid             ,   32 ); // text(32) PRIMARY KEY NOT NULL
+      Wt::Dbo::field( action, m_name             , GCW::Dbo::Account::Field::name             , 2048 ); // text(2048) NOT NULL
+      Wt::Dbo::field( action, m_account_typeName , GCW::Dbo::Account::Field::account_typeName , 2048 ); // text(2048) NOT NULL
+      Wt::Dbo::field( action, m_commodity_guid   , GCW::Dbo::Account::Field::commodity_guid   ,   32 ); // text(32)
+      Wt::Dbo::field( action, m_commodity_scu    , GCW::Dbo::Account::Field::commodity_scu           ); // integer NOT NULL
+      Wt::Dbo::field( action, m_non_std_scu      , GCW::Dbo::Account::Field::non_std_scu             ); // integer NOT NULL
+      Wt::Dbo::field( action, m_parent_guid      , GCW::Dbo::Account::Field::parent_guid      ,   32 ); // text(32)
+      Wt::Dbo::field( action, m_code             , GCW::Dbo::Account::Field::code             , 2048 ); // text(2048)
+      Wt::Dbo::field( action, m_description      , GCW::Dbo::Account::Field::description      , 2048 ); // text(2048)
+      Wt::Dbo::field( action, m_hidden           , GCW::Dbo::Account::Field::hidden                  ); // integer
+      Wt::Dbo::field( action, m_placeHolder      , GCW::Dbo::Account::Field::placeHolder             ); // integer
     }
 
   private:
 
-    std::string m_guid           ;
-    std::string m_name           ;
-    std::string m_account_type   ;
-    std::string m_commodity_guid ;
-    int         m_commodity_scu  ;
-    int         m_non_std_scu    ;
-    std::string m_parent_guid    ;
-    std::string m_code           ;
-    std::string m_description    ;
-    int         m_hidden         ;
-    int         m_placeHolder    ;
+    std::string m_guid             ;
+    std::string m_name             ;
+    std::string m_account_typeName ;
+    std::string m_commodity_guid   ;
+    int         m_commodity_scu    ;
+    int         m_non_std_scu      ;
+    std::string m_parent_guid      ;
+    std::string m_code             ;
+    std::string m_description      ;
+    int         m_hidden           ;
+    int         m_placeHolder      ;
 
 }; // endclass Item
 

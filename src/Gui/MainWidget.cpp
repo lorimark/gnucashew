@@ -209,19 +209,12 @@ void
 GCW::Gui::MainWidget::
 test()
 {
-  auto w = centralWidget()-> accountsWidget();
 
-  w-> loadConfig();
+  std::cout << __FILE__ << ":" << __LINE__
+    << " " << centralWidget()-> tabWidget()-> count()
+    << std::endl;
 
-#ifdef NEVER
-  for( int row=0; row< model-> rowCount(); row++ )
-  {
-    auto index = model-> index( row, 0 );
 
-    std::cout << __FILE__ << ":" << __LINE__ << " " << iterate( view, index ) << std::endl;
-
-  } // endfor( int row=0; row< model-> rowCount(); row++ )
-#endif
 } // endtest()
 
 

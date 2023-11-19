@@ -21,20 +21,46 @@ AccountRegisterModel( const std::string & _accountGuid, bool _editable )
 
   dataChanged().connect( [=]( Wt::WModelIndex _index1, Wt::WModelIndex _index2 )
   {
-//    std::cout << __FILE__ << ":" << __LINE__
-//    << " r1:" << _index1.row() << " c1:" << _index1.column()
-//    << " r2:" << _index2.row() << " c2:" << _index2.column()
-//    << std::endl;
+    std::cout << __FILE__ << ":" << __LINE__ << " model.dataChanged()"
+
+      << " r1:" << _index1.row()
+      << " c1:" << _index1.column()
+      << " v1:" << Wt::asString( _index1.data() )
+
+      << " r2:" << _index2.row()
+      << " c2:" << _index2.column()
+      << " v2:" << Wt::asString( _index2.data() )
+
+      << std::endl;
 
   });
 
   itemChanged().connect( [=]( Wt::WStandardItem * _item )
   {
-//    std::cout << __FILE__ << ":" << __LINE__ << " " << Wt::asString( _item-> data() ) << std::endl;
+    std::cout << __FILE__ << ":" << __LINE__ << " model.itemChanged()"
+      << Wt::asString( _item-> data() )
+      << std::endl;
 
   });
 
 } // endGCW::Eng::AccountRegisterModel::AccountRegisterModel( const std::string & _accountGuid )
+
+
+bool
+GCW::Eng::AccountRegisterModel::
+setData( const Wt::WModelIndex & _index, const Wt::cpp17::any & _value, Wt::ItemDataRole _role )
+{
+  auto retVal = Wt::WStandardItemModel::setData( _index, _value, _role );
+
+  std::cout << __FILE__ << ":" << __LINE__ << " setData()"
+    << "\n rv:" << retVal
+    << "\n id:" << Wt::asString( _index.data() )
+    << "\n va:" << Wt::asString( _value )
+    << std::endl;
+
+  return retVal;
+
+} // endsetData( const Wt::WModelIndex & _index, const Wt::cpp17::any & _value, Wt::ItemDataRole _role )
 
 /*!
 ** \brief Refresh From Disk
@@ -60,8 +86,8 @@ refreshFromDisk()
   **    2   description
   **    3   account / transfer
   **    4   reconciliation
-  **    5   increase
-  **    6   decrease
+  **    5   debit
+  **    6   credit
   **    7   balance r/o (computed)
   ** \endcode
   **
@@ -85,6 +111,23 @@ refreshFromDisk()
   */
   clear();
 
+  /*
+  ** Get an account item loaded.  This is the account that _is_ this
+  **  register.
+  **
+  */
+  auto accountItem = GCW::Dbo::Accounts::byGuid( m_accountGuid );
+
+#ifdef NEVER
+  std::cout << __FILE__ << ":" << __LINE__
+    << " guid:" << accountItem-> guid()
+    << " name:" << accountItem-> name()
+    << " dbcr:" << static_cast<int>( accountItem-> accountDbCr() )
+    << " type:" << static_cast<int>( accountItem-> accountType() )
+    << " typn:" << accountItem-> accountTypeName()
+    << std::endl;
+#endif
+
   /*!
   ** In order to produce a proper 'register' of items, it is important
   **  to load the data from the 'splits' side of the transaction rather
@@ -92,7 +135,8 @@ refreshFromDisk()
   **
   ** Note that when the splits are loaded based on the account ID, they
   **  are returned in a std::vector that is sorted based on the transction
-  **  date.
+  **  date.  This chosen sort method insures that the running balance
+  **  can be accurately calculated on the fly.
   **
   */
   auto splitItems = GCW::Dbo::Splits::byAccount( m_accountGuid );
@@ -104,8 +148,8 @@ refreshFromDisk()
   **  Maintain a running balance as we go along to keep the balance
   **  reflected within the view.  The result is a multi-column row
   **  item that is added to the model.  This allows the model to be
-  **  subsequently resorted without affecting the running balances
-  **  and so forth.
+  **  subsequently resorted or subset-extracted without affecting
+  **  the running balances and so forth.
   **
   */
   DECIMAL::decimal<2> runningBalance( 0 );
@@ -129,9 +173,9 @@ refreshFromDisk()
     auto transactionSplits = GCW::Dbo::Splits       ::bySplit ( splitItem-> guid()    );
 
     /*!
-    ** \note The post_date also carries with it the guid of the split item itself, so
-    **  that the originating split can be located from the table view.  The guid
-    **  can be accessed by;
+    ** \note The post_date column (col-0) also carries with it the guid of the split
+    **  item itself, so that the originating split can be located from the table
+    **  view.  The guid can be accessed by;
     **
     ** \code
     ** auto splitRowGuid = Wt::asString( standardItem.data( Wt::ItemRole::User ) )
@@ -139,7 +183,8 @@ refreshFromDisk()
     **
     */
     auto post_date = _addColumn( columns, transactionItem-> post_date_as_date().toString( GCW::CFG::date_format() ) );
-         post_date-> setData( splitItem-> guid() );
+         post_date-> setData( splitItem-> guid(), Wt::ItemDataRole::User );
+         post_date-> setToolTip( splitItem-> guid() );
 
     auto num = _addColumn( columns, transactionItem-> num() );
 
@@ -198,7 +243,8 @@ refreshFromDisk()
           /*!
           ** \par Another Imbalance
           ** This is another problem... We have another split, but the account
-          **  we are split-to doesn't exist.
+          **  we are split-to doesn't exist.  This is a problem and should not
+          **  happen and represents an error in the database.
           **
           */
           account = _addColumn( columns, TR("gcw.RegisterWidget.account.imbalanceUSD") );
@@ -237,8 +283,8 @@ refreshFromDisk()
     auto reconcile = _addColumn( columns, splitItem-> reconcile_state() ); // Reconciled
 
     /*!
-    ** Values of the transaction appear either in the (+)Increase column
-    **  or in the (-)Decrease column depending on if they are positive
+    ** Values of the transaction appear either in the Debit column (Left)
+    **  or in the Credit column (Right) depending on if they are positive
     **  or negative.  The 'decimal.h' library is used to perform the
     **  arithmetic to prevent the floating point math problems.
     **
@@ -247,36 +293,174 @@ refreshFromDisk()
     **  to appear in the correct chronological order.
     **
     */
-    Wt::WStandardItem * deposit    = nullptr;
-    Wt::WStandardItem * withdrawal = nullptr;
-    Wt::WStandardItem * balance    = nullptr;
+    Wt::WStandardItem * debit   = nullptr;
+    Wt::WStandardItem * credit  = nullptr;
+    Wt::WStandardItem * balance = nullptr;
 
-    /*
-    ** Accumulate the running balance
+    /*!
+    ** \par Balance Computation Notes
+    **
+    **  There are two 'types' of accounts; Debit/Credit.  Gnucash
+    **   stores split information as a single value that is positive
+    **   or negative.  If the value is positive, then it is posted
+    **   to the debit column.  If the value is negative, it is posted
+    **   to credit column.
+    **
+    **  Depending on the account type (debit/credit), that value is
+    **   then either 'added' or 'subtracted' from the account balance.
+    **   If this is a 'credit' account, then the value is subtracted,
+    **   and if it is a debit account, the value is added.
+    **
+    **  Therefore, if this is a credit account, such as a credit card,
+    **   then a 'positive' value, posted to the debit column, would
+    **   'decrease' the balance in that account.  Therefore, the value,
+    **   being positive, is 'subtracted' from the running balance.  If
+    **   the value were negative, it would be posted to the credit
+    **   column, and again would be 'subtracted' from the running
+    **   balance, and a negative value being subtracted from a value
+    **   causes the result to 'increase'.
+    **
+    **  If this is a debit account, such as a bank checking account, a
+    **   'positive' value, posted to the debit column (again), would
+    **   'increase' the balance in that account.
+    **
+    **  So, that's the funky GAAP math done here.
+    **
+    ** What follows is a pretty good explanation of the debit/credit
+    **  stuff;
+    **
+    **  >>>>>>>>>>>>>>>
+    **  Debit/Credit is just Left/Right.
+    **  Maybe this will help...
+    **
+    **  The Accounting Equation:
+    **  Assets - Liabilities = Equity
+    **
+    **      (let's make all terms 'positive')
+    **  Assets = Liabilities + Equity
+    **
+    **      (now, we'll split off a subset of Equity)
+    **  Assets = Liabilities + Equity + Retained Earnings
+    **
+    **      (now, we'll substitute temporary accounts for Retained Earnings)
+    **  Assets = Liabilities + Equity + (Income - Expenses)
+    **
+    **      (now, we'll once again, make all terms 'positive')
+    **  Assets + Expenses = Liabilities + Equity + Income
+    **
+    **  And there, you have the full Accounting Equation with the five major account types that GnuCash uses.
+    **
+    **  In double-entry accounting, ALL transactions are in the form of:
+    **  Debit = Credit
+    **  Left = Right
+    **
+    **  The 'Debit' accounts (those that are normally (positive) a Debit balance, and increase with a Debit, decrease with a Credit) are on the left of the equation:
+    **  Assets
+    **  Expenses
+    **
+    **  The 'Credit' accounts (those that are normally (positive) a Credit balance, and increase with a Credit, decrease with a Debit) are those on the right of the equation:
+    **  Liabilities
+    **  Equity
+    **  Income
+    **
+    **  A negative balance in any account would indicate either an entry error or a contra-balance situation. (rare for individuals)
+    **
+    **  You can move funds from the left to the right, or vice versa, or between any accounts or types on the same side of the equation. (I will use the abbreviations Dr. and Cr. here)
+    **  Most texts will write transactions Debit first, then Credit as shown below. The amounts are not shown, because they *must* be equal.
+    **
+    ** \par Example Left to Right - Asset to Liability (paying down a debt)
+    ** \code
+    **  Dr. Liabilities:Loan
+    **    Cr. Assets:Cash
+    **  result: decreased Loan owed, decreased Cash on hand, Assets decreased, Liabilities decreased - equation still in balance
+    ** \endcode
+    **
+    ** \par Example Right to Left - Income to Asset (receipt of income)
+    ** \code
+    **  Dr. Assets:Cash
+    **    Cr. Income:Salary
+    **  result: increased Cash on hand, increased Salary earned, Assets increased, Income increased - equation still in balance
+    ** \endcode
+    **
+    ** \par  Example Left to Left(same type) - Asset to Asset (buying land outright)
+    ** \code
+    **  Dr. Assets:Land
+    **    Cr. Assets:Cash
+    **  result: increased Land owned, decreased Cash on hand, Assets shifted - equation still in balance
+    ** \endcode
+    **
+    ** \par  Example Left to Left(different type) - Asset to Expense (buying groceries)
+    ** \code
+    **  Dr. Expenses:Food
+    **    Cr. Assets:Cash
+    **  result: increased Food expense, decreased Cash on hand, Expenses increased, Assets decreased - equation still in balance
+    ** \endcode
+    **
+    ** \par  Example Right to Right(same type) - Liability to Liability (paying down a loan with a credit card)
+    ** \code
+    **  Dr. Liabilities:Loan
+    **    Cr. Liabilities:Credit Card
+    **  result: decreased Loan owed, increased Credit Card owed, Liabilities shifted - equation still in balance
+    ** \endcode
+    **
+    ** \par  Example Right to Right(different type) - Equity to Liability (recognition of dividends to be paid - business transaction)
+    ** \code
+    **  Dr. Equity:Retained Earnings
+    **    Cr. Liabilities:Dividends Payable
+    **  result: decreased Retained Earnings, increased Dividends owed to shareholders, Equity decreased, Liability increased - equation remains in balance.
+    ** \endcode
+    **
+    **  *it is rare and unusualy for an individual to shift Equity to Liabilities and vice versa. Forgiveness of Debt may in some jurisdictions be a transfer from Liabilities to Income.
+    **
+    **  Regards,
+    **  Adrien
+    **  adrien.monteleone@lusfiber.net
+    **  2023-10-22
+    **  >>>>>>>>>>>>>>>
     **
     */
-    runningBalance += splitItem-> value();
+    if( accountItem-> accountDrCr() == GCW::Dbo::Account::DrCr::CREDIT )
+      runningBalance -= splitItem-> value();
 
+    if( accountItem-> accountDrCr() == GCW::Dbo::Account::DrCr::DEBIT )
+      runningBalance += splitItem-> value();
+
+    /*
+    ** if the value is positive, we post it to the debit (left) column.
+    */
     if( splitItem-> value() > 0 )
     {
-      deposit    = _addColumn( columns, splitItem-> valueAsString() );
-      withdrawal = _addColumn( columns, "" );
+      debit  = _addColumn( columns, splitItem-> valueAsString() );
+      credit = _addColumn( columns, "" );
     }
 
+    /*
+    ** if the value is negative, we post it to the credit (right) column.
+    **  however, we invert the value in this column, so that it does not
+    **  carry the (-) leading minus sign... all the numbers we enter are
+    **  positive... only the 'balance' column can show negative numbers.
+    */
     else
     if( splitItem-> value() < 0 )
     {
-      deposit    = _addColumn( columns, "" );
-      withdrawal = _addColumn( columns, splitItem-> valueAsString() );
+      debit  = _addColumn( columns, "" );
+      credit = _addColumn( columns, splitItem-> valueAsString(true) );
     }
 
+    /*
+    ** if the value is zero, we make sure both columns are blank.
+    */
     else
     if( splitItem-> value() == 0 )
     {
-      deposit    = _addColumn( columns, "" );
-      withdrawal = _addColumn( columns, "" );
+      debit  = _addColumn( columns, "" );
+      credit = _addColumn( columns, "" );
     }
 
+    /*
+    ** Poke the balance in
+    **
+    */
     balance =
       _addColumn
       (
@@ -285,25 +469,41 @@ refreshFromDisk()
        .arg( toString( runningBalance, GCW::CFG::decimal_format() ) )
       );
 
+    /*
+    ** If the balance hit negative, highlight the number with a bit
+    **  of bad-news-red.
+    **
+    */
     if( runningBalance < 0 )
       balance-> setStyleClass( "negval" );
 
-    if( splitItem-> reconcile_state() == "y" )
-      editable = false;
-    else
-      editable = true;
+    /*
+    ** If we can edit at all, then check the reconciliation
+    **  state.  If the split has already been reconciled then
+    **  we really don't want the user messing around with it.
+    **
+    */
+    if( m_editable )
+    {
+      if( splitItem-> reconcile_state() == "y" )
+        editable = false;
+      else
+        editable = true;
+    }
 
-#ifndef NEVER
+    /*
+    ** If this item can be edited then unlock everything.
+    **
+    */
     if( editable )
     {
       post_date   -> setFlags( Wt::ItemFlag::Editable );
       num         -> setFlags( Wt::ItemFlag::Editable );
       description -> setFlags( Wt::ItemFlag::Editable );
       account     -> setFlags( Wt::ItemFlag::Editable );
-      deposit     -> setFlags( Wt::ItemFlag::Editable );
-      withdrawal  -> setFlags( Wt::ItemFlag::Editable );
+      debit       -> setFlags( Wt::ItemFlag::Editable );
+      credit      -> setFlags( Wt::ItemFlag::Editable );
     }
-#endif
 
     /*
     ** Add the row to the model
@@ -332,15 +532,21 @@ refreshFromDisk()
     appendRow( std::move( columns ) );
   }
 
+  /*
+  ** poke all the header labels in.  Note that some of the labels change
+  **  depending on the account debit/credit type
+  **
+  */
+  auto accountDef = accountItem-> accountDef();
   int col = 0;
-  setHeaderData( col++, TR( "gcw.RegisterWidget.column.date"       ) );
-  setHeaderData( col++, TR( "gcw.RegisterWidget.column.num"        ) );
-  setHeaderData( col++, TR( "gcw.RegisterWidget.column.memo"       ) );
-  setHeaderData( col++, TR( "gcw.RegisterWidget.column.account"    ) );
-  setHeaderData( col++, TR( "gcw.RegisterWidget.column.reconcile"  ) );
-  setHeaderData( col++, TR( "gcw.RegisterWidget.column.deposit"    ) );
-  setHeaderData( col++, TR( "gcw.RegisterWidget.column.withdrawal" ) );
-  setHeaderData( col++, TR( "gcw.RegisterWidget.column.balance"    ) );
+  setHeaderData( col++, TR( "gcw.RegisterWidget.column.date"                     ) );
+  setHeaderData( col++, TR( "gcw.RegisterWidget.column.num"                      ) );
+  setHeaderData( col++, TR( "gcw.RegisterWidget.column.memo"                     ) );
+  setHeaderData( col++, TR( "gcw.RegisterWidget.column." + accountDef.colAccount ) );
+  setHeaderData( col++, TR( "gcw.RegisterWidget.column.reconcile"                ) );
+  setHeaderData( col++, TR( "gcw.RegisterWidget.column." + accountDef.colDr      ) );
+  setHeaderData( col++, TR( "gcw.RegisterWidget.column." + accountDef.colCr      ) );
+  setHeaderData( col++, TR( "gcw.RegisterWidget.column.balance"                  ) );
 
 } // endGCW::Eng::AccountRegisterModel::refreshFromDisk()
 

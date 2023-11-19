@@ -112,9 +112,10 @@ class Item
     **  number type.  It can then be used in regular accounting
     **  calculations.
     */
-    DECIMAL::decimal<2> value() const
+    DECIMAL::decimal<2> value( bool negate = false ) const
     {
-      DECIMAL::decimal<2> retVal( value_num() );
+      auto neg = negate? -1:1;
+      DECIMAL::decimal<2> retVal( value_num()*neg );
       retVal /= value_denom();
       return retVal;
     }
@@ -133,9 +134,9 @@ class Item
     ** \sa GCW::CFG::decimal_format()
     **
     */
-    std::string valueAsString() const
+    std::string valueAsString( bool negate = false ) const
     {
-      return toString( value(), GCW::CFG::decimal_format() );
+      return toString( value(negate), GCW::CFG::decimal_format() );
     }
 
     /*!

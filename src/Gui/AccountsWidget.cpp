@@ -140,9 +140,14 @@ GCW::Dbo::Vars::Item::Ptr
 GCW::Gui::AccountsWidget::
 configItem()
 {
-  Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
+  GCW::Dbo::Vars::Item::Ptr retVal;
 
-  auto retVal = GCW::Dbo::Vars::get( "config", "AccountsWidget" );
+  if( GCW::app()-> gnucash_session().hasGnuCashewExtensions() )
+  {
+    Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
+
+    retVal = GCW::Dbo::Vars::get( "config", "AccountsWidget" );
+  }
 
   return retVal;
 
@@ -153,6 +158,9 @@ void
 GCW::Gui::AccountsWidget::
 saveConfig()
 {
+  if( !GCW::app()-> gnucash_session().hasGnuCashewExtensions() )
+    return;
+
   Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
   configItem().modify()-> setVarField( Wt::Json::serialize( toJson() ) );
 
@@ -162,6 +170,9 @@ void
 GCW::Gui::AccountsWidget::
 loadConfig()
 {
+  if( !GCW::app()-> gnucash_session().hasGnuCashewExtensions() )
+    return;
+
   Wt::Json::Object jobj;
   try {
     Wt::Json::parse( configItem()-> varField(), jobj );
@@ -251,49 +262,37 @@ toJson() const
 
 }
 
-int indent = 0;
 bool
 GCW::Gui::AccountsWidget::
 expandNode( const std::string & _accountGuid, Wt::WModelIndex _parent )
 {
   bool retVal = false;
 
-  indent++;
-
-  Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
-
   /*
   ** Loop through all the children in this node
   **
   */
+//  Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
   for( int row=0; row< view()-> model()-> rowCount( _parent ); row++ )
   {
-    auto index = view()-> model()-> index( row, 0, _parent );
-
-    auto nodeGuid = Wt::asString( index.data( Wt::ItemDataRole::User ) ).toUTF8();
-
-#ifdef NEVER
-    std::cout << __FILE__ << ":" << __LINE__
-      << " row:"  << row << "of" << view()-> model()-> rowCount( _parent )
-      << " ind:"  << indent
-      << " a->n:" << _accountGuid << "->" << nodeGuid
-      << " "      << GCW::Dbo::Accounts::fullName( nodeGuid )
-      << std::endl;
-#endif
+    /*
+    ** get the index for this child of this node
+    */
+    auto child = view()-> model()-> index( row, 0, _parent );
 
     /*
-    ** if this node matches the account, expand it and return
+    ** get the guid of this child
+    */
+    auto nodeGuid = Wt::asString( child.data( Wt::ItemDataRole::User ) ).toUTF8();
+
+    /*
+    ** if this node matches the account, expand it and set the
+    **  return to 'found'
     **
     */
     if( nodeGuid == _accountGuid )
     {
-#ifdef NEVER
-      std::cout << __FILE__ << ":" << __LINE__
-        << " expanding:" << Wt::asString( index.data() )
-        << std::endl;
-#endif
-
-      view()-> expand( index );
+      view()-> expand( child );
       retVal |= true;
     }
 
@@ -301,22 +300,18 @@ expandNode( const std::string & _accountGuid, Wt::WModelIndex _parent )
     ** remember if any of the sub-nodes get expanded.
     **
     */
-    retVal |= expandNode( _accountGuid, index );
+    retVal |= expandNode( _accountGuid, child );
 
   } // endfor( int row=0; row< view()-> model()-> rowCount( _parent ); row++ )
 
-  indent--;
-
+  /*
+  ** Either this node was expanded, or any one of
+  **  the child nodes was expanded, so therefore we
+  **  need to also expand this node.
+  **
+  */
   if( retVal )
-  {
-#ifdef NEVER
-    std::cout << __FILE__ << ":" << __LINE__
-      << " expanding:" << Wt::asString( _parent.data() )
-      << std::endl;
-#endif
-
     view()-> expand( _parent );
-  }
 
   /*
   ** None of the nodes here got expanded
@@ -328,15 +323,82 @@ expandNode( const std::string & _accountGuid, Wt::WModelIndex _parent )
 
 bool
 GCW::Gui::AccountsWidget::
-fromJson( Wt::Json::Object & _jobj )
+expandTreeNodes( Wt::Json::Object & _jobj )
 {
   auto jary = _jobj.get("expanded").orIfNull( Wt::Json::Array() );
 
   for( auto value : jary )
-  {
-    indent = 0;
     expandNode( value.orIfNull( "" ) );
-  }
+
+  return true;
+
+} // endexpandNodes()
+
+/*!
+** \brief Find Index by AccountGuid
+**
+** This will loop through the tree and locate a specific
+**  index by it's accountGuid value.
+**
+*/
+Wt::WModelIndex
+GCW::Gui::AccountsWidget::
+findIndex( const std::string & _accountGuid, Wt::WModelIndex _parentIndex )
+{
+  /*
+  ** If this is the index we are looking for, then just return it.
+  **
+  */
+  if( Wt::asString( _parentIndex.data( Wt::ItemDataRole::User ) ) == _accountGuid )
+    return _parentIndex;
+
+  /*
+  ** Loop through all the child nodes checking them for
+  **  matches
+  **
+  */
+  for( int row=0; row< view()-> model()-> rowCount( _parentIndex ); row++ )
+  {
+    auto childIndex = findIndex( _accountGuid, view()-> model()-> index( row, 0, _parentIndex ) );
+
+    /*
+    ** If we get back a valid index, then we have what we
+    **  need and can just return it.
+    **
+    */
+    if( childIndex.isValid() )
+      return childIndex;
+
+  } // endfor( int row=0; row< view()-> model()-> rowCount( _parentIndex ); row++ )
+
+  /*
+  ** Return an invalid index indicating not-found.
+  **
+  */
+  return Wt::WModelIndex();
+
+} // endfindIndex( const std::string & _accountGuid, Wt::WModelIndex _parentIndex )
+
+bool
+GCW::Gui::AccountsWidget::
+setSelected( const std::string & _accountGuid )
+{
+  auto index = findIndex( _accountGuid );
+
+  view()-> select   ( index                                   );
+  view()-> scrollTo ( index, Wt::ScrollHint::PositionAtCenter );
+
+  return true;
+
+} // endexpandNodes()
+
+bool
+GCW::Gui::AccountsWidget::
+fromJson( Wt::Json::Object & _jobj )
+{
+  expandTreeNodes( _jobj );
+
+  setSelected( _jobj.get("selected").orIfNull( std::string() ) );
 
   return true;
 
@@ -363,10 +425,16 @@ load()
   if( !GCW::app()-> gnucash_session().isOpen() )
     return;
 
-  Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
-
+  /*
+  ** load the data in to the model
+  **
+  */
   load( invisibleRootItem(), GCW::Dbo::Accounts::root() );
 
+  /*
+  ** define all the columns
+  **
+  */
   int col = 0;
   setHeaderData( col++, TR( "gcw.AccountsWidget.column.accountname"      ) );
   setHeaderData( col++, TR( "gcw.AccountsWidget.column.accountcode"      ) );

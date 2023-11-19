@@ -2,6 +2,7 @@
 
 #include "../App.h"
 #include "../Glb/Core.h"
+#include "Account.h"
 #include "Accounts.h"
 #include "Transactions.h"
 
@@ -45,11 +46,52 @@ void sort( GCW::Dbo::Accounts::Item::Vector & _accountItems )
 
 const char * GCW::Dbo::Accounts::s_tableName = "accounts";
 
+const GCW::Dbo::Account::AccountDef_t &
+GCW::Dbo::Accounts::Item::
+accountDef() const
+{
+  auto atn = accountTypeName();
+
+  for( auto & val : GCW::Dbo::Account::s_accountDef )
+    if( val.name == accountTypeName() )
+      return val;
+
+  return GCW::Dbo::Account::s_accountDef.at(0);
+}
+
+GCW::Dbo::Account::DrCr
+GCW::Dbo::Accounts::Item::
+accountDrCr() const
+{
+  auto atn = accountTypeName();
+
+  for( auto & val : GCW::Dbo::Account::s_accountDef )
+    if( val.name == accountTypeName() )
+      return val.drcr;
+
+  return GCW::Dbo::Account::DrCr::NONE;
+}
+
+GCW::Dbo::Account::Type
+GCW::Dbo::Accounts::Item::
+accountType() const
+{
+  auto atn = accountTypeName();
+
+  for( auto & val : GCW::Dbo::Account::s_accountDef )
+    if( val.name == accountTypeName() )
+      return val.type;
+
+  return GCW::Dbo::Account::Type::NONE;
+}
+
 GCW::Dbo::Accounts::Item::Ptr
 GCW::Dbo::Accounts::
 root()
 {
   GCW::Dbo::Accounts::Item::Ptr retVal;
+
+  Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
 
   /*
   ** Get a handle on the root account.  The root account is the only

@@ -39,7 +39,6 @@ public:
     /** Default fixed width a date/time column takes up (without wrapping) */
     const static int kDefaultDateTimeWidth;
 
-
     TableView();
 
     /*!
@@ -49,7 +48,7 @@ public:
     ** @param int height Full table height
     **
     */
-    auto layoutSizeChanged(int width, int height) -> void override;
+    auto layoutSizeChanged( int width, int height )-> void override;
 
     /*!
     ** Overload setColumnWidth so we can save what the user specifies into our
@@ -60,17 +59,20 @@ public:
     ** should both use 50%, which would yeild 40px each (minux padding.)
     **
     */
-    auto setColumnWidth(int column, const Wt::WLength& width) -> void override;
+    auto setColumnWidth(int column, const Wt::WLength& width)-> void override;
 
     /*!
     ** Set the number of visible rows before a scroll bar appears
     **
     */
-    auto setVisibleRows(int rows) -> void { visible_rows_ = rows; }
+    auto setVisibleRows(int rows)-> void { visible_rows_ = rows; }
 
 protected:
 
-    void handleClick( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _event );
+//    auto handleClick       ( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _event )-> void;
+//    auto handleDoubleClick ( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _event )-> void;
+    auto handleMouseDown   ( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _event )-> void;
+//    auto handleMouseUp     ( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _event )-> void;
 
     /*
     ** Map table columns to width

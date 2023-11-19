@@ -75,6 +75,9 @@ byAccount( const std::string & _accountGuid )
 {
   GCW::Dbo::Splits::Item::Vector retVal;
 
+  /*
+  ** grab the raw data items out of the storage
+  */
   auto results =
     GCW::app()-> gnucash_session().find< GCW::Dbo::Splits::Item >()
     .where( "account_guid = ?" )
@@ -82,9 +85,15 @@ byAccount( const std::string & _accountGuid )
     .resultList()
     ;
 
+  /*
+  ** vector everything
+  */
   for( auto result : results )
     retVal.push_back( result );
 
+  /*
+  ** sort the vector
+  */
   sort( retVal );
 
   return retVal;

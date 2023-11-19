@@ -13,7 +13,8 @@ const int GCW::Gui::TableView::kTableCellPadding     = 7;
 const int GCW::Gui::TableView::kScrollBarWidth       = 20;
 const int GCW::Gui::TableView::kDefaultDateTimeWidth = 120;
 
-GCW::Gui::TableView::TableView()
+GCW::Gui::TableView::
+TableView()
 : Wt::WTableView()
 {
   setHeaderHeight( kTableHeaderRowHeight );
@@ -23,8 +24,9 @@ GCW::Gui::TableView::TableView()
 
 } // endGCW::Gui::TableView::TableView( Wt::WContainerWidget* parent )
 
-auto GCW::Gui::TableView::
-layoutSizeChanged( int width, int height ) -> void
+auto
+GCW::Gui::TableView::
+layoutSizeChanged( int width, int height )-> void
 {
   // Calculate our fixed width columns
   auto nfixed = 0;
@@ -82,7 +84,7 @@ layoutSizeChanged( int width, int height ) -> void
 } // endauto GCW::Gui::TableView::layoutSizeChanged( int width, int height ) -> void
 
 auto GCW::Gui::TableView::
-setColumnWidth( int column, const Wt::WLength& width ) -> void
+setColumnWidth( int column, const Wt::WLength& width )-> void
 {
     // Just save the data and pass the the work up
     widths_.emplace( column, width );
@@ -104,16 +106,19 @@ setColumnWidth( int column, const Wt::WLength& width ) -> void
 ** The 'purpose' for the handler is due to the fact that the
 **  view responds differently if the view is editable or not.
 **  For instance, if an index is read-only, clicking on it
-**  causes the view the 'select' the entire row.  But, if the
+**  causes the view to 'select' the entire row.  But, if the
 **  index is 'Editable' then you are placed in to the editor
 **  but the view 'selection' is still visible, even if it's on
 **  another row.  Further, the editor widget that opened, did
 **  not signal to the rest of the row that it should be 'selected'.
 **
 */
-void GCW::Gui::TableView::handleClick( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _event )
-{
 #ifdef NEVER
+void
+GCW::Gui::TableView::
+handleClick( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _event )
+{
+#ifndef NEVER
   std::cout << __FILE__ << ":" << __LINE__
     << " handleClick:<start>"
     << " row:" << _index.row()
@@ -121,6 +126,8 @@ void GCW::Gui::TableView::handleClick( const Wt::WModelIndex & _index, const Wt:
     << std::endl
     ;
 #endif
+
+
 
 #ifdef NEVER
   if( selectedIndexes().size() > 0 )
@@ -180,6 +187,7 @@ void GCW::Gui::TableView::handleClick( const Wt::WModelIndex & _index, const Wt:
   }
 #endif
 
+#ifdef NEVER
   /*
   ** The 'selector' is funky.  If an 'editor' is enabled, then
   **  selecting the cell causes the editor to open, but the previous
@@ -191,23 +199,100 @@ void GCW::Gui::TableView::handleClick( const Wt::WModelIndex & _index, const Wt:
   {
     auto oldIndex = *selectedIndexes().begin();
 
-    std::cout << __FILE__ << ":" << __LINE__ << " old:" << oldIndex.row() << " new:" << _index.row() << std::endl;
+    std::cout << __FILE__ << ":" << __LINE__ << " handleCLick()"
+      << " old:" << oldIndex.row()
+      << " new:" << _index.row()
+      << std::endl;
 
     if( _index.row() != oldIndex.row() )
     {
       clearSelection();
+      closeEditors( true );
     }
 
   }
+#endif
 
+//  clearSelection();
+//  closeEditors();
   Wt::WTableView::handleClick( _index, _event );
 
-#ifdef NEVER
+#ifndef NEVER
   std::cout << __FILE__ << ":" << __LINE__ << " handleClick:<end>" << std::endl;
 #endif
 
 } // endvoid GCW::Gui::TableView::handleClick( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _event )
+#endif
 
+#ifdef NEVER
+void
+GCW::Gui::TableView::
+handleDoubleClick( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _event )
+{
+#ifndef NEVER
+  std::cout << __FILE__ << ":" << __LINE__
+    << " handleDoubleClick:<start>"
+    << " row:" << _index.row()
+    << " col:" << _index.column()
+    << std::endl
+    ;
+#endif
+
+  Wt::WTableView::handleDoubleClick( _index, _event );
+
+  std::cout << __FILE__ << ":" << __LINE__ << " handleDoubleClick:<end>" << std::endl;
+
+} // endhandleDoubleClick ( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _event )
+#endif
+
+void
+GCW::Gui::TableView::
+handleMouseDown( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _event )
+{
+#ifdef NEVER
+  std::cout << __FILE__ << ":" << __LINE__
+    << " handleMouseDown:<start>"
+    << " row:" << _index.row()
+    << " col:" << _index.column()
+    << std::endl
+    ;
+#endif
+
+  clearSelection();
+
+  if( !isEditing( _index ) )
+    closeEditors();
+
+  Wt::WTableView::handleMouseDown( _index, _event );
+
+#ifdef NEVER
+  std::cout << __FILE__ << ":" << __LINE__ << " handleMouseDown:<end>" << std::endl;
+#endif
+
+} // endhandleMouseDown   ( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _event )
+
+#ifdef NEVER
+void
+GCW::Gui::TableView::
+handleMouseUp( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _event )
+{
+#ifdef NEVER
+  std::cout << __FILE__ << ":" << __LINE__
+    << " handleMouseUp:<start>"
+    << " row:" << _index.row()
+    << " col:" << _index.column()
+    << std::endl
+    ;
+#endif
+
+  Wt::WTableView::handleMouseUp( _index, _event );
+
+#ifdef NEVER
+  std::cout << __FILE__ << ":" << __LINE__ << " handleMouseUp:<end>" << std::endl;
+#endif
+
+} // endhandleMouseUp( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _event )
+#endif
 
 
 
