@@ -2,7 +2,9 @@
 
 #include "AccountRegisterModel.h"
 #include "../Dbo/Splits.h"
+#include "../Dbo/Prefrences.h"
 #include "../Dbo/Transactions.h"
+#include "../Dbo/Vars.h"
 
 GCW::Eng::AccountRegisterModel::
 AccountRegisterModel( const std::string & _accountGuid, bool _editable )
@@ -110,6 +112,13 @@ refreshFromDisk()
   **
   */
   clear();
+
+  /*
+  ** Get the prefrence item that can inform us about prefrences
+  **  to be applied to this model.
+  **
+  */
+  auto prefrenceItem = GCW::Dbo::Prefrences::get();
 
   /*
   ** Get an account item loaded.  This is the account that _is_ this
@@ -283,8 +292,8 @@ refreshFromDisk()
     auto reconcile = _addColumn( columns, splitItem-> reconcile_state() ); // Reconciled
 
     /*!
-    ** Values of the transaction appear either in the Debit column (Left)
-    **  or in the Credit column (Right) depending on if they are positive
+    ** Values of the transaction appear either in the Debit column (positive-Left)
+    **  or in the Credit column (negative-Right) depending on if they are positive
     **  or negative.  The 'decimal.h' library is used to perform the
     **  arithmetic to prevent the floating point math problems.
     **
@@ -303,8 +312,8 @@ refreshFromDisk()
     **  There are two 'types' of accounts; Debit/Credit.  Gnucash
     **   stores split information as a single value that is positive
     **   or negative.  If the value is positive, then it is posted
-    **   to the debit column.  If the value is negative, it is posted
-    **   to credit column.
+    **   to the debit (left) column.  If the value is negative, it
+    **   is posted to credit (right) column.
     **
     **  Depending on the account type (debit/credit), that value is
     **   then either 'added' or 'subtracted' from the account balance.
@@ -412,18 +421,44 @@ refreshFromDisk()
     **
     **  *it is rare and unusualy for an individual to shift Equity to Liabilities and vice versa. Forgiveness of Debt may in some jurisdictions be a transfer from Liabilities to Income.
     **
-    **  Regards,
-    **  Adrien
-    **  adrien.monteleone@lusfiber.net
-    **  2023-10-22
+    ** \par Original Post
+    ** \ref https://lists.gnucash.org/pipermail/gnucash-user/2023-October/109219.html
+    ** \par Accounting Basics
+    ** \ref https://www.gnucash.org/docs/v5/C/gnucash-guide/basics-accounting1.html
     **  >>>>>>>>>>>>>>>
     **
     */
-    if( accountItem-> accountDrCr() == GCW::Dbo::Account::DrCr::CREDIT )
-      runningBalance -= splitItem-> value();
+    switch( prefrenceItem.reverseBalanceAccounts() )
+    {
+      case GCW::Dbo::Prefrences::ReverseBalanceAccounts::INCOME_EXPENSE:
+      {
+        if( accountItem-> accountType() == GCW::Dbo::Account::Type::INCOME
+         || accountItem-> accountType() == GCW::Dbo::Account::Type::EXPENSE
+          )
+          runningBalance -= splitItem-> value(); // math inverted
+        else
+          runningBalance += splitItem-> value(); // math normal
+        break;
+      }
 
-    if( accountItem-> accountDrCr() == GCW::Dbo::Account::DrCr::DEBIT )
-      runningBalance += splitItem-> value();
+      case GCW::Dbo::Prefrences::ReverseBalanceAccounts::CREDIT:
+      {
+
+        if( accountItem-> accountDrCr() == GCW::Dbo::Account::DrCr::DEBIT )
+          runningBalance -= splitItem-> value(); // math inverted
+        else
+          runningBalance += splitItem-> value(); // math normal
+        break;
+      }
+
+      case GCW::Dbo::Prefrences::ReverseBalanceAccounts::NONE:
+      default:
+      {
+        // math normal
+        runningBalance += splitItem-> value();
+      }
+
+    } // endswitch( prefrenceItem.reverseBalanceAccounts() )
 
     /*
     ** if the value is positive, we post it to the debit (left) column.

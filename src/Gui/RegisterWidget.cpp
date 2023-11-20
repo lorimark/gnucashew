@@ -252,8 +252,6 @@ std::unique_ptr< Wt::WWidget > SuggestionDelegate::createEditor
 
   for( auto item : model-> suggestionsFromColumn( _index.column() ) )
   {
-    std::cout << __FILE__ << ":" << __LINE__ << " " << item << std::endl;
-
     popup-> addSuggestion( item, item );
   }
 
@@ -590,12 +588,12 @@ loadData()
   tableView()-> setHeaderAlignment ( 4, Wt::AlignmentFlag::Center );
   tableView()-> setColumnAlignment ( 4, Wt::AlignmentFlag::Center );
 
-  /* Deposit */
+  /* Debit */
   tableView()-> setColumnWidth     ( 5, "100px"                   );
   tableView()-> setHeaderAlignment ( 5, Wt::AlignmentFlag::Right  );
   tableView()-> setColumnAlignment ( 5, Wt::AlignmentFlag::Right  );
 
-  /* Withdrawal */
+  /* Credit */
   tableView()-> setColumnWidth     ( 6, "100px"                   );
   tableView()-> setHeaderAlignment ( 6, Wt::AlignmentFlag::Right  );
   tableView()-> setColumnAlignment ( 6, Wt::AlignmentFlag::Right  );

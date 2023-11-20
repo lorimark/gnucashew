@@ -127,8 +127,6 @@ handleClick( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _event )
     ;
 #endif
 
-
-
 #ifdef NEVER
   if( selectedIndexes().size() > 0 )
   {
@@ -249,7 +247,7 @@ void
 GCW::Gui::TableView::
 handleMouseDown( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _event )
 {
-#ifdef NEVER
+#ifndef NEVER
   std::cout << __FILE__ << ":" << __LINE__
     << " handleMouseDown:<start>"
     << " row:" << _index.row()
@@ -265,7 +263,7 @@ handleMouseDown( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _event 
 
   Wt::WTableView::handleMouseDown( _index, _event );
 
-#ifdef NEVER
+#ifndef NEVER
   std::cout << __FILE__ << ":" << __LINE__ << " handleMouseDown:<end>" << std::endl;
 #endif
 

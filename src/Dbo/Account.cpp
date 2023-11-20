@@ -12,7 +12,7 @@ std::vector< GCW::Dbo::Account::AccountDef_t > GCW::Dbo::Account::s_accountDef =
   { GCW::Dbo::Account::DrCr::CREDIT , GCW::Dbo::Account::Type::CREDIT     , "CREDIT"     , "blank"    , "payment"  , "charge"     },
   { GCW::Dbo::Account::DrCr::CREDIT , GCW::Dbo::Account::Type::EQUITY     , "EQUITY"     , "transfer" , "decrease" , "increase"   },
   { GCW::Dbo::Account::DrCr::DEBIT  , GCW::Dbo::Account::Type::EXPENSE    , "EXPENSE"    , "transfer" , "expense"  , "rebate"     },
-  { GCW::Dbo::Account::DrCr::CREDIT , GCW::Dbo::Account::Type::INCOME     , "INCOME"     , "account"  , "payment"  , "charge"     },
+  { GCW::Dbo::Account::DrCr::CREDIT , GCW::Dbo::Account::Type::INCOME     , "INCOME"     , "account"  , "debit"    , "credit"     },
   { GCW::Dbo::Account::DrCr::CREDIT , GCW::Dbo::Account::Type::LIABILITY  , "LIABILITY"  , "account"  , "payment"  , "charge"     },
   { GCW::Dbo::Account::DrCr::CREDIT , GCW::Dbo::Account::Type::PAYABLE    , "PAYABLE"    , "account"  , "payment"  , "charge"     },
   { GCW::Dbo::Account::DrCr::DEBIT  , GCW::Dbo::Account::Type::RECEIVABLE , "RECEIVABLE" , "transfer" , "invoice"  , "payment"    }
