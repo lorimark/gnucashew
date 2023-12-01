@@ -24,15 +24,13 @@ AccountRegisterModel( const std::string & _accountGuid, bool _editable )
   dataChanged().connect( [=]( Wt::WModelIndex _index1, Wt::WModelIndex _index2 )
   {
     std::cout << __FILE__ << ":" << __LINE__ << " model.dataChanged()"
-
+      << " tst:" << std::string( Wt::asString( _index1.data() ) == Wt::asString( _index2.data() )? "same":"different" )
       << " r1:" << _index1.row()
       << " c1:" << _index1.column()
       << " v1:" << Wt::asString( _index1.data() )
-
       << " r2:" << _index2.row()
       << " c2:" << _index2.column()
       << " v2:" << Wt::asString( _index2.data() )
-
       << std::endl;
 
   });
@@ -40,13 +38,15 @@ AccountRegisterModel( const std::string & _accountGuid, bool _editable )
   itemChanged().connect( [=]( Wt::WStandardItem * _item )
   {
     std::cout << __FILE__ << ":" << __LINE__ << " model.itemChanged()"
-      << Wt::asString( _item-> data() )
+      << " row:" << _item-> row()
+      << " col:" << _item-> column()
+      << " d:"   << Wt::asString( _item-> data() )
+      << " t:"   << Wt::asString( _item-> text() )
       << std::endl;
 
   });
 
 } // endGCW::Eng::AccountRegisterModel::AccountRegisterModel( const std::string & _accountGuid )
-
 
 bool
 GCW::Eng::AccountRegisterModel::
@@ -161,7 +161,7 @@ refreshFromDisk()
   **  the running balances and so forth.
   **
   */
-  DECIMAL::decimal<2> runningBalance( 0 );
+  GCW_DECIMAL runningBalance( 0 );
   for( auto splitItem : splitItems )
   {
     RowItem columns;
@@ -443,8 +443,7 @@ refreshFromDisk()
 
       case GCW::Dbo::Prefrences::ReverseBalanceAccounts::CREDIT:
       {
-
-        if( accountItem-> accountDrCr() == GCW::Dbo::Account::DrCr::DEBIT )
+        if( accountItem-> accountDrCr() == GCW::Dbo::Account::DrCr::CREDIT )
           runningBalance -= splitItem-> value(); // math inverted
         else
           runningBalance += splitItem-> value(); // math normal
@@ -545,6 +544,16 @@ refreshFromDisk()
     **
     */
     appendRow( std::move( columns ) );
+
+    /* FIXME
+    ** Add up the static running accumulators
+    **
+    */
+    m_present = runningBalance;
+//    m_future     ;
+//    m_cleared    ;
+//    m_reconciled ;
+//    m_projected  ;
 
   } // endfor( auto splitItem : splitItems )
 

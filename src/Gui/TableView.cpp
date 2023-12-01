@@ -113,7 +113,7 @@ setColumnWidth( int column, const Wt::WLength& width )-> void
 **  not signal to the rest of the row that it should be 'selected'.
 **
 */
-#ifdef NEVER
+#ifndef NEVER
 void
 GCW::Gui::TableView::
 handleClick( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _event )
@@ -212,8 +212,16 @@ handleClick( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _event )
 #endif
 
 //  clearSelection();
-//  closeEditors();
+  closeEditors();
+
+  for( auto & i : selectionModel()-> selectedIndexes() )
+    std::cout << __FILE__ << ":" << __LINE__ << " r:" << i.row() << " c:" << i.column() << std::endl;
+
   Wt::WTableView::handleClick( _index, _event );
+
+  for( auto & i : selectionModel()-> selectedIndexes() )
+    std::cout << __FILE__ << ":" << __LINE__ << " r:" << i.row() << " c:" << i.column() << std::endl;
+
 
 #ifndef NEVER
   std::cout << __FILE__ << ":" << __LINE__ << " handleClick:<end>" << std::endl;
@@ -238,11 +246,14 @@ handleDoubleClick( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _even
 
   Wt::WTableView::handleDoubleClick( _index, _event );
 
+#ifndef NEVER
   std::cout << __FILE__ << ":" << __LINE__ << " handleDoubleClick:<end>" << std::endl;
+#endif
 
 } // endhandleDoubleClick ( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _event )
 #endif
 
+#ifdef NEVER
 void
 GCW::Gui::TableView::
 handleMouseDown( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _event )
@@ -256,10 +267,10 @@ handleMouseDown( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _event 
     ;
 #endif
 
-  clearSelection();
+//  clearSelection();
 
-  if( !isEditing( _index ) )
-    closeEditors();
+//  if( !isEditing( _index ) )
+//    closeEditors( false );
 
   Wt::WTableView::handleMouseDown( _index, _event );
 
@@ -268,13 +279,14 @@ handleMouseDown( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _event 
 #endif
 
 } // endhandleMouseDown   ( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _event )
+#endif
 
 #ifdef NEVER
 void
 GCW::Gui::TableView::
 handleMouseUp( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _event )
 {
-#ifdef NEVER
+#ifndef NEVER
   std::cout << __FILE__ << ":" << __LINE__
     << " handleMouseUp:<start>"
     << " row:" << _index.row()
@@ -285,7 +297,7 @@ handleMouseUp( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _event )
 
   Wt::WTableView::handleMouseUp( _index, _event );
 
-#ifdef NEVER
+#ifndef NEVER
   std::cout << __FILE__ << ":" << __LINE__ << " handleMouseUp:<end>" << std::endl;
 #endif
 

@@ -185,6 +185,11 @@
   <message id="gcw.RegisterWidget.column.spend">Spend</message>
   <message id="gcw.RegisterWidget.column.transfer">Transfer</message>
   <message id="gcw.RegisterWidget.column.withdrawal">Withdrawal</message>
+  <message id="gcw.RegisterWidget.StatusBar.present">Present</message>
+  <message id="gcw.RegisterWidget.StatusBar.future">Future</message>
+  <message id="gcw.RegisterWidget.StatusBar.cleared">Cleared</message>
+  <message id="gcw.RegisterWidget.StatusBar.reconciled">Reconciled</message>
+  <message id="gcw.RegisterWidget.StatusBar.projected">Projected Minimum</message>
 
   <message id="gcw.RegisterWidget.account.multisplit">~~ Split Transaction ~~</message>
   <message id="gcw.RegisterWidget.account.imbalanceUSD">Imbalance-USD</message>

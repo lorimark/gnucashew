@@ -5,6 +5,9 @@
 
 #include <Wt/WStandardItemModel.h>
 
+#include "../Glb/gcwglobal.h"
+#include "../GnuCashew.h"
+
 namespace GCW {
   namespace Eng {
 
@@ -26,6 +29,12 @@ class AccountRegisterModel
     AccountRegisterModel( const std::string & _accountGuid, bool _editable = true );
 
     void refreshFromDisk();
+
+    GCW_DECIMAL present    () const { return m_present;    }
+    GCW_DECIMAL future     () const { return m_future;     }
+    GCW_DECIMAL cleared    () const { return m_cleared;    }
+    GCW_DECIMAL reconciled () const { return m_reconciled; }
+    GCW_DECIMAL projected  () const { return m_projected;  }
 
     RowItem makeRow( const std::string & _splitGuid );
 
@@ -57,6 +66,13 @@ balance
     bool        m_editable = false;
     std::string m_accountGuid;
     std::string m_lastDate;
+
+    GCW_DECIMAL m_present    ;
+    GCW_DECIMAL m_future     ;
+    GCW_DECIMAL m_cleared    ;
+    GCW_DECIMAL m_reconciled ;
+    GCW_DECIMAL m_projected  ;
+
 
 }; // endclass AccountRegisterModel
 

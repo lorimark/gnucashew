@@ -186,8 +186,10 @@ Wt::cpp17::any DateDelegate::editState( Wt::WWidget * _editor, const Wt::WModelI
 
 void DateDelegate::setEditState( Wt::WWidget * _editor, const Wt::WModelIndex & _index, const Wt::cpp17::any & _value ) const
 {
-  std::cout << __FILE__ << ":" << __LINE__ << " " << _editor    << std::endl;
-  std::cout << __FILE__ << ":" << __LINE__ << " " << m_dateEdit << std::endl;
+//  the '_editor' and 'm_dateEdit' are not the same widget
+  std::cout << __FILE__ << ":" << __LINE__ << " " << _editor    << " " << typeid( _editor ).name()    << std::endl;
+  std::cout << __FILE__ << ":" << __LINE__ << " " << m_dateEdit << " " << typeid( m_dateEdit ).name() << std::endl;
+
 
 } // endvoid DateDelegate::setEditState( Wt::WWidget * _editor, const Wt::WModelIndex & _index, const Wt::cpp17::any & _value ) const
 
@@ -324,14 +326,14 @@ RegisterWidget( const std::string & _accountGuid )
 : m_accountGuid( _accountGuid )
 {
   /*
-  ** Look in gcw.css for styling
+  ** Look in gcw.css for styling.
   **
   */
   addStyleClass( "RegisterWidget" );
 
   /*
   ** use a layout manager to install the table view into, so
-  **  that the widget will fit and scroll properly
+  **  that the widget will fit and scroll properly.
   **
   */
   auto lw = setLayout( std::make_unique< Wt::WVBoxLayout >() );
@@ -342,7 +344,13 @@ RegisterWidget( const std::string & _accountGuid )
 //  tableView()-> setRowHeight( "20px" );
 
   /*
-  ** Configure the table view
+  ** Poke a status bar down at the bottom of the area.
+  **
+  */
+  m_statusBar = lw-> addWidget( std::make_unique< StatusBar >() );
+
+  /*
+  ** Configure the table view.
   **
   */
   tableView()-> setSortingEnabled       ( false                                                         );
@@ -522,6 +530,68 @@ RegisterWidget( const std::string & _accountGuid )
 
 } // endGCW::RegisterWidget::RegisterWidget( const std::string & _accountGuid )
 
+GCW::Gui::RegisterWidget::StatusBar::
+StatusBar()
+{
+  addStyleClass( "StatusBar" );
+
+  auto lw = setLayout( std::make_unique< Wt::WHBoxLayout >() );
+
+  lw-> setSpacing( 0 );
+
+  auto _addWidget = [&]( const std::string & _key, int _spacing = 0 )
+  {
+    lw-> addWidget( std::make_unique< Wt::WText >( TR("gcw.RegisterWidget.StatusBar." + _key ) + ":" ) );
+    auto retVal = lw-> addWidget( std::make_unique< Wt::WText >(), _spacing );
+    retVal-> setAttributeValue( "style", "margin-right:10px" );
+    return retVal;
+  };
+
+  m_present    = _addWidget( "present"      );
+  m_future     = _addWidget( "future"       );
+  m_cleared    = _addWidget( "cleared"      );
+  m_reconciled = _addWidget( "reconciled"   );
+  m_projected  = _addWidget( "projected", 1 );
+
+} // endStatusBar()
+
+void
+GCW::Gui::RegisterWidget::StatusBar::
+setPresent( GCW_DECIMAL _value )
+{
+  m_present-> setText( "$" + toString( _value, GCW::CFG::decimal_format() ) );
+}
+
+void
+GCW::Gui::RegisterWidget::StatusBar::
+setFuture( GCW_DECIMAL _value )
+{
+  m_future-> setText(  "$" + toString( _value, GCW::CFG::decimal_format() ) );
+}
+
+void
+GCW::Gui::RegisterWidget::StatusBar::
+setCleared( GCW_DECIMAL _value )
+{
+  m_cleared-> setText(  "$" + toString( _value, GCW::CFG::decimal_format() ) );
+}
+
+void
+GCW::Gui::RegisterWidget::StatusBar::
+setReconciled( GCW_DECIMAL _value )
+{
+  m_reconciled-> setText(  "$" + toString( _value, GCW::CFG::decimal_format() ) );
+}
+
+void
+GCW::Gui::RegisterWidget::StatusBar::
+setProjected( GCW_DECIMAL _value )
+{
+  m_projected-> setText(  "$" + toString( _value, GCW::CFG::decimal_format() ) );
+}
+
+
+
 void GCW::Gui::RegisterWidget::
 test()
 {
@@ -608,6 +678,12 @@ loadData()
   auto lastIndex = model()-> index( model()-> rowCount() -1, 0 );
   tableView()-> scrollTo( lastIndex );
   tableView()-> edit( lastIndex );
+
+  statusBar()-> setPresent    ( model()-> present    () );
+  statusBar()-> setProjected  ( model()-> projected  () );
+  statusBar()-> setReconciled ( model()-> reconciled () );
+  statusBar()-> setFuture     ( model()-> future     () );
+  statusBar()-> setCleared    ( model()-> cleared    () );
 
 } // endvoid GCW::Gui::RegisterWidget::loadData()
 

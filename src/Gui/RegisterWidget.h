@@ -8,12 +8,20 @@
 #include <Wt/WStandardItem.h>
 #include <Wt/WStandardItemModel.h>
 
+#include "../GnuCashew.h"
 #include "../Dbo/Session.h"
 #include "../Dbo/Accounts.h"
 #include "../Eng/AccountRegisterModel.h"
 #include "TableView.h"
 
+
 namespace GCW {
+
+  // FIXME
+  // not sure why I need to forward-declare this class... it's
+  //  right up there in the header
+  namespace Eng { class AccountRegisterModel; }
+
   namespace Gui {
 
 /*!
@@ -42,6 +50,28 @@ namespace GCW {
 class RegisterWidget
 : public Wt::WContainerWidget
 {
+  private:
+
+    class StatusBar
+    : public Wt::WContainerWidget
+    {
+      public:
+        StatusBar();
+
+        void setPresent   ( GCW_DECIMAL _value );
+        void setFuture    ( GCW_DECIMAL _value );
+        void setCleared   ( GCW_DECIMAL _value );
+        void setReconciled( GCW_DECIMAL _value );
+        void setProjected ( GCW_DECIMAL _value );
+
+        Wt::WText * m_present    = nullptr;
+        Wt::WText * m_future     = nullptr;
+        Wt::WText * m_cleared    = nullptr;
+        Wt::WText * m_reconciled = nullptr;
+        Wt::WText * m_projected  = nullptr;
+
+    }; // endclass StatusBar
+
   public:
 
     /*!
@@ -72,6 +102,8 @@ class RegisterWidget
 
     std::shared_ptr< Model > model () { return m_model; }
 
+    StatusBar * statusBar() { return m_statusBar; }
+
     void test();
 
     /*!
@@ -99,11 +131,12 @@ class RegisterWidget
 
     void loadData();
 
-    std::string m_accountGuid;
-    std::shared_ptr< Model > m_model;
-    GCW::Gui::TableView * m_tableView = nullptr;
-    int m_clickedRow = -1;
-    int m_clickedCol = -1;
+    std::string                m_accountGuid;
+    std::shared_ptr< Model >   m_model;
+    GCW::Gui::TableView      * m_tableView = nullptr;
+    StatusBar                * m_statusBar = nullptr;
+    int                        m_clickedRow = -1;
+    int                        m_clickedCol = -1;
 
 };  // endclass RegisterWidget
 

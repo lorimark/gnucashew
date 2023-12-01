@@ -3,13 +3,12 @@
 #ifndef __GNUCASHEW_H___
 #define __GNUCASHEW_H___
 
+#define DEC_NAMESPACE DECIMAL
+#include "3rd/decimal.h"
 #include "define.h"
 #include "App.h"
 #include "Glb/gcwglobal.h"
 #include "Dbo/Vars.h"
-
-#define DEC_NAMESPACE DECIMAL
-#include "3rd/decimal.h"
 
 namespace GCW {
 

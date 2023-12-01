@@ -112,10 +112,10 @@ class Item
     **  number type.  It can then be used in regular accounting
     **  calculations.
     */
-    DECIMAL::decimal<2> value( bool negate = false ) const
+    GCW_DECIMAL value( bool negate = false ) const
     {
       auto neg = negate? -1:1;
-      DECIMAL::decimal<2> retVal( value_num()*neg );
+      GCW_DECIMAL retVal( value_num()*neg );
       retVal /= value_denom();
       return retVal;
     }
@@ -146,9 +146,9 @@ class Item
     **  number type.  It can then be used in regular accounting
     **  calculations.
     */
-    DECIMAL::decimal<2> quantity() const
+    GCW_DECIMAL quantity() const
     {
-      DECIMAL::decimal<2> retVal( quantity_num() );
+      GCW_DECIMAL retVal( quantity_num() );
       retVal /= quantity_denom();
       return retVal;
     }
