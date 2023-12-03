@@ -32,6 +32,11 @@
   border-radius:5px;
 }
 
+.RegisterWidget input
+{
+  padding:7px;
+}
+
 /* Account elipsis '...' on the left */
 .RegisterWidget
  .Wt-header

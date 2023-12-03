@@ -58,11 +58,11 @@ class RegisterWidget
       public:
         StatusBar();
 
-        void setPresent   ( GCW_DECIMAL _value );
-        void setFuture    ( GCW_DECIMAL _value );
-        void setCleared   ( GCW_DECIMAL _value );
-        void setReconciled( GCW_DECIMAL _value );
-        void setProjected ( GCW_DECIMAL _value );
+        void setPresent   ( GCW_NUMERIC _value );
+        void setFuture    ( GCW_NUMERIC _value );
+        void setCleared   ( GCW_NUMERIC _value );
+        void setReconciled( GCW_NUMERIC _value );
+        void setProjected ( GCW_NUMERIC _value );
 
         Wt::WText * m_present    = nullptr;
         Wt::WText * m_future     = nullptr;

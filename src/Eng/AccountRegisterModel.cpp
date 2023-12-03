@@ -125,15 +125,15 @@ refreshFromDisk()
   **  register.
   **
   */
-  auto accountItem = GCW::Dbo::Accounts::byGuid( m_accountGuid );
+  auto registerAccountItem = GCW::Dbo::Accounts::byGuid( m_accountGuid );
 
 #ifdef NEVER
   std::cout << __FILE__ << ":" << __LINE__
-    << " guid:" << accountItem-> guid()
-    << " name:" << accountItem-> name()
-    << " dbcr:" << static_cast<int>( accountItem-> accountDbCr() )
-    << " type:" << static_cast<int>( accountItem-> accountType() )
-    << " typn:" << accountItem-> accountTypeName()
+    << " guid:" << registerAccountItem-> guid()
+    << " name:" << registerAccountItem-> name()
+    << " dbcr:" << static_cast<int>( registerAccountItem-> accountDbCr() )
+    << " type:" << static_cast<int>( registerAccountItem-> accountType() )
+    << " typn:" << registerAccountItem-> accountTypeName()
     << std::endl;
 #endif
 
@@ -161,9 +161,13 @@ refreshFromDisk()
   **  the running balances and so forth.
   **
   */
-  GCW_DECIMAL runningBalance( 0 );
+  GCW_NUMERIC runningBalance( 0 );
   for( auto splitItem : splitItems )
   {
+    /*
+    ** Prepare a row of columns.
+    **
+    */
     RowItem columns;
 
     /*
@@ -242,11 +246,13 @@ refreshFromDisk()
 
         auto splitAccountItem = GCW::Dbo::Accounts::byGuid( txSplitItem-> account_guid() );
 
-        // yes account item
+        // yes, we have one account item
         if( splitAccountItem )
+        {
           account = _addColumn( columns, GCW::Dbo::Accounts::fullName( splitAccountItem-> guid() ) );
+        }
 
-        // no account item
+        // no, we don't have an account item
         else
         {
           /*!
@@ -432,29 +438,36 @@ refreshFromDisk()
     {
       case GCW::Dbo::Prefrences::ReverseBalanceAccounts::INCOME_EXPENSE:
       {
-        if( accountItem-> accountType() == GCW::Dbo::Account::Type::INCOME
-         || accountItem-> accountType() == GCW::Dbo::Account::Type::EXPENSE
+        if( registerAccountItem-> accountType() == GCW::Dbo::Account::Type::INCOME
+         || registerAccountItem-> accountType() == GCW::Dbo::Account::Type::EXPENSE
           )
+        {
           runningBalance -= splitItem-> value(); // math inverted
+        }
         else
+        {
           runningBalance += splitItem-> value(); // math normal
+        }
         break;
       }
 
       case GCW::Dbo::Prefrences::ReverseBalanceAccounts::CREDIT:
       {
-        if( accountItem-> accountDrCr() == GCW::Dbo::Account::DrCr::CREDIT )
+        if( registerAccountItem-> accountDrCr() == GCW::Dbo::Account::DrCr::CREDIT )
+        {
           runningBalance -= splitItem-> value(); // math inverted
+        }
         else
+        {
           runningBalance += splitItem-> value(); // math normal
+        }
         break;
       }
 
       case GCW::Dbo::Prefrences::ReverseBalanceAccounts::NONE:
       default:
       {
-        // math normal
-        runningBalance += splitItem-> value();
+        runningBalance += splitItem-> value(); // math normal
       }
 
     } // endswitch( prefrenceItem.reverseBalanceAccounts() )
@@ -509,10 +522,12 @@ refreshFromDisk()
     **
     */
     if( runningBalance < 0 )
+    {
       balance-> setStyleClass( "negval" );
+    }
 
     /*
-    ** If we can edit at all, then check the reconciliation
+    ** If this model is editable, then check the reconciliation
     **  state.  If the split has already been reconciled then
     **  we really don't want the user messing around with it.
     **
@@ -520,13 +535,22 @@ refreshFromDisk()
     if( m_editable )
     {
       if( splitItem-> reconcile_state() == "y" )
+      {
         editable = false;
+      }
       else
+      {
         editable = true;
+      }
     }
 
     /*
     ** If this item can be edited then unlock everything.
+    ** TODO: note, it would be possible here to do things
+    **        like, if the transaction has been reconciled,
+    **        allow for the description to be edited, but
+    **        perhaps not the date or amounts... that could
+    **        be handy.
     **
     */
     if( editable )
@@ -535,6 +559,7 @@ refreshFromDisk()
       num         -> setFlags( Wt::ItemFlag::Editable );
       description -> setFlags( Wt::ItemFlag::Editable );
       account     -> setFlags( Wt::ItemFlag::Editable );
+      reconcile   -> setFlags( Wt::ItemFlag::Editable );
       debit       -> setFlags( Wt::ItemFlag::Editable );
       credit      -> setFlags( Wt::ItemFlag::Editable );
     }
@@ -569,7 +594,7 @@ refreshFromDisk()
     _addColumn( columns, ""          )-> setFlags( Wt::ItemFlag::Editable ); // Num
     _addColumn( columns, ""          )-> setFlags( Wt::ItemFlag::Editable ); // Memo
     _addColumn( columns, ""          )-> setFlags( Wt::ItemFlag::Editable ); // Account
-    _addColumn( columns, "n"         )                                     ; // R
+    _addColumn( columns, "n"         )-> setFlags( Wt::ItemFlag::Editable ); // R
     _addColumn( columns, ""          )-> setFlags( Wt::ItemFlag::Editable ); // Deposit
     _addColumn( columns, ""          )-> setFlags( Wt::ItemFlag::Editable ); // Withdrawal
     _addColumn( columns, ""          )                                     ; // Balance
@@ -578,10 +603,11 @@ refreshFromDisk()
 
   /*
   ** poke all the header labels in.  Note that some of the labels change
-  **  depending on the account debit/credit type
+  **  depending on the account debit/credit type.  We get those from the
+  **  accountDef.
   **
   */
-  auto accountDef = accountItem-> accountDef();
+  auto accountDef = registerAccountItem-> accountDef();
   int col = 0;
   setHeaderData( col++, TR( "gcw.RegisterWidget.column.date"                     ) );
   setHeaderData( col++, TR( "gcw.RegisterWidget.column.num"                      ) );

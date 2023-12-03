@@ -113,7 +113,7 @@ setColumnWidth( int column, const Wt::WLength& width )-> void
 **  not signal to the rest of the row that it should be 'selected'.
 **
 */
-#ifndef NEVER
+#ifdef NEVER
 void
 GCW::Gui::TableView::
 handleClick( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _event )
@@ -211,17 +211,11 @@ handleClick( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _event )
   }
 #endif
 
-//  clearSelection();
-  closeEditors();
-
-  for( auto & i : selectionModel()-> selectedIndexes() )
-    std::cout << __FILE__ << ":" << __LINE__ << " r:" << i.row() << " c:" << i.column() << std::endl;
-
+  /*
+  ** Call the stock click handler
+  **
+  */
   Wt::WTableView::handleClick( _index, _event );
-
-  for( auto & i : selectionModel()-> selectedIndexes() )
-    std::cout << __FILE__ << ":" << __LINE__ << " r:" << i.row() << " c:" << i.column() << std::endl;
-
 
 #ifndef NEVER
   std::cout << __FILE__ << ":" << __LINE__ << " handleClick:<end>" << std::endl;
@@ -253,7 +247,7 @@ handleDoubleClick( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _even
 } // endhandleDoubleClick ( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _event )
 #endif
 
-#ifdef NEVER
+#ifndef NEVER
 void
 GCW::Gui::TableView::
 handleMouseDown( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _event )
@@ -272,11 +266,26 @@ handleMouseDown( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _event 
 //  if( !isEditing( _index ) )
 //    closeEditors( false );
 
+  if( m_lastIndexClick.isValid() )
+    if( m_lastIndexClick. row    () != _index. row    ()
+     || m_lastIndexClick. column () != _index. column ()
+      )
+    {
+      clearSelection();
+      closeEditors();
+    }
+
   Wt::WTableView::handleMouseDown( _index, _event );
 
 #ifndef NEVER
   std::cout << __FILE__ << ":" << __LINE__ << " handleMouseDown:<end>" << std::endl;
 #endif
+
+  /*
+  ** remember the last index clicked
+  **
+  */
+  m_lastIndexClick = _index;
 
 } // endhandleMouseDown   ( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _event )
 #endif

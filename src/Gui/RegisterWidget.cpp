@@ -18,6 +18,12 @@
 
 namespace {
 
+void
+setText_( Wt::WText * _widget, GCW_NUMERIC _value )
+{
+  _widget-> setText( "$" + toString( _value, GCW::CFG::decimal_format() ) );
+}
+
 class HeaderDelegate
 : public Wt::WItemDelegate
 {
@@ -34,7 +40,9 @@ class HeaderDelegate
 
 };
 
-std::unique_ptr< Wt::WWidget > HeaderDelegate::createEditor
+std::unique_ptr< Wt::WWidget >
+HeaderDelegate::
+createEditor
 (
   const Wt::WModelIndex & _index,
   Wt::WFlags< Wt::ViewItemRenderFlag > _flags
@@ -47,7 +55,9 @@ std::unique_ptr< Wt::WWidget > HeaderDelegate::createEditor
   return std::move( retVal );
 }
 
-Wt::cpp17::any HeaderDelegate::editState( Wt::WWidget *editor, const Wt::WModelIndex &index ) const
+Wt::cpp17::any
+HeaderDelegate::
+editState( Wt::WWidget *editor, const Wt::WModelIndex &index ) const
 {
   auto dateEdit = dynamic_cast< Wt::WDateEdit* >( editor );
 
@@ -80,7 +90,9 @@ class DateDelegate
     mutable Wt::WDateEdit * m_dateEdit = nullptr;
 };
 
-std::unique_ptr< Wt::WWidget > DateDelegate::createEditor
+std::unique_ptr< Wt::WWidget >
+DateDelegate::
+createEditor
 (
   const Wt::WModelIndex & _index,
   Wt::WFlags< Wt::ViewItemRenderFlag > _flags
@@ -137,7 +149,9 @@ std::unique_ptr< Wt::WWidget > DateDelegate::createEditor
 
 } // endstd::unique_ptr< Wt::WWidget > DateDelegate::createEditor
 
-void DateDelegate::doCloseEditor( Wt::WDateEdit * _dateEdit, bool save ) const
+void
+DateDelegate::
+doCloseEditor( Wt::WDateEdit * _dateEdit, bool save ) const
 {
   std::cout << __FILE__ << ":" << __LINE__ << " " << std::endl;
 
@@ -151,13 +165,17 @@ void DateDelegate::doCloseEditor( Wt::WDateEdit * _dateEdit, bool save ) const
 
 } // endvoid DateDelegate::doCloseEditor( Wt::WDateEdit * _dateEdit, bool save ) const
 
-void DateDelegate::doTabAction( Wt::WKeyEvent _keyEvent ) const
+void
+DateDelegate::
+doTabAction( Wt::WKeyEvent _keyEvent ) const
 {
   std::cout << __FILE__ << ":" << __LINE__ << " " << std::endl;
 
 }
 
-Wt::cpp17::any DateDelegate::editState( Wt::WWidget * _editor, const Wt::WModelIndex & _index ) const
+Wt::cpp17::any
+DateDelegate::
+editState( Wt::WWidget * _editor, const Wt::WModelIndex & _index ) const
 {
   auto cw = dynamic_cast< Wt::WContainerWidget* >( _editor );
 
@@ -184,7 +202,9 @@ Wt::cpp17::any DateDelegate::editState( Wt::WWidget * _editor, const Wt::WModelI
 
 } // endWt::cpp17::any DateDelegate::editState( Wt::WWidget * _editor, const Wt::WModelIndex & _index ) const
 
-void DateDelegate::setEditState( Wt::WWidget * _editor, const Wt::WModelIndex & _index, const Wt::cpp17::any & _value ) const
+void
+DateDelegate::
+setEditState( Wt::WWidget * _editor, const Wt::WModelIndex & _index, const Wt::cpp17::any & _value ) const
 {
 //  the '_editor' and 'm_dateEdit' are not the same widget
   std::cout << __FILE__ << ":" << __LINE__ << " " << _editor    << " " << typeid( _editor ).name()    << std::endl;
@@ -193,7 +213,9 @@ void DateDelegate::setEditState( Wt::WWidget * _editor, const Wt::WModelIndex & 
 
 } // endvoid DateDelegate::setEditState( Wt::WWidget * _editor, const Wt::WModelIndex & _index, const Wt::cpp17::any & _value ) const
 
-void DateDelegate::setModelData( const Wt::cpp17::any & _editState, Wt::WAbstractItemModel * _model, const Wt::WModelIndex & _index ) const
+void
+DateDelegate::
+setModelData( const Wt::cpp17::any & _editState, Wt::WAbstractItemModel * _model, const Wt::WModelIndex & _index ) const
 {
   std::cout << __FILE__ << ":" << __LINE__
     << " setModelData()"
@@ -226,7 +248,9 @@ class SuggestionDelegate
 
 };
 
-std::unique_ptr< Wt::WWidget > SuggestionDelegate::createEditor
+std::unique_ptr< Wt::WWidget >
+SuggestionDelegate::
+createEditor
 (
   const Wt::WModelIndex & _index,
   Wt::WFlags< Wt::ViewItemRenderFlag > _flags
@@ -278,7 +302,9 @@ class AccountDelegate
 
 };
 
-std::unique_ptr< Wt::WWidget > AccountDelegate::createEditor
+std::unique_ptr< Wt::WWidget >
+AccountDelegate::
+createEditor
 (
   const Wt::WModelIndex & _index,
   Wt::WFlags< Wt::ViewItemRenderFlag > _flags
@@ -555,44 +581,14 @@ StatusBar()
 
 } // endStatusBar()
 
-void
-GCW::Gui::RegisterWidget::StatusBar::
-setPresent( GCW_DECIMAL _value )
-{
-  m_present-> setText( "$" + toString( _value, GCW::CFG::decimal_format() ) );
-}
+void GCW::Gui::RegisterWidget::StatusBar:: setPresent    ( GCW_NUMERIC _value ) { setText_( m_present    , _value ); }
+void GCW::Gui::RegisterWidget::StatusBar:: setFuture     ( GCW_NUMERIC _value ) { setText_( m_future     , _value ); }
+void GCW::Gui::RegisterWidget::StatusBar:: setCleared    ( GCW_NUMERIC _value ) { setText_( m_cleared    , _value ); }
+void GCW::Gui::RegisterWidget::StatusBar:: setReconciled ( GCW_NUMERIC _value ) { setText_( m_reconciled , _value ); }
+void GCW::Gui::RegisterWidget::StatusBar:: setProjected  ( GCW_NUMERIC _value ) { setText_( m_projected  , _value ); }
 
 void
-GCW::Gui::RegisterWidget::StatusBar::
-setFuture( GCW_DECIMAL _value )
-{
-  m_future-> setText(  "$" + toString( _value, GCW::CFG::decimal_format() ) );
-}
-
-void
-GCW::Gui::RegisterWidget::StatusBar::
-setCleared( GCW_DECIMAL _value )
-{
-  m_cleared-> setText(  "$" + toString( _value, GCW::CFG::decimal_format() ) );
-}
-
-void
-GCW::Gui::RegisterWidget::StatusBar::
-setReconciled( GCW_DECIMAL _value )
-{
-  m_reconciled-> setText(  "$" + toString( _value, GCW::CFG::decimal_format() ) );
-}
-
-void
-GCW::Gui::RegisterWidget::StatusBar::
-setProjected( GCW_DECIMAL _value )
-{
-  m_projected-> setText(  "$" + toString( _value, GCW::CFG::decimal_format() ) );
-}
-
-
-
-void GCW::Gui::RegisterWidget::
+GCW::Gui::RegisterWidget::
 test()
 {
   std::cout << __FILE__ << ":" << __LINE__ << " ::test::" << std::endl;
@@ -611,7 +607,8 @@ test()
 
 } // endvoid GCW::Gui::RegisterWidget::test()
 
-Wt::Json::Object GCW::Gui::RegisterWidget::
+Wt::Json::Object
+GCW::Gui::RegisterWidget::
 toJson() const
 {
   Wt::Json::Object jobj;
@@ -619,14 +616,16 @@ toJson() const
   return jobj;
 }
 
-bool GCW::Gui::RegisterWidget::
+bool
+GCW::Gui::RegisterWidget::
 fromJson( const Wt::Json::Object & _jobj )
 {
   return true;
 }
 
 
-void GCW::Gui::RegisterWidget::
+void
+GCW::Gui::RegisterWidget::
 loadData()
 {
   m_model = std::make_shared< Model >( m_accountGuid );

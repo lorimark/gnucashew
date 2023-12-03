@@ -30,11 +30,11 @@ class AccountRegisterModel
 
     void refreshFromDisk();
 
-    GCW_DECIMAL present    () const { return m_present;    }
-    GCW_DECIMAL future     () const { return m_future;     }
-    GCW_DECIMAL cleared    () const { return m_cleared;    }
-    GCW_DECIMAL reconciled () const { return m_reconciled; }
-    GCW_DECIMAL projected  () const { return m_projected;  }
+    GCW_NUMERIC present    () const { return m_present;    }
+    GCW_NUMERIC future     () const { return m_future;     }
+    GCW_NUMERIC cleared    () const { return m_cleared;    }
+    GCW_NUMERIC reconciled () const { return m_reconciled; }
+    GCW_NUMERIC projected  () const { return m_projected;  }
 
     RowItem makeRow( const std::string & _splitGuid );
 
@@ -67,11 +67,11 @@ balance
     std::string m_accountGuid;
     std::string m_lastDate;
 
-    GCW_DECIMAL m_present    ;
-    GCW_DECIMAL m_future     ;
-    GCW_DECIMAL m_cleared    ;
-    GCW_DECIMAL m_reconciled ;
-    GCW_DECIMAL m_projected  ;
+    GCW_NUMERIC m_present    ;
+    GCW_NUMERIC m_future     ;
+    GCW_NUMERIC m_cleared    ;
+    GCW_NUMERIC m_reconciled ;
+    GCW_NUMERIC m_projected  ;
 
 
 }; // endclass AccountRegisterModel

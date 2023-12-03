@@ -10,7 +10,7 @@
 
 #define ISO_DATE_FORMAT "yyyy-MM-ddThh:mm:ss.zzzZ"
 
-#define GCW_DECIMAL DECIMAL::decimal<2>
+#define GCW_NUMERIC DECIMAL::decimal<2>
 
 #endif
 
