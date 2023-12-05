@@ -109,6 +109,8 @@ openEditor( const std::string & _accountGuid )
 
 #ifdef EDIT_FORM_AS_POPUP_DIALOG
 
+  std::cout << __FILE__ << ":" << __LINE__ << " opening popup" << std::endl;
+
   /*
   ** Add a dialog to open/edit this item
   **
@@ -125,6 +127,8 @@ openEditor( const std::string & _accountGuid )
 #endif
 
 #ifdef EDIT_FORM_AS_SPLIT_PAGE
+
+  std::cout << __FILE__ << ":" << __LINE__ << " opening split" << std::endl;
 
   /*
   **

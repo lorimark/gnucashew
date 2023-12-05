@@ -101,11 +101,13 @@ createEditor
   Wt::WFlags< Wt::ViewItemRenderFlag > _flags
 ) const
 {
+#ifdef NEVER
   std::cout << __FILE__ << ":" << __LINE__
     << " DateDelegate::createEditor()"
     << " r:" << _index.row()
     << " c:" << _index.column()
     << std::endl;
+#endif
 
   /*
   ** The editor is placed in to a container for layout
@@ -156,7 +158,9 @@ void
 DateDelegate::
 doCloseEditor( Wt::WDateEdit * _dateEdit, bool save ) const
 {
+#ifdef NEVER
   std::cout << __FILE__ << ":" << __LINE__ << " DateDelegate::doCloseEditor()" << std::endl;
+#endif
 
   closeEditor().emit( _dateEdit, save );
 
@@ -172,7 +176,9 @@ void
 DateDelegate::
 doTabAction( Wt::WKeyEvent _keyEvent ) const
 {
+#ifdef NEVER
   std::cout << __FILE__ << ":" << __LINE__ << " DateDelegate::doTabAction()" << std::endl;
+#endif
 
 }
 
@@ -184,7 +190,7 @@ editState( Wt::WWidget * _editor, const Wt::WModelIndex & _index ) const
 
   auto de = dynamic_cast< Wt::WDateEdit* >( cw-> children().at(0) );
 
-#ifndef NEVER
+#ifdef NEVER
   std::cout << __FILE__ << ":" << __LINE__
     << " Wt::cpp17::any DateDelegate::editState()"
     << " r:" << _index.row()
@@ -210,9 +216,10 @@ DateDelegate::
 setEditState( Wt::WWidget * _editor, const Wt::WModelIndex & _index, const Wt::cpp17::any & _value ) const
 {
 //  the '_editor' and 'm_dateEdit' are not the same widget
+#ifdef NEVER
   std::cout << __FILE__ << ":" << __LINE__ << " " << _editor    << " " << typeid( _editor ).name()    << std::endl;
   std::cout << __FILE__ << ":" << __LINE__ << " " << m_dateEdit << " " << typeid( m_dateEdit ).name() << std::endl;
-
+#endif
 
 } // endvoid DateDelegate::setEditState( Wt::WWidget * _editor, const Wt::WModelIndex & _index, const Wt::cpp17::any & _value ) const
 
@@ -220,6 +227,7 @@ void
 DateDelegate::
 setModelData( const Wt::cpp17::any & _editState, Wt::WAbstractItemModel * _model, const Wt::WModelIndex & _index ) const
 {
+#ifdef NEVER
   std::cout << __FILE__ << ":" << __LINE__
     << " setModelData()"
     << " " << _index.row()
@@ -227,7 +235,7 @@ setModelData( const Wt::cpp17::any & _editState, Wt::WAbstractItemModel * _model
     << " " << Wt::asString( _editState )
     << " " << _model
     << std::endl;
-
+#endif
 
 } // endvoid DateDelegate::setModelData( const Wt::cpp17::any & _editState, Wt::WAbstractItemModel * _model, const Wt::WModelIndex & _index ) const
 
@@ -264,11 +272,13 @@ createEditor
   Wt::WFlags< Wt::ViewItemRenderFlag > _flags
 ) const
 {
+#ifdef NEVER
   std::cout << __FILE__ << ":" << __LINE__
     << " ReconcileDelegate::createEditor()"
     << " r:" << _index.row()
     << " c:" << _index.column()
     << std::endl;
+#endif
 
   /*
   ** The editor is placed in to a container for layout
@@ -313,7 +323,9 @@ void
 ReconcileDelegate::
 doCloseEditor( Wt::WLineEdit * _editor, bool save ) const
 {
+#ifdef NEVER
   std::cout << __FILE__ << ":" << __LINE__ << " ReconciledDelegate::doCloseEditor()" << std::endl;
+#endif
 
   closeEditor().emit( _editor, save );
 
@@ -329,7 +341,9 @@ void
 ReconcileDelegate::
 doTabAction( Wt::WKeyEvent _keyEvent ) const
 {
+#ifdef NEVER
   std::cout << __FILE__ << ":" << __LINE__ << " ReconciledDelegate::doTabAction()" << std::endl;
+#endif
 
 }
 
@@ -341,7 +355,7 @@ editState( Wt::WWidget * _editor, const Wt::WModelIndex & _index ) const
 
   auto ed = dynamic_cast< Wt::WLineEdit* >( cw-> children().at(0) );
 
-#ifndef NEVER
+#ifdef NEVER
   std::cout << __FILE__ << ":" << __LINE__
     << " Wt::cpp17::any DateDelegate::editState()"
     << " r:" << _index.row()
@@ -375,6 +389,7 @@ void
 ReconcileDelegate::
 setModelData( const Wt::cpp17::any & _editState, Wt::WAbstractItemModel * _model, const Wt::WModelIndex & _index ) const
 {
+#ifdef NEVER
   std::cout << __FILE__ << ":" << __LINE__
     << " ReconciledDelegate::setModelData()"
     << " " << _index.row()
@@ -382,7 +397,7 @@ setModelData( const Wt::cpp17::any & _editState, Wt::WAbstractItemModel * _model
     << " " << Wt::asString( _editState )
     << " " << _model
     << std::endl;
-
+#endif
 
 } // endvoid ReconciledDelegate::setModelData( const Wt::cpp17::any & _editState, Wt::WAbstractItemModel * _model, const Wt::WModelIndex & _index ) const
 

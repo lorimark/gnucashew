@@ -161,26 +161,6 @@ EditWidget( const std::string & _accountGuid )
   */
   Wt::WTemplate * templtHistory;
   {
-
-#ifdef DOES_NOT_HONOR_LAYOUT
-    /*
-    ** BUGBUG: this code isn't honoring the layout stuff, to keep
-    **  the register table within the boundary of the widget.
-    **
-    */
-    auto cw_ = std::make_unique< Wt::WContainerWidget >();
-    cw_-> setMaximumSize( "Auto", "260px" );
-    auto lw_ = cw_-> setLayout( std::make_unique< Wt::WVBoxLayout >() );
-    auto u_ = std::make_unique< Wt::WTemplate >( TR( "gcw_gui.billpayeditor.form.tab2" ) );
-    templtHistory = u_.get();
-    lw_-> addWidget( std::move( u_ ) );
-    m_tabWidget-> addTab( std::move( cw_ ), TR("gcw.billPay.tabName.history") );
-
-    auto accountRegister = templtHistory-> bindNew< GCW::Gui::RegisterWidget >( "accountRegister", _accountGuid );
-
-    accountRegister-> setMaximumSize( "Auto", "2060px" );
-#endif
-
     /*
     ** This does a better job of honoring the layout, but we still have
     **  to set the widget height.

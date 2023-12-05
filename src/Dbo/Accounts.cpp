@@ -120,17 +120,21 @@ byGuid( const std::string & _guid )
 {
   GCW::Dbo::Accounts::Item::Ptr retVal;
 
-  Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
+  if( _guid != "" )
+  {
 
-  try
-  {
-    retVal =
-      GCW::app()-> gnucash_session().load< GCW::Dbo::Accounts::Item >( _guid )
-      ;
-  }
-  catch( std::exception & e )
-  {
-    std::cout << __FILE__ << ":" << __LINE__ << " " << e.what() << std::endl;
+    Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
+
+    try
+    {
+      retVal =
+        GCW::app()-> gnucash_session().load< GCW::Dbo::Accounts::Item >( _guid )
+        ;
+    }
+    catch( std::exception & e )
+    {
+      std::cout << __FILE__ << ":" << __LINE__ << " " << e.what() << std::endl;
+    }
   }
 
   return retVal;

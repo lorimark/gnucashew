@@ -52,11 +52,11 @@ bool
 GCW::Eng::AccountRegisterModel::
 setData( const Wt::WModelIndex & _index, const Wt::cpp17::any & _value, Wt::ItemDataRole _role )
 {
-  std::cout << __FILE__ << ":" << __LINE__ << " " << __FUNCTION__ << std::endl;
+  std::cout << __FILE__ << ":" << __LINE__ << " " << __FUNCTION__ << "(override) before sub-call" << std::endl;
 
   auto retVal = Wt::WStandardItemModel::setData( _index, _value, _role );
 
-  std::cout << __FILE__ << ":" << __LINE__ << " setData(override)"
+  std::cout << __FILE__ << ":" << __LINE__ << " " << __FUNCTION__ << "(override) after sub-call"
     << "\n rv:" << retVal
     << "\n id:" << Wt::asString( _index.data() )
     << "\n va:" << Wt::asString( _value )
@@ -150,7 +150,11 @@ refreshFromDisk()
   **  can be accurately calculated on the fly.
   **
   */
+  std::cout << __FILE__ << ":" << __LINE__ << " " << std::endl;
+
   auto splitItems = GCW::Dbo::Splits::byAccount( m_accountGuid );
+
+  std::cout << __FILE__ << ":" << __LINE__ << " " << std::endl;
 
   /*!
   ** Each item is processed from the vector in sequential order.
@@ -606,8 +610,16 @@ refreshFromDisk()
   **  depending on the account debit/credit type.  We get those from the
   **  accountDef.
   **
+  ** FIXME: this is modified a bit to allow for a default account def.
+  **        this is necessary since it is possible to ask for an account
+  **        register that is not (yet) associated to an account... this
+  **        can happen in the BillPay module when setting up a new
+  **        account for bill-pay functions. (kind of sloppy doing it here)
   */
-  auto accountDef = registerAccountItem-> accountDef();
+  GCW::Dbo::Account::AccountDef_t accountDef = GCW::Dbo::Account::s_accountDef.at(0);
+  if( registerAccountItem )
+    accountDef = registerAccountItem-> accountDef();
+
   int col = 0;
   setHeaderData( col++, TR( "gcw.RegisterWidget.column.date"                     ) );
   setHeaderData( col++, TR( "gcw.RegisterWidget.column.num"                      ) );
