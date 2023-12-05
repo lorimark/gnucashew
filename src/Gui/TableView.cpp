@@ -3,6 +3,8 @@
 #include <Wt/WStandardItem.h>
 #include <Wt/WStandardItemModel.h>
 
+#include "../Glb/gcwglobal.h"
+#include "../GnuCashew.h"
 #include "TableView.h"
 
 
@@ -30,7 +32,7 @@ layoutSizeChanged( int width, int height )-> void
 {
   // Calculate our fixed width columns
   auto nfixed = 0;
-  auto nrel = 0;
+  auto nrel   = 0;
 
   // "fixed" number of pixels
   auto fixed = 0.0;
@@ -274,6 +276,15 @@ handleMouseDown( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _event 
       clearSelection();
       closeEditors();
     }
+
+#ifdef NEVER
+  auto balanceIndex = model()-> index( _index.row(), 7 );
+
+  std::cout << __FILE__ << ":" << __LINE__ << " " <<balanceIndex.data( Wt::ItemDataRole::User ).type().name() << std::endl;
+
+  auto balanceValue = Wt::cpp17::any_cast< GCW_NUMERIC >( balanceIndex.data( Wt::ItemDataRole::User ) );
+  std::cout << __FILE__ << ":" << __LINE__ << " " << balanceValue << std::endl;
+#endif
 
   Wt::WTableView::handleMouseDown( _index, _event );
 

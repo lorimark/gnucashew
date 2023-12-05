@@ -18,11 +18,14 @@ MainWidget()
   addStyleClass( "MainWidget" );
 
   auto lw = setLayout( std::make_unique< Wt::WVBoxLayout >() );
+  lw-> setSpacing( 0 );
 
   m_navBar        = lw-> addWidget( std::make_unique< Wt::WNavigationBar      >()    );
   m_navBar-> addStyleClass( "NavBar" );
+
   m_toolBar       = lw-> addWidget( std::make_unique< Wt::WToolBar            >()    );
   m_toolBar-> addStyleClass( "ToolBar" );
+
   m_centralWidget = lw-> addWidget( std::make_unique< GCW::Gui::CentralWidget >(), 1 );
   m_statusBar     = lw-> addWidget( std::make_unique< Wt::WContainerWidget    >()    );
   m_statusBar-> addStyleClass( "StatusBar" );

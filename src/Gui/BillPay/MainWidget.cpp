@@ -54,6 +54,7 @@ buildContent()
     m_gridLayout-> setRowStretch( 1, 1 );
 
     lw2 = cw-> setLayout( std::make_unique< Wt::WVBoxLayout >() );
+    lw2-> setSpacing( 0 );
   }
 
   // unpaid items

@@ -34,6 +34,7 @@ CentralWidget()
   **
   */
   auto lw = setLayout( std::make_unique< Wt::WVBoxLayout >() );
+  lw-> setSpacing( 0 );
 
   /*
   ** Build the tab-widget

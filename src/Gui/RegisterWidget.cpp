@@ -24,6 +24,9 @@ setText_( Wt::WText * _widget, GCW_NUMERIC _value )
   _widget-> setText( "$" + toString( _value, GCW::CFG::decimal_format() ) );
 }
 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+
 class HeaderDelegate
 : public Wt::WItemDelegate
 {
@@ -99,7 +102,7 @@ createEditor
 ) const
 {
   std::cout << __FILE__ << ":" << __LINE__
-    << " createEditor()"
+    << " DateDelegate::createEditor()"
     << " r:" << _index.row()
     << " c:" << _index.column()
     << std::endl;
@@ -153,7 +156,7 @@ void
 DateDelegate::
 doCloseEditor( Wt::WDateEdit * _dateEdit, bool save ) const
 {
-  std::cout << __FILE__ << ":" << __LINE__ << " " << std::endl;
+  std::cout << __FILE__ << ":" << __LINE__ << " DateDelegate::doCloseEditor()" << std::endl;
 
   closeEditor().emit( _dateEdit, save );
 
@@ -169,7 +172,7 @@ void
 DateDelegate::
 doTabAction( Wt::WKeyEvent _keyEvent ) const
 {
-  std::cout << __FILE__ << ":" << __LINE__ << " " << std::endl;
+  std::cout << __FILE__ << ":" << __LINE__ << " DateDelegate::doTabAction()" << std::endl;
 
 }
 
@@ -183,7 +186,7 @@ editState( Wt::WWidget * _editor, const Wt::WModelIndex & _index ) const
 
 #ifndef NEVER
   std::cout << __FILE__ << ":" << __LINE__
-    << " editState()"
+    << " Wt::cpp17::any DateDelegate::editState()"
     << " r:" << _index.row()
     << " c:" << _index.column()
     << " i:" << cw-> id()
@@ -227,6 +230,161 @@ setModelData( const Wt::cpp17::any & _editState, Wt::WAbstractItemModel * _model
 
 
 } // endvoid DateDelegate::setModelData( const Wt::cpp17::any & _editState, Wt::WAbstractItemModel * _model, const Wt::WModelIndex & _index ) const
+
+
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+class ReconcileDelegate
+: public Wt::WItemDelegate
+{
+  public:
+
+    std::unique_ptr< Wt::WWidget > createEditor
+    (
+     const Wt::WModelIndex & _index,
+     Wt::WFlags< Wt::ViewItemRenderFlag > _flags
+    ) const;
+
+    virtual Wt::cpp17::any editState( Wt::WWidget *editor, const Wt::WModelIndex &index ) const override;
+    void setEditState( Wt::WWidget * _editor, const Wt::WModelIndex & _index, const Wt::cpp17::any & _value ) const;
+    void setModelData ( const Wt::cpp17::any & _editState, Wt::WAbstractItemModel * _model, const Wt::WModelIndex & _index ) const;
+
+    void doCloseEditor( Wt::WLineEdit * _editor, bool save ) const;
+    void doTabAction( Wt::WKeyEvent _keyEvent ) const;
+
+};
+
+std::unique_ptr< Wt::WWidget >
+ReconcileDelegate::
+createEditor
+(
+  const Wt::WModelIndex & _index,
+  Wt::WFlags< Wt::ViewItemRenderFlag > _flags
+) const
+{
+  std::cout << __FILE__ << ":" << __LINE__
+    << " ReconcileDelegate::createEditor()"
+    << " r:" << _index.row()
+    << " c:" << _index.column()
+    << std::endl;
+
+  /*
+  ** The editor is placed in to a container for layout
+  **  management
+  **
+  */
+  auto retVal = std::make_unique< Wt::WContainerWidget >();
+  retVal-> setSelectable( true );
+
+  /*
+  ** Get the date from the string value
+  **
+  */
+  auto reconciled =  Wt::asString( _index.data( Wt::ItemDataRole::Edit ) );
+
+  /*
+  ** Build an editor
+  **
+  ** Hitting the 'enter' key or the 'esc' key closes the editor
+  **
+  */
+  auto reconciledEdit = std::make_unique< Wt::WLineEdit >();
+  reconciledEdit-> setReadOnly( true );
+  reconciledEdit-> setText( reconciled );
+  reconciledEdit-> enterPressed  ().connect( [&](){ doCloseEditor( reconciledEdit.get(), true  ); });
+  reconciledEdit-> escapePressed ().connect( [&](){ doCloseEditor( reconciledEdit.get(), false ); });
+  reconciledEdit-> keyWentDown   ().connect( [&]( Wt::WKeyEvent _keyEvent ){ doTabAction( _keyEvent ); });
+
+  /*
+  ** Stuff it in to the layout
+  **
+  */
+  retVal-> setLayout( std::make_unique< Wt::WHBoxLayout >() );
+  retVal-> layout()-> setContentsMargins( 1,1,1,1 );
+  retVal-> layout()-> addWidget( std::move( reconciledEdit ) );
+
+  return retVal;
+
+} // endstd::unique_ptr< Wt::WWidget > ReconciledDelegate::createEditor
+
+void
+ReconcileDelegate::
+doCloseEditor( Wt::WLineEdit * _editor, bool save ) const
+{
+  std::cout << __FILE__ << ":" << __LINE__ << " ReconciledDelegate::doCloseEditor()" << std::endl;
+
+  closeEditor().emit( _editor, save );
+
+#ifdef NEVER
+  m_editorClosed.emit( m_row, m_col );
+  m_row = -1;
+  m_col = -1;
+#endif
+
+} // endvoid ReconciledDelegate::doCloseEditor( Wt::WDateEdit * _dateEdit, bool save ) const
+
+void
+ReconcileDelegate::
+doTabAction( Wt::WKeyEvent _keyEvent ) const
+{
+  std::cout << __FILE__ << ":" << __LINE__ << " ReconciledDelegate::doTabAction()" << std::endl;
+
+}
+
+Wt::cpp17::any
+ReconcileDelegate::
+editState( Wt::WWidget * _editor, const Wt::WModelIndex & _index ) const
+{
+  auto cw = dynamic_cast< Wt::WContainerWidget* >( _editor );
+
+  auto ed = dynamic_cast< Wt::WLineEdit* >( cw-> children().at(0) );
+
+#ifndef NEVER
+  std::cout << __FILE__ << ":" << __LINE__
+    << " Wt::cpp17::any DateDelegate::editState()"
+    << " r:" << _index.row()
+    << " c:" << _index.column()
+    << " i:" << cw-> id()
+    << " n:" << cw-> objectName()
+    << " s:" << cw-> children().size()
+    << " t:" << typeid( cw-> children().at(0) ).name()
+    << " d:" << ed
+    << std::endl
+    ;
+#endif
+
+//  return "";
+  return ed-> text();
+
+} // endWt::cpp17::any DateDelegate::editState( Wt::WWidget * _editor, const Wt::WModelIndex & _index ) const
+
+void
+ReconcileDelegate::
+setEditState( Wt::WWidget * _editor, const Wt::WModelIndex & _index, const Wt::cpp17::any & _value ) const
+{
+//  the '_editor' and 'm_dateEdit' are not the same widget
+//  std::cout << __FILE__ << ":" << __LINE__ << " " << _editor    << " " << typeid( _editor ).name()    << std::endl;
+//  std::cout << __FILE__ << ":" << __LINE__ << " " << m_dateEdit << " " << typeid( m_dateEdit ).name() << std::endl;
+
+
+} // endvoid DateDelegate::setEditState( Wt::WWidget * _editor, const Wt::WModelIndex & _index, const Wt::cpp17::any & _value ) const
+
+void
+ReconcileDelegate::
+setModelData( const Wt::cpp17::any & _editState, Wt::WAbstractItemModel * _model, const Wt::WModelIndex & _index ) const
+{
+  std::cout << __FILE__ << ":" << __LINE__
+    << " ReconciledDelegate::setModelData()"
+    << " " << _index.row()
+    << " " << _index.column()
+    << " " << Wt::asString( _editState )
+    << " " << _model
+    << std::endl;
+
+
+} // endvoid ReconciledDelegate::setModelData( const Wt::cpp17::any & _editState, Wt::WAbstractItemModel * _model, const Wt::WModelIndex & _index ) const
 
 
 
@@ -284,6 +442,9 @@ createEditor
   return retVal;
 
 } // endstd::unique_ptr< Wt::WWidget > SuggestionDelegate::createEditor
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 
 
@@ -344,7 +505,41 @@ createEditor
 
 } // endstd::unique_ptr< Wt::WWidget > AccountDelegate::createEditor
 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+
 } // endnamespace {
+
+GCW::Gui::RegisterWidget::StatusBar::
+StatusBar()
+{
+  addStyleClass( "StatusBar" );
+
+  auto lw = setLayout( std::make_unique< Wt::WHBoxLayout >() );
+
+  lw-> setSpacing( 0 );
+
+  auto _addWidget = [&]( const std::string & _key, int _spacing = 0 )
+  {
+    lw-> addWidget( std::make_unique< Wt::WText >( TR("gcw.RegisterWidget.StatusBar." + _key ) + ":" ) );
+    auto retVal = lw-> addWidget( std::make_unique< Wt::WText >(), _spacing );
+    retVal-> setAttributeValue( "style", "margin-right:10px" );
+    return retVal;
+  };
+
+  m_present    = _addWidget( "present"      );
+  m_future     = _addWidget( "future"       );
+  m_cleared    = _addWidget( "cleared"      );
+  m_reconciled = _addWidget( "reconciled"   );
+  m_projected  = _addWidget( "projected", 1 );
+
+} // endStatusBar()
+
+void GCW::Gui::RegisterWidget::StatusBar:: setPresent    ( GCW_NUMERIC _value ) { setText_( m_present    , _value ); }
+void GCW::Gui::RegisterWidget::StatusBar:: setFuture     ( GCW_NUMERIC _value ) { setText_( m_future     , _value ); }
+void GCW::Gui::RegisterWidget::StatusBar:: setCleared    ( GCW_NUMERIC _value ) { setText_( m_cleared    , _value ); }
+void GCW::Gui::RegisterWidget::StatusBar:: setReconciled ( GCW_NUMERIC _value ) { setText_( m_reconciled , _value ); }
+void GCW::Gui::RegisterWidget::StatusBar:: setProjected  ( GCW_NUMERIC _value ) { setText_( m_projected  , _value ); }
 
 
 GCW::Gui::RegisterWidget::
@@ -443,6 +638,16 @@ RegisterWidget( const std::string & _accountGuid )
 
   }
 
+  {
+    auto reconcileDelegate = std::make_shared< ReconcileDelegate >();
+    tableView()-> setItemDelegateForColumn( 4, reconcileDelegate );
+  }
+
+  /*
+  ** set column delegates so the editors have assistance with list pickers and
+  **  whatnot
+  **
+  */
   tableView()-> setItemDelegateForColumn ( 1, std::make_shared< SuggestionDelegate >() );
   tableView()-> setItemDelegateForColumn ( 2, std::make_shared< SuggestionDelegate >() );
   tableView()-> setItemDelegateForColumn ( 3, std::make_shared< AccountDelegate    >() );
@@ -476,8 +681,6 @@ RegisterWidget( const std::string & _accountGuid )
     selectionChanged().connect( [=]()
     {
       std::cout << __FILE__ << ":" << __LINE__ << " selectionChanged" << std::endl;
-
-      tableView()-> closeEditors( true );
     });
 #endif
 
@@ -556,36 +759,82 @@ RegisterWidget( const std::string & _accountGuid )
 
 } // endGCW::RegisterWidget::RegisterWidget( const std::string & _accountGuid )
 
-GCW::Gui::RegisterWidget::StatusBar::
-StatusBar()
+void
+GCW::Gui::RegisterWidget::
+loadData()
 {
-  addStyleClass( "StatusBar" );
+  m_model = std::make_shared< Model >( m_accountGuid );
+  tableView()-> setModel( m_model );
 
-  auto lw = setLayout( std::make_unique< Wt::WHBoxLayout >() );
+  // 0 = Date
+  tableView()-> setColumnWidth    ( 0, "150px"                   );
+  tableView()-> setHeaderAlignment( 0, Wt::AlignmentFlag::Right  );
+  tableView()-> setColumnAlignment( 0, Wt::AlignmentFlag::Right  );
 
-  lw-> setSpacing( 0 );
+  // 1 = Action/Num
+  tableView()-> setColumnWidth    ( 1,  "50px"                   );
+  tableView()-> setHeaderAlignment( 1, Wt::AlignmentFlag::Center );
+  tableView()-> setColumnAlignment( 1, Wt::AlignmentFlag::Center );
 
-  auto _addWidget = [&]( const std::string & _key, int _spacing = 0 )
-  {
-    lw-> addWidget( std::make_unique< Wt::WText >( TR("gcw.RegisterWidget.StatusBar." + _key ) + ":" ) );
-    auto retVal = lw-> addWidget( std::make_unique< Wt::WText >(), _spacing );
-    retVal-> setAttributeValue( "style", "margin-right:10px" );
-    return retVal;
-  };
+  // 2 = Memo/Description
+  tableView()-> setColumnWidth    ( 2,   "99%"                   );
+  tableView()-> setHeaderAlignment( 2, Wt::AlignmentFlag::Left   );
+  tableView()-> setColumnAlignment( 2, Wt::AlignmentFlag::Left   );
 
-  m_present    = _addWidget( "present"      );
-  m_future     = _addWidget( "future"       );
-  m_cleared    = _addWidget( "cleared"      );
-  m_reconciled = _addWidget( "reconciled"   );
-  m_projected  = _addWidget( "projected", 1 );
+  // 3 = Account/Transfer
+  tableView()-> setColumnWidth    ( 3, "200px"                   );
+  tableView()-> setHeaderAlignment( 3, Wt::AlignmentFlag::Right  );
+  tableView()-> setColumnAlignment( 3, Wt::AlignmentFlag::Right  );
 
-} // endStatusBar()
+  // 4 = Reconciliation
+  tableView()-> setColumnWidth    ( 4,  "25px"                   );
+  tableView()-> setHeaderAlignment( 4, Wt::AlignmentFlag::Center );
+  tableView()-> setColumnAlignment( 4, Wt::AlignmentFlag::Center );
 
-void GCW::Gui::RegisterWidget::StatusBar:: setPresent    ( GCW_NUMERIC _value ) { setText_( m_present    , _value ); }
-void GCW::Gui::RegisterWidget::StatusBar:: setFuture     ( GCW_NUMERIC _value ) { setText_( m_future     , _value ); }
-void GCW::Gui::RegisterWidget::StatusBar:: setCleared    ( GCW_NUMERIC _value ) { setText_( m_cleared    , _value ); }
-void GCW::Gui::RegisterWidget::StatusBar:: setReconciled ( GCW_NUMERIC _value ) { setText_( m_reconciled , _value ); }
-void GCW::Gui::RegisterWidget::StatusBar:: setProjected  ( GCW_NUMERIC _value ) { setText_( m_projected  , _value ); }
+  // 5 = Debit
+  tableView()-> setColumnWidth    ( 5, "100px"                   );
+  tableView()-> setHeaderAlignment( 5, Wt::AlignmentFlag::Right  );
+  tableView()-> setColumnAlignment( 5, Wt::AlignmentFlag::Right  );
+
+  // 6 = Credit
+  tableView()-> setColumnWidth    ( 6, "100px"                   );
+  tableView()-> setHeaderAlignment( 6, Wt::AlignmentFlag::Right  );
+  tableView()-> setColumnAlignment( 6, Wt::AlignmentFlag::Right  );
+
+  // 7 = Balance
+  tableView()-> setColumnWidth    ( 7, "100px"                   );
+  tableView()-> setHeaderAlignment( 7, Wt::AlignmentFlag::Right  );
+  tableView()-> setColumnAlignment( 7, Wt::AlignmentFlag::Right  );
+
+  auto lastIndex = model()-> index( model()-> rowCount() -1, 0 );
+  tableView()-> scrollTo( lastIndex );
+  tableView()-> edit( lastIndex );
+
+  statusBar()-> setPresent    ( model()-> present    () );
+  statusBar()-> setProjected  ( model()-> projected  () );
+  statusBar()-> setReconciled ( model()-> reconciled () );
+  statusBar()-> setFuture     ( model()-> future     () );
+  statusBar()-> setCleared    ( model()-> cleared    () );
+
+} // endvoid GCW::Gui::RegisterWidget::loadData()
+
+Wt::Json::Object
+GCW::Gui::RegisterWidget::
+toJson() const
+{
+  Wt::Json::Object jobj;
+
+  return jobj;
+}
+
+bool
+GCW::Gui::RegisterWidget::
+fromJson( const Wt::Json::Object & _jobj )
+{
+  return true;
+}
+
+
 
 void
 GCW::Gui::RegisterWidget::
@@ -607,83 +856,6 @@ test()
 
 } // endvoid GCW::Gui::RegisterWidget::test()
 
-Wt::Json::Object
-GCW::Gui::RegisterWidget::
-toJson() const
-{
-  Wt::Json::Object jobj;
 
-  return jobj;
-}
-
-bool
-GCW::Gui::RegisterWidget::
-fromJson( const Wt::Json::Object & _jobj )
-{
-  return true;
-}
-
-
-void
-GCW::Gui::RegisterWidget::
-loadData()
-{
-  m_model = std::make_shared< Model >( m_accountGuid );
-
-  tableView()-> setModel( m_model );
-
-  /* Date */
-  tableView()-> setColumnWidth     ( 0, "150px"                   );
-  tableView()-> setHeaderAlignment ( 0, Wt::AlignmentFlag::Right  );
-  tableView()-> setColumnAlignment ( 0, Wt::AlignmentFlag::Right  );
-
-  /* Action/Num */
-  tableView()-> setColumnWidth     ( 1,  "50px"                   );
-  tableView()-> setHeaderAlignment ( 1, Wt::AlignmentFlag::Center );
-  tableView()-> setColumnAlignment ( 1, Wt::AlignmentFlag::Center );
-
-  /* Memo/Description */
-  tableView()-> setColumnWidth     ( 2,   "99%"                   );
-  tableView()-> setHeaderAlignment ( 2, Wt::AlignmentFlag::Left   );
-  tableView()-> setColumnAlignment ( 2, Wt::AlignmentFlag::Left   );
-
-  /* Account/Transfer */
-  tableView()-> setColumnWidth     ( 3, "200px"                   );
-  tableView()-> setHeaderAlignment ( 3, Wt::AlignmentFlag::Right  );
-  tableView()-> setColumnAlignment ( 3, Wt::AlignmentFlag::Right  );
-
-  /* Reconciliation */
-  tableView()-> setColumnWidth     ( 4,  "25px"                   );
-  tableView()-> setHeaderAlignment ( 4, Wt::AlignmentFlag::Center );
-  tableView()-> setColumnAlignment ( 4, Wt::AlignmentFlag::Center );
-
-  /* Debit */
-  tableView()-> setColumnWidth     ( 5, "100px"                   );
-  tableView()-> setHeaderAlignment ( 5, Wt::AlignmentFlag::Right  );
-  tableView()-> setColumnAlignment ( 5, Wt::AlignmentFlag::Right  );
-
-  /* Credit */
-  tableView()-> setColumnWidth     ( 6, "100px"                   );
-  tableView()-> setHeaderAlignment ( 6, Wt::AlignmentFlag::Right  );
-  tableView()-> setColumnAlignment ( 6, Wt::AlignmentFlag::Right  );
-
-  /* Balance */
-  tableView()-> setColumnWidth     ( 7, "100px"                   );
-  tableView()-> setHeaderAlignment ( 7, Wt::AlignmentFlag::Right  );
-  tableView()-> setColumnAlignment ( 7, Wt::AlignmentFlag::Right  );
-
-//  auto lastIndex = model()-> rowCount();
-
-  auto lastIndex = model()-> index( model()-> rowCount() -1, 0 );
-  tableView()-> scrollTo( lastIndex );
-  tableView()-> edit( lastIndex );
-
-  statusBar()-> setPresent    ( model()-> present    () );
-  statusBar()-> setProjected  ( model()-> projected  () );
-  statusBar()-> setReconciled ( model()-> reconciled () );
-  statusBar()-> setFuture     ( model()-> future     () );
-  statusBar()-> setCleared    ( model()-> cleared    () );
-
-} // endvoid GCW::Gui::RegisterWidget::loadData()
 
 

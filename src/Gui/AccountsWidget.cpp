@@ -21,6 +21,7 @@ AccountsWidget()
   addStyleClass( "AccountsWidget" );
 
   auto lw = setLayout( std::make_unique< Wt::WVBoxLayout >() );
+  lw-> setSpacing( 0 );
 
   auto w = std::make_unique< Wt::WTreeView >();
   m_view = w.get();

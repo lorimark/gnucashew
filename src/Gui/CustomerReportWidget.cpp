@@ -18,6 +18,7 @@ CustomerReportWidget( const std::string & _customerGuid )
   **
   */
   auto lw = setLayout( std::make_unique< Wt::WVBoxLayout >() );
+  lw-> setSpacing( 0 );
 
 } // endGCW::Gui::CustomerReportWidget::CustomerReportWidget()
 

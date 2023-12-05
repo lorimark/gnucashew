@@ -23,25 +23,25 @@ AccountRegisterModel( const std::string & _accountGuid, bool _editable )
 
   dataChanged().connect( [=]( Wt::WModelIndex _index1, Wt::WModelIndex _index2 )
   {
-    std::cout << __FILE__ << ":" << __LINE__ << " model.dataChanged()"
-      << " tst:" << std::string( Wt::asString( _index1.data() ) == Wt::asString( _index2.data() )? "same":"different" )
-      << " r1:" << _index1.row()
-      << " c1:" << _index1.column()
-      << " v1:" << Wt::asString( _index1.data() )
-      << " r2:" << _index2.row()
-      << " c2:" << _index2.column()
-      << " v2:" << Wt::asString( _index2.data() )
+    std::cout << __FILE__ << ":" << __LINE__ << " model<signal>.dataChanged()"
+      << "\n tst:" << std::string( Wt::asString( _index1.data() ) == Wt::asString( _index2.data() )? "same":"different" )
+      << "\n r1:" << _index1.row()
+      << "\n c1:" << _index1.column()
+      << "\n v1:" << Wt::asString( _index1.data() )
+      << "\n r2:" << _index2.row()
+      << "\n c2:" << _index2.column()
+      << "\n v2:" << Wt::asString( _index2.data() )
       << std::endl;
 
   });
 
   itemChanged().connect( [=]( Wt::WStandardItem * _item )
   {
-    std::cout << __FILE__ << ":" << __LINE__ << " model.itemChanged()"
-      << " row:" << _item-> row()
-      << " col:" << _item-> column()
-      << " d:"   << Wt::asString( _item-> data() )
-      << " t:"   << Wt::asString( _item-> text() )
+    std::cout << __FILE__ << ":" << __LINE__ << " model<signal>.itemChanged()"
+      << "\n row:" << _item-> row()
+      << "\n col:" << _item-> column()
+      << "\n d:"   << Wt::asString( _item-> data( Wt::ItemDataRole::Display ) )
+      << "\n t:"   << Wt::asString( _item-> text() )
       << std::endl;
 
   });
@@ -52,9 +52,11 @@ bool
 GCW::Eng::AccountRegisterModel::
 setData( const Wt::WModelIndex & _index, const Wt::cpp17::any & _value, Wt::ItemDataRole _role )
 {
+  std::cout << __FILE__ << ":" << __LINE__ << " " << __FUNCTION__ << std::endl;
+
   auto retVal = Wt::WStandardItemModel::setData( _index, _value, _role );
 
-  std::cout << __FILE__ << ":" << __LINE__ << " setData()"
+  std::cout << __FILE__ << ":" << __LINE__ << " setData(override)"
     << "\n rv:" << retVal
     << "\n id:" << Wt::asString( _index.data() )
     << "\n va:" << Wt::asString( _value )
@@ -259,7 +261,9 @@ refreshFromDisk()
           ** \par Another Imbalance
           ** This is another problem... We have another split, but the account
           **  we are split-to doesn't exist.  This is a problem and should not
-          **  happen and represents an error in the database.
+          **  happen and represents an error in the database.  This means the
+          **  account containing this guid nolonger exists.  That should never
+          **  happen.
           **
           */
           account = _addColumn( columns, TR("gcw.RegisterWidget.account.imbalanceUSD") );
@@ -434,6 +438,7 @@ refreshFromDisk()
     **  >>>>>>>>>>>>>>>
     **
     */
+    bool invert = false;
     switch( prefrenceItem.reverseBalanceAccounts() )
     {
       case GCW::Dbo::Prefrences::ReverseBalanceAccounts::INCOME_EXPENSE:
@@ -442,11 +447,7 @@ refreshFromDisk()
          || registerAccountItem-> accountType() == GCW::Dbo::Account::Type::EXPENSE
           )
         {
-          runningBalance -= splitItem-> value(); // math inverted
-        }
-        else
-        {
-          runningBalance += splitItem-> value(); // math normal
+          invert = true; // math inverted
         }
         break;
       }
@@ -455,22 +456,24 @@ refreshFromDisk()
       {
         if( registerAccountItem-> accountDrCr() == GCW::Dbo::Account::DrCr::CREDIT )
         {
-          runningBalance -= splitItem-> value(); // math inverted
-        }
-        else
-        {
-          runningBalance += splitItem-> value(); // math normal
+          invert = true; // math inverted
         }
         break;
       }
 
-      case GCW::Dbo::Prefrences::ReverseBalanceAccounts::NONE:
-      default:
-      {
-        runningBalance += splitItem-> value(); // math normal
-      }
-
     } // endswitch( prefrenceItem.reverseBalanceAccounts() )
+
+    runningBalance += splitItem-> value( invert );
+
+    /* FIXME
+    ** Add up the static running accumulators
+    **
+    */
+    m_present += splitItem-> value( invert );
+//    m_future     ;
+//    m_cleared    ;
+//    m_reconciled ;
+//    m_projected  ;
 
     /*
     ** if the value is positive, we post it to the debit (left) column.
@@ -478,7 +481,9 @@ refreshFromDisk()
     if( splitItem-> value() > 0 )
     {
       debit  = _addColumn( columns, splitItem-> valueAsString() );
+      debit-> setData( splitItem-> value(), Wt::ItemDataRole::User );
       credit = _addColumn( columns, "" );
+      credit-> setData( 0, Wt::ItemDataRole::User );
     }
 
     /*
@@ -491,7 +496,9 @@ refreshFromDisk()
     if( splitItem-> value() < 0 )
     {
       debit  = _addColumn( columns, "" );
+      debit-> setData( 0, Wt::ItemDataRole::User );
       credit = _addColumn( columns, splitItem-> valueAsString(true) );
+      credit-> setData( splitItem-> value(), Wt::ItemDataRole::User );
     }
 
     /*
@@ -501,7 +508,9 @@ refreshFromDisk()
     if( splitItem-> value() == 0 )
     {
       debit  = _addColumn( columns, "" );
+      debit-> setData( 0, Wt::ItemDataRole::User );
       credit = _addColumn( columns, "" );
+      credit-> setData( 0, Wt::ItemDataRole::User );
     }
 
     /*
@@ -515,6 +524,7 @@ refreshFromDisk()
        Wt::WString( "{1}" )
        .arg( toString( runningBalance, GCW::CFG::decimal_format() ) )
       );
+    balance-> setData( runningBalance, Wt::ItemDataRole::User );
 
     /*
     ** If the balance hit negative, highlight the number with a bit
@@ -569,16 +579,6 @@ refreshFromDisk()
     **
     */
     appendRow( std::move( columns ) );
-
-    /* FIXME
-    ** Add up the static running accumulators
-    **
-    */
-    m_present = runningBalance;
-//    m_future     ;
-//    m_cleared    ;
-//    m_reconciled ;
-//    m_projected  ;
 
   } // endfor( auto splitItem : splitItems )
 

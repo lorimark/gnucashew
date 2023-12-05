@@ -5,6 +5,7 @@
 
 #include <Wt/Json/Object.h>
 #include <Wt/WContainerWidget.h>
+#include <Wt/WSortFilterProxyModel.h>
 #include <Wt/WStandardItem.h>
 #include <Wt/WStandardItemModel.h>
 

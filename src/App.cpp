@@ -101,6 +101,7 @@ GCW::App::App( const Wt::WEnvironment & env )
   **
   */
   auto lw = root()-> setLayout( std::make_unique< Wt::WVBoxLayout >() );
+  lw-> setSpacing( 0 );
 
   /*
   ** Build and install the main desktop widget.

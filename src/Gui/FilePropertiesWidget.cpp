@@ -18,6 +18,7 @@ FilePropertiesWidget()
   **
   */
   auto lw = setLayout( std::make_unique< Wt::WVBoxLayout >() );
+  lw-> setSpacing( 0 );
 
   if( GCW::app()-> gnucash_session().hasGnuCashewExtensions() )
   {
