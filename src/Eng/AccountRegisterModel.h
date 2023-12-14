@@ -29,6 +29,9 @@ class AccountRegisterModel
     AccountRegisterModel( const std::string & _accountGuid, bool _editable = true );
 
     void refreshFromDisk();
+    void saveToDisk();
+
+    std::string splitGuid( const Wt::WModelIndex & _index );
 
     GCW_NUMERIC present    () const { return m_present;    }
     GCW_NUMERIC future     () const { return m_future;     }
@@ -63,16 +66,59 @@ balance
 
   private:
 
-    bool        m_editable = false;
+    void saveToDisk( const Wt::WModelIndex & _index, const Wt::cpp17::any & _value, Wt::ItemDataRole _role );
+
+#ifdef NEVER
+    template <typename T>
+    bool matchValue( const Wt::cpp17::any & _any1, const Wt::cpp17::any & _any2 )
+    {
+      auto v1 = Wt::cpp17::any_cast< T >( _any1 );
+      auto v2 = Wt::cpp17::any_cast< T >( _any2 );
+      return v1 == v2;
+    }
+#endif
+
+    /*
+    ** Send a signal when a index is being updated
+    **  because it was dirty.
+    **
+    */
+    Wt::Signal< Wt::WModelIndex > m_goneDirty;
+
+    /*
+    ** keep track of rows as they go dirty.
+    **
+    */
+    std::set< int > m_dirtyRows;
+
+    /*
+    ** 
+    **
+    */
+    bool m_editable = false;
+
+    /*
+    ** The model is associated with a single account.
+    **
+    */
     std::string m_accountGuid;
+
+    /*
+    ** Keep track of the last date entered for pre-populating
+    **  the next row.
+    **
+    */
     std::string m_lastDate;
 
+    /*
+    ** Running balance accumulators.
+    **
+    */
     GCW_NUMERIC m_present    ;
     GCW_NUMERIC m_future     ;
     GCW_NUMERIC m_cleared    ;
     GCW_NUMERIC m_reconciled ;
     GCW_NUMERIC m_projected  ;
-
 
 }; // endclass AccountRegisterModel
 

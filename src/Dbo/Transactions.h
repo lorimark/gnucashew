@@ -98,6 +98,8 @@ class Item
       return d.date();
     }
 
+    void set_post_date( const Wt::WDate & _value );
+
     template< class Action > void persist( Action & action )
     {
       Wt::Dbo::id   ( action, m_guid           , "guid"           ,   32 ); // text(32) PRIMARY KEY NOT NULL,
@@ -123,6 +125,7 @@ extern const char * s_tableName;
 ** \brief Load Transaction by Guid
 **
 */
+Item::Ptr load( const std::string & _txGuid );
 Item::Ptr byGuid( const std::string & _txGuid );
 Item::Vector byAccount( const std::string & _accountGuid );
 

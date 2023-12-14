@@ -11,6 +11,7 @@
 #include "CentralWidget.h"
 #include "CustomerReportWidget.h"
 #include "CustomersWidget.h"
+#include "SlotsWidget.h"
 
 /*!
 ** \brief Central Widget
@@ -277,6 +278,45 @@ open_BillPayWidget()
   tabWidget()-> setCurrentIndex( tabIndex( tabName ) );
 
 } // endopen_BillPayWidget()
+
+void
+GCW::Gui::CentralWidget::
+open_SlotsWidget()
+{
+  auto tabName = "slots";
+
+  /*
+  ** See if this tab exists, if not, then add it.
+  **
+  */
+  if( tabIndex( tabName ) == -1 )
+  {
+    /*
+    ** Open a new CustomersWidget tab that is connected to the account
+    **
+    */
+    auto widget = std::make_unique< GCW::Gui::SlotsWidget >();
+    auto w = widget.get();
+
+    auto tab =
+      tabWidget()->
+        insertTab
+        ( 1,
+          std::move( widget ),
+          tabName
+        );
+
+    tab-> setCloseable( true );
+
+  } // endif( tabIndex( _account-> name() ) == -1 )
+
+  /*
+  ** Go straight to the tab.
+  **
+  */
+  tabWidget()-> setCurrentIndex( tabIndex( tabName ) );
+
+} // endopen_SlotsWidget()
 
 void GCW::Gui::CentralWidget::
 test()

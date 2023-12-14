@@ -61,9 +61,14 @@ load( const std::string & _splitGuid )
 {
   GCW::Dbo::Splits::Item::Ptr retVal;
 
-  retVal =
-    GCW::app()-> gnucash_session().load< GCW::Dbo::Splits::Item >( _splitGuid )
-    ;
+  if( _splitGuid != "" )
+  {
+    Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
+
+    retVal =
+      GCW::app()-> gnucash_session().load< GCW::Dbo::Splits::Item >( _splitGuid )
+      ;
+  }
 
   return retVal;
 
@@ -77,6 +82,8 @@ byAccount( const std::string & _accountGuid )
 
   if( _accountGuid != "" )
   {
+    Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
+
     /*
     ** grab the raw data items out of the storage
     */
@@ -117,6 +124,8 @@ bySplit( const std::string & _splitGuid )
   */
   if( splitItem )
   {
+    Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
+
     auto results =
       GCW::app()-> gnucash_session().find< GCW::Dbo::Splits::Item >()
       .where( "tx_guid = ?" )
@@ -155,6 +164,8 @@ GCW::Dbo::Splits::
 byTransaction( const std::string & _txGuid )
 {
   GCW::Dbo::Splits::Item::Vector retVal;
+
+  Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
 
   auto results =
     GCW::app()-> gnucash_session().find< GCW::Dbo::Splits::Item >()

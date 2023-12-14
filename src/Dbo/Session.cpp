@@ -8,6 +8,7 @@
 
 #include "Accounts.h"
 #include "Customers.h"
+#include "Slots.h"
 #include "Splits.h"
 #include "Transactions.h"
 #include "Vars.h"
@@ -87,6 +88,7 @@ init()
   mapClass< GCW::Dbo:: Accounts     ::Item >( GCW::Dbo:: Accounts     ::s_tableName );
   mapClass< GCW::Dbo:: Customers    ::Item >( GCW::Dbo:: Customers    ::s_tableName );
   mapClass< GCW::Dbo:: Transactions ::Item >( GCW::Dbo:: Transactions ::s_tableName );
+  mapClass< GCW::Dbo:: Slots        ::Item >( GCW::Dbo:: Slots        ::s_tableName );
   mapClass< GCW::Dbo:: Splits       ::Item >( GCW::Dbo:: Splits       ::s_tableName );
   mapClass< GCW::Dbo:: Vars         ::Item >( GCW::Dbo:: Vars         ::s_tableName );
 
@@ -103,12 +105,14 @@ hasGnuCashewExtensions()
   */
   bool retVal = false;
 
+  using ResultRow = std::tuple< std::string, std::string, std::string, int, std::string >;
+
   /*
   **  query the list of tables
   */
   Wt::Dbo::Transaction t( *this );
   auto results =
-    query< std::tuple< std::string, std::string, std::string, int, std::string > >
+    query< ResultRow >
     (
      "select type,name,tbl_name,rootpage,sql from sqlite_master"
     )

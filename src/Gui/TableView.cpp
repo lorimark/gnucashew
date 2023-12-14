@@ -8,7 +8,6 @@
 #include "../GnuCashew.h"
 #include "TableView.h"
 
-
 // Pixels
 const int GCW::Gui::TableView::kTableHeaderRowHeight = 30;
 const int GCW::Gui::TableView::kTableBodyRowHeight   = 25;
@@ -20,6 +19,8 @@ GCW::Gui::TableView::
 TableView()
 : Wt::WTableView()
 {
+  addStyleClass( "Gcw-TableView" );
+
   setHeaderHeight( kTableHeaderRowHeight );
   setRowHeight( kTableBodyRowHeight );
 
@@ -62,12 +63,14 @@ layoutSizeChanged( int width, int height )-> void
 
   // Columns who's width wasn't explicitly set are considered "fixed", and Wt
   // will default them to 150px or something.
-  nfixed = model()->columnCount() - nrel;
+  if( model() )
+  {
+    nfixed = model()->columnCount() - nrel;
 
-  // Show scroll bar?
-  bool show_scroll = visible_rows_ > 0 && model()->rowCount() > visible_rows_;
+    // Show scroll bar?
+    bool show_scroll = visible_rows_ > 0 && model()->rowCount() > visible_rows_;
 
-  auto remainder = width - ( fixed + ( kTableCellPadding * model()->columnCount() ) + ( show_scroll ? kScrollBarWidth : 0.0 ) );
+    auto remainder = width - ( fixed + ( kTableCellPadding * model()->columnCount() ) + ( show_scroll ? kScrollBarWidth : 0.0 ) );
 
   for( auto col : widths_)
     if( col.second.unit() == Wt::LengthUnit::Percentage )
@@ -80,6 +83,8 @@ layoutSizeChanged( int width, int height )-> void
         Wt::LengthUnit::Pixel
        )
       );
+
+  } // endif( model() )
 
   // Pass the call up the chain
   Wt::WTableView::layoutSizeChanged( width, height );
@@ -116,7 +121,7 @@ setColumnWidth( int column, const Wt::WLength& width )-> void
 **  not signal to the rest of the row that it should be 'selected'.
 **
 */
-#ifndef NEVER
+#ifdef NEVER
 void
 GCW::Gui::TableView::
 handleClick( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _event )
@@ -218,7 +223,7 @@ handleClick( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _event )
   ** Call the stock click handler
   **
   */
-//  Wt::WTableView::handleClick( _index, _event );
+  Wt::WTableView::handleClick( _index, _event );
 
 #ifndef NEVER
   std::cout << __FILE__ << ":" << __LINE__ << " handleClick:<end>" << std::endl;
@@ -227,7 +232,7 @@ handleClick( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _event )
 } // endvoid GCW::Gui::TableView::handleClick( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _event )
 #endif
 
-#ifndef NEVER
+#ifdef NEVER
 void
 GCW::Gui::TableView::
 handleDoubleClick( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _event )
@@ -241,7 +246,7 @@ handleDoubleClick( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _even
     ;
 #endif
 
-//  Wt::WTableView::handleDoubleClick( _index, _event );
+  Wt::WTableView::handleDoubleClick( _index, _event );
 
 #ifndef NEVER
   std::cout << __FILE__ << ":" << __LINE__ << " handleDoubleClick:<end>" << std::endl;
@@ -260,16 +265,15 @@ handleMouseDown( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _event 
   //  row we ~were~ on is dirty, and if it needs to be saved
 //  Wt::WMessageBox::show( "TableView", "something or whatever", Wt::StandardButton::Ok );
 
-#ifndef NEVER
-  std::cout << __FILE__ << ":" << __LINE__
-    << " handleMouseDown:<start>"
+#ifdef NEVER
+  std::cout << BREAKHEADER
     << " row:" << _index.row()
     << " col:" << _index.column()
     << std::endl
     ;
 #endif
 
-#ifdef NEVER
+#ifndef NEVER
   if( m_lastIndexClick.isValid() )
     if( m_lastIndexClick. row    () != _index. row    ()
      || m_lastIndexClick. column () != _index. column ()
@@ -289,10 +293,10 @@ handleMouseDown( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _event 
   std::cout << __FILE__ << ":" << __LINE__ << " " << balanceValue << std::endl;
 #endif
 
-//  Wt::WTableView::handleMouseDown( _index, _event );
+  Wt::WTableView::handleMouseDown( _index, _event );
 
-#ifndef NEVER
-  std::cout << __FILE__ << ":" << __LINE__ << " handleMouseDown:<end>" << std::endl;
+#ifdef NEVER
+  std::cout << BREAKFOOTER;
 #endif
 
   /*
@@ -304,7 +308,7 @@ handleMouseDown( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _event 
 } // endhandleMouseDown   ( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _event )
 #endif
 
-#ifndef NEVER
+#ifdef NEVER
 void
 GCW::Gui::TableView::
 handleMouseUp( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _event )
@@ -318,7 +322,7 @@ handleMouseUp( const Wt::WModelIndex & _index, const Wt::WMouseEvent & _event )
     ;
 #endif
 
-//  Wt::WTableView::handleMouseUp( _index, _event );
+  Wt::WTableView::handleMouseUp( _index, _event );
 
 #ifndef NEVER
   std::cout << __FILE__ << ":" << __LINE__ << " handleMouseUp:<end>" << std::endl;

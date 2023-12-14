@@ -142,6 +142,7 @@ Item::Ptr root();
 ** \brief Load Account by Guid
 **
 */
+Item::Ptr load( const std::string & _guid );
 Item::Ptr byGuid( const std::string & _guid );
 Item::Ptr byChildName( const std::string & _parentGuid, const std::string & _childName );
 Item::Ptr byFullName( const std::string & _fullName );

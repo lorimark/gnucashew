@@ -221,6 +221,8 @@ setEditState( Wt::WWidget * _editor, const Wt::WModelIndex & _index, const Wt::c
   std::cout << __FILE__ << ":" << __LINE__ << " " << m_dateEdit << " " << typeid( m_dateEdit ).name() << std::endl;
 #endif
 
+  Wt::WItemDelegate::setEditState( _editor, _index, _value );
+
 } // endvoid DateDelegate::setEditState( Wt::WWidget * _editor, const Wt::WModelIndex & _index, const Wt::cpp17::any & _value ) const
 
 void
@@ -236,6 +238,8 @@ setModelData( const Wt::cpp17::any & _editState, Wt::WAbstractItemModel * _model
     << " " << _model
     << std::endl;
 #endif
+
+  Wt::WItemDelegate::setModelData( _editState, _model, _index );
 
 } // endvoid DateDelegate::setModelData( const Wt::cpp17::any & _editState, Wt::WAbstractItemModel * _model, const Wt::WModelIndex & _index ) const
 
@@ -576,7 +580,6 @@ RegisterWidget( const std::string & _accountGuid )
   auto w = std::make_unique< GCW::Gui::TableView >();
   m_tableView = w.get();
   lw-> addWidget( std::move( w ), 1 );
-  tableView()-> addStyleClass( "Gcw-TableView" );
 //  tableView()-> setRowHeight( "20px" );
 
   /*

@@ -29,18 +29,30 @@ enum class DrCr
 
 enum class Type
 {
-  NONE       = 0x00,
-  ROOT       = 0x01,
-  ASSET      = 0x02,
-  BANK       = 0x03,
-  CASH       = 0x04,
-  CREDIT     = 0x05,
-  EQUITY     = 0x06,
-  EXPENSE    = 0x07,
-  INCOME     = 0x08,
-  LIABILITY  = 0x09,
-  PAYABLE    = 0x0a,
-  RECEIVABLE = 0x0b
+  INVALID    = -1,
+  NONE       = -1,
+  BANK       = 0,
+  CASH       = 1,
+  CREDIT     = 3,
+  ASSET      = 2,
+  LIABILITY  = 4,
+  STOCK      = 5,
+  MUTUAL     = 6,
+  CURRENCY   = 7,
+  INCOME     = 8,
+  EXPENSE    = 9,
+  EQUITY     = 10,
+  RECEIVABLE = 11,
+  PAYABLE    = 12,
+  ROOT       = 13,
+  TRADING    = 14,
+  NUM_ACCOUNT_TYPES    = 15,
+  CHECKING   = 15,
+  SAVINGS    = 16,
+  MONEYMRKT  = 17,
+  CREDITLINE = 18,
+  LAST
+
 };
 
 typedef struct ACCOUNTDEF_S

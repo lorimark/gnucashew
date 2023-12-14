@@ -107,6 +107,8 @@ MainWidget()
     if( GCW::app()-> gnucash_session().hasGnuCashewExtensions() )
       popActions-> addItem( TR( "gcw.MainWidget.mu.actions.billpay"       ), centralWidget(), &GCW::Gui::CentralWidget::open_BillPayWidget );
 
+    popActions-> addItem( "slots", centralWidget(), &GCW::Gui::CentralWidget::open_SlotsWidget );
+
     popActions-> addSeparator();
     popActions-> addItem( TR( "gcw.MainWidget.mu.actions.resetwarnings" ) )-> setDisabled( true );
     popActions-> addItem( TR( "gcw.MainWidget.mu.actions.renamepage"    ) )-> setDisabled( true );

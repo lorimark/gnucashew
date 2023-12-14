@@ -5,9 +5,16 @@
 
 const char * GCW::Dbo::Transactions::s_tableName = "transactions";
 
+void
+GCW::Dbo::Transactions::Item::
+set_post_date( const Wt::WDate & _value )
+{
+  m_post_date = _value.toString( "yyyy-MM-dd 00:00:00" ).toUTF8();
+}
+
 GCW::Dbo::Transactions::Item::Ptr
 GCW::Dbo::Transactions::
-byGuid( const std::string & _txGuid )
+load( const std::string & _txGuid )
 {
   GCW::Dbo::Transactions::Item::Ptr retVal;
 
@@ -28,6 +35,14 @@ byGuid( const std::string & _txGuid )
 
 
   return retVal;
+
+} // endGCW::Dbo::Transactions::Item::Ptr GCW::Dbo::Transactions::byGuid( const std::string & _txGuid )
+
+GCW::Dbo::Transactions::Item::Ptr
+GCW::Dbo::Transactions::
+byGuid( const std::string & _txGuid )
+{
+  return load( _txGuid );
 
 } // endGCW::Dbo::Transactions::Item::Ptr GCW::Dbo::Transactions::byGuid( const std::string & _txGuid )
 

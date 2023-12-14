@@ -116,7 +116,7 @@ root()
 
 GCW::Dbo::Accounts::Item::Ptr
 GCW::Dbo::Accounts::
-byGuid( const std::string & _guid )
+load( const std::string & _guid )
 {
   GCW::Dbo::Accounts::Item::Ptr retVal;
 
@@ -138,6 +138,14 @@ byGuid( const std::string & _guid )
   }
 
   return retVal;
+
+} // endload( const std::string & _guid )
+
+GCW::Dbo::Accounts::Item::Ptr
+GCW::Dbo::Accounts::
+byGuid( const std::string & _guid )
+{
+  return load( _guid );
 
 } // endbyGuid( const std::string & _guid )
 

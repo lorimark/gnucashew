@@ -103,7 +103,7 @@ class Item
           int           value_denom     () const { return m_value_denom     ; }
           int           quantity_num    () const { return m_quantity_num    ; }
           int           quantity_denom  () const { return m_quantity_denom  ; }
-    const std::string   lot_guid        () const { return m_lot_guid        ; }
+    const std::string & lot_guid        () const { return m_lot_guid        ; }
 
     /*!
     ** \brief Return 'value' as a decimal.h number.
