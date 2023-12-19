@@ -98,6 +98,9 @@ class Item
     const int           hidden          () const { return m_hidden           ; }
     const int           placeHolder     () const { return m_placeHolder      ; }
 
+    bool hasColor() const;
+    std::string color() const;
+
     template< class Action > void persist( Action & action )
     {
       Wt::Dbo::id   ( action, m_guid             , GCW::Dbo::Account::Field::guid             ,   32 ); // text(32) PRIMARY KEY NOT NULL

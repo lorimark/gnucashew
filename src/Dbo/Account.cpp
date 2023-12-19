@@ -2,7 +2,7 @@
 
 #include "Account.h"
 
-std::vector< GCW::Dbo::Account::AccountDef_t > GCW::Dbo::Account::s_accountDef =
+const std::vector< GCW::Dbo::Account::AccountDef_t > GCW::Dbo::Account::s_accountDef =
 {// dbcr                               type                                  name           colAccount   colDr        colCr
   { GCW::Dbo::Account::DrCr::NONE   ,  GCW::Dbo::Account::Type::INVALID    , "INVALID"    , "account"  , "debit"    , "credit"      },
   { GCW::Dbo::Account::DrCr::NONE   ,  GCW::Dbo::Account::Type::NONE       , "NONE"       , "account"  , "debit"    , "credit"      },
@@ -28,16 +28,16 @@ std::vector< GCW::Dbo::Account::AccountDef_t > GCW::Dbo::Account::s_accountDef =
 
 };
 
-Wt::WFormModel::Field GCW::Dbo::Account::Field::guid             = "guid"           ; // text(32) PRIMARY KEY NOT NULL
-Wt::WFormModel::Field GCW::Dbo::Account::Field::name             = "name"           ; // text(2048) NOT NULL
-Wt::WFormModel::Field GCW::Dbo::Account::Field::account_typeName = "account_type"   ; // text(2048) NOT NULL
-Wt::WFormModel::Field GCW::Dbo::Account::Field::commodity_guid   = "commodity_guid" ; // text(32)
-Wt::WFormModel::Field GCW::Dbo::Account::Field::commodity_scu    = "commodity_scu"  ; // integer NOT NULL
-Wt::WFormModel::Field GCW::Dbo::Account::Field::non_std_scu      = "non_std_scu"    ; // integer NOT NULL
-Wt::WFormModel::Field GCW::Dbo::Account::Field::parent_guid      = "parent_guid"    ; // text(32)
-Wt::WFormModel::Field GCW::Dbo::Account::Field::code             = "code"           ; // text(2048)
-Wt::WFormModel::Field GCW::Dbo::Account::Field::description      = "description"    ; // text(2048)
-Wt::WFormModel::Field GCW::Dbo::Account::Field::hidden           = "hidden"         ; // integer
-Wt::WFormModel::Field GCW::Dbo::Account::Field::placeHolder      = "placeholder"    ; // integer
+const Wt::WFormModel::Field GCW::Dbo::Account::Field::guid             = "guid"           ; // text(32) PRIMARY KEY NOT NULL
+const Wt::WFormModel::Field GCW::Dbo::Account::Field::name             = "name"           ; // text(2048) NOT NULL
+const Wt::WFormModel::Field GCW::Dbo::Account::Field::account_typeName = "account_type"   ; // text(2048) NOT NULL
+const Wt::WFormModel::Field GCW::Dbo::Account::Field::commodity_guid   = "commodity_guid" ; // text(32)
+const Wt::WFormModel::Field GCW::Dbo::Account::Field::commodity_scu    = "commodity_scu"  ; // integer NOT NULL
+const Wt::WFormModel::Field GCW::Dbo::Account::Field::non_std_scu      = "non_std_scu"    ; // integer NOT NULL
+const Wt::WFormModel::Field GCW::Dbo::Account::Field::parent_guid      = "parent_guid"    ; // text(32)
+const Wt::WFormModel::Field GCW::Dbo::Account::Field::code             = "code"           ; // text(2048)
+const Wt::WFormModel::Field GCW::Dbo::Account::Field::description      = "description"    ; // text(2048)
+const Wt::WFormModel::Field GCW::Dbo::Account::Field::hidden           = "hidden"         ; // integer
+const Wt::WFormModel::Field GCW::Dbo::Account::Field::placeHolder      = "placeholder"    ; // integer
 
 

@@ -5,6 +5,7 @@
 #include "Account.h"
 #include "Accounts.h"
 #include "Transactions.h"
+#include "Slots.h"
 
 namespace {
 
@@ -322,5 +323,27 @@ fullName( Item::Ptr _item )
   return fullName( _item-> guid() );
 
 } // endfullName( Item::Ptr _item )
+
+bool
+GCW::Dbo::Accounts::Item::
+hasColor() const
+{
+  return GCW::Dbo::Slots::get( guid(), "color" ).get();
+}
+
+std::string
+GCW::Dbo::Accounts::Item::
+color() const
+{
+  std::string retVal;
+
+  if( auto slotItem = GCW::Dbo::Slots::get( guid(), "color" ) )
+  {
+    retVal = slotItem-> string_val();
+  }
+
+  return retVal;
+
+}
 
 

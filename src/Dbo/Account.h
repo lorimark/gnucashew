@@ -55,6 +55,10 @@ enum class Type
 
 };
 
+/*!
+**
+**
+*/
 typedef struct ACCOUNTDEF_S
 {
   DrCr        drcr;
@@ -66,21 +70,21 @@ typedef struct ACCOUNTDEF_S
 
 } AccountDef_t;
 
-extern std::vector< AccountDef_t > s_accountDef;
+extern const std::vector< AccountDef_t > s_accountDef;
 
       namespace Field {
 
-extern Wt::WFormModel::Field guid             ; // text(32) PRIMARY KEY NOT NULL
-extern Wt::WFormModel::Field name             ; // text(2048) NOT NULL
-extern Wt::WFormModel::Field account_typeName ; // text(2048) NOT NULL
-extern Wt::WFormModel::Field commodity_guid   ; // text(32)
-extern Wt::WFormModel::Field commodity_scu    ; // integer NOT NULL
-extern Wt::WFormModel::Field non_std_scu      ; // integer NOT NULL
-extern Wt::WFormModel::Field parent_guid      ; // text(32)
-extern Wt::WFormModel::Field code             ; // text(2048)
-extern Wt::WFormModel::Field description      ; // text(2048)
-extern Wt::WFormModel::Field hidden           ; // integer
-extern Wt::WFormModel::Field placeHolder      ; // integer
+extern const Wt::WFormModel::Field guid             ; // text(32) PRIMARY KEY NOT NULL
+extern const Wt::WFormModel::Field name             ; // text(2048) NOT NULL
+extern const Wt::WFormModel::Field account_typeName ; // text(2048) NOT NULL
+extern const Wt::WFormModel::Field commodity_guid   ; // text(32)
+extern const Wt::WFormModel::Field commodity_scu    ; // integer NOT NULL
+extern const Wt::WFormModel::Field non_std_scu      ; // integer NOT NULL
+extern const Wt::WFormModel::Field parent_guid      ; // text(32)
+extern const Wt::WFormModel::Field code             ; // text(2048)
+extern const Wt::WFormModel::Field description      ; // text(2048)
+extern const Wt::WFormModel::Field hidden           ; // integer
+extern const Wt::WFormModel::Field placeHolder      ; // integer
 
       } // endnamespace Field {
     } // endnamespace Account {

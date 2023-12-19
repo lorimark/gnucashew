@@ -1,4 +1,4 @@
-#line 2 "src/Dbo/Vars.cpp"
+#line 2 "src/Dbo/Slots.cpp"
 
 #include <Wt/Json/Parser.h>
 #include <Wt/Json/Object.h>
@@ -32,12 +32,11 @@ get()
 } // endget()
 
 
-#ifdef NEVER
-GCW::Dbo::Vars::Item::Ptr
-GCW::Dbo::Vars::
-get( const std::string & _keyValue, const std::string & _cfyValue )
+GCW::Dbo::Slots::Item::Ptr
+GCW::Dbo::Slots::
+get( const std::string & _guid, const std::string & _name )
 {
-  GCW::Dbo::Vars::Item::Ptr retVal;
+  GCW::Dbo::Slots::Item::Ptr retVal;
 
   /*
   ** Build a 'where' that has both the key and cfy
@@ -45,15 +44,17 @@ get( const std::string & _keyValue, const std::string & _cfyValue )
   **
   */
   auto where =
-    Wt::WString( "\"keyField\" = '{1}'" )
-    .arg( _keyValue )
+    Wt::WString( "\"obj_guid\" = '{1}'" )
+    .arg( _guid )
     .toUTF8()
     ;
 
-  if( _cfyValue != "*" )
+  if( _name != "*"
+   && _name != ""
+    )
     where +=
-      Wt::WString( " AND \"cfyField\" = '{1}'" )
-      .arg( _cfyValue )
+      Wt::WString( " AND \"name\" = '{1}'" )
+      .arg( _name )
       .toUTF8()
       ;
 
@@ -62,35 +63,16 @@ get( const std::string & _keyValue, const std::string & _cfyValue )
   **
   */
   retVal =
-    GCW::app()-> gnucash_session().find< GCW::Dbo::Vars::Item >()
+    GCW::app()-> gnucash_session().find< GCW::Dbo::Slots::Item >()
       .where( where )
       .resultValue()
       ;
-
-  /*
-  ** if an item could not be found then create one, setting in
-  **  the key and cfy if available.
-  **
-  */
-  if( !retVal )
-  {
-    retVal =
-      GCW::app()-> gnucash_session().addNew< GCW::Dbo::Vars::Item >()
-        ;
-
-    retVal.modify()-> setKeyField( _keyValue );
-
-    if( _cfyValue != "*" )
-      retVal.modify()-> setCfyField( _cfyValue );
-
-    retVal.flush();
-
-  } // endif( !retVal )
 
   return retVal;
 
 } // endget( const std::string & _keyValue, const std::string & _cfyValue )
 
+#ifdef NEVER
 std::string
 GCW::Dbo::Vars::Item::
 getVarString( const std::string & _field ) const

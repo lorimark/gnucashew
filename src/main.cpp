@@ -377,9 +377,6 @@ void addEntryPoint( const std::string & url, Wt::WServer & server )
   );
 }
 
-
-
-
 int main( int argc, char ** argv )
 {
   show_program_version( "start-up" );

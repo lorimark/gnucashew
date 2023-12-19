@@ -54,6 +54,18 @@ class Item
 {
   public:
 
+    const std::string & obj_guid          () const { return m_obj_guid          ; } // text(32) NOT NULL
+    const std::string & name              () const { return m_name              ; } // text(4096) NOT NULL
+          int           slot_type         () const { return m_slot_type         ; } // integer NOT NULL
+          long long     int64_val         () const { return m_int64_val         ; } // bigint
+    const std::string & string_val        () const { return m_string_val        ; } // text(4096),
+          double        double_val        () const { return m_double_val        ; } // float8,
+    const std::string & timespec_val      () const { return m_timespec_val      ; } // text(19),
+    const std::string & guid_val          () const { return m_guid_val          ; } // text(32),
+          long long     numeric_val_num   () const { return m_numeric_val_num   ; } // bigint,
+          long long     numeric_val_denom () const { return m_numeric_val_denom ; } // bigint,
+    const std::string & gdate_val         () const { return m_gdate_val         ; } // text(8)
+
     template< class Action > void persist( Action & action )
     {
 //      Wt::Dbo::field( action, m_id                , GCW::Dbo::Slot::Field:: id                       ); // integer PRIMARY KEY AUTOINCREMENT NOT NULL,
@@ -88,7 +100,7 @@ class Item
 }; // endclass Item
 
 GCW::Dbo::Slots::Item::Vector get();
-GCW::Dbo::Slots::Item::Ptr get( const std::string & _keyValue, const std::string & _cfyValue = "*" );
+GCW::Dbo::Slots::Item::Ptr get( const std::string & _guid, const std::string & _name );
 
 extern const char * s_tableName;
 

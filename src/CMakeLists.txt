@@ -32,10 +32,17 @@ add_subdirectory( Glb )
 
 include_directories(
   /opt/Wt4/include
+  /usr/include/glib-2.0
+  /usr/lib/x86_64-linux-gnu/glib-2.0/include
   Glb
 )
 
-link_directories(/opt/Wt4/lib)
+link_directories(
+  /opt/Wt4/lib
+  /usr/local/lib
+  /usr/local/lib/gnucash
+  /usr/lib/x86_64-linux-gnu
+)
 
 add_executable (
   gnucashew-bin
@@ -56,5 +63,17 @@ target_link_libraries(
   hpdf
   pthread
   xml2
+  gnc-app-utils
+  gnc-backend-sql
+  gnc-backend-xml-utils
+  gnc-core-utils
+  gnc-engine
+  gnc-gnome
+  gnc-html
+  gnc-locale-tax
+  gnc-module
+  gnucash-guile
+  glib-2.0
+  gobject-2.0
 )
 
