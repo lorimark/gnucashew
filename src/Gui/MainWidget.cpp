@@ -7,9 +7,6 @@
 #include <Wt/WVBoxLayout.h>
 #include <Wt/Json/Serializer.h>
 
-#include <gnucash/Account.h>
-#include <gnucash/qofsession.h>
-
 #include "../define.h"
 #include "../GnuCashew.h"
 #include "MainWidget.h"
@@ -213,80 +210,21 @@ editSelectedAccount()
 } // endeditSelectedAccount()
 
 
-#define TESTFILE "gnucashew-dev.gnucash"
 void test_gnucash()
 {
-  std::cout << __FILE__ << ":" << __LINE__ << " gnc_engine_is_initialized: " << gnc_engine_is_initialized() << std::endl;
-  std::cout << __FILE__ << ":" << __LINE__ << " xaccAccountTypeEnumAsString: " << xaccAccountTypeEnumAsString( GNCAccountType::ACCT_TYPE_BANK ) << std::endl;
+  std::cout << __FILE__ << ":" << __LINE__ << " " << std::endl;
 
-//  auto userdata_migration_msg = gnc_filepath_init();
-  gnc_engine_init( 0, nullptr );
+  GCW::app()-> gnucash_session().openGnucash();
 
-  std::cout << __FILE__ << ":" << __LINE__ << " gnc_engine_is_initialized: " << gnc_engine_is_initialized() << std::endl;
-  std::cout << __FILE__ << ":" << __LINE__ << " xaccAccountTypeEnumAsString: " << xaccAccountTypeEnumAsString( GNCAccountType::ACCT_TYPE_BANK ) << std::endl;
+  std::cout << __FILE__ << ":" << __LINE__ << " " << std::endl;
 
-
-  {
-    std::cout << __FILE__ << ":" << __LINE__ << " set testurl " << std::endl;
-    const char* testurl = "sqlite3://" TESTFILE;
-    std::cout << __FILE__ << ":" << __LINE__ << " " << testurl << std::endl;
-
-    std::cout << __FILE__ << ":" << __LINE__ << " qof_session_new" << std::endl;
-    auto s = qof_session_new( qof_book_new() );
-    std::cout << __FILE__ << ":" << __LINE__ << " " << s << std::endl;
-
-    std::cout << __FILE__ << ":" << __LINE__ << " qof_session_begin" << std::endl;
-    qof_session_begin( s, testurl, SESSION_NEW_STORE );
-
-    std::cout << __FILE__ << ":" << __LINE__ << " qof_session_load" << std::endl;
-    qof_session_load( s, NULL );
-
-    std::cout << __FILE__ << ":" << __LINE__ << " qof_session_get_book" << std::endl;
-    auto book = qof_session_get_book( s );
-    std::cout << __FILE__ << ":" << __LINE__ << " " << book << std::endl;
-
-    std::cout << __FILE__ << ":" << __LINE__ << " gnc_book_get_root_account" << std::endl;
-    auto rootAccount = gnc_book_get_root_account( book );
-    std::cout << __FILE__ << ":" << __LINE__ << " rootAccount: " << rootAccount << std::endl;
-//    std::cout << __FILE__ << ":" << __LINE__ << " rootGuid: "    << xaccAccountGetGUID( rootAccount )-> reserved << std::endl;
-    std::cout << __FILE__ << ":" << __LINE__ << " rootName: "    << xaccAccountGetName( rootAccount ) << std::endl;
-    std::cout << __FILE__ << ":" << __LINE__ << " rootCode: "    << xaccAccountGetCode( rootAccount ) << std::endl;
-    std::cout << __FILE__ << ":" << __LINE__ << " rootDesc: "    << xaccAccountGetDescription( rootAccount ) << std::endl;
-
-    std::cout << __FILE__ << ":" << __LINE__ << " qof_session_save" << std::endl;
-    qof_session_save( s, NULL );
-
-    std::cout << __FILE__ << ":" << __LINE__ << " qof_session_end" << std::endl;
-    qof_session_end( s );
-
-//    std::cout << __FILE__ << ":" << __LINE__ << " unlink" << std::endl;
-//    unlink(TESTFILE);
-
-  }
-
-//  AccountList *accountList;
-//  gnc_accounts_and_all_descendants( accountList );
-
-//  auto account = gnc_account_lookup_by_name( nullptr, "Assets" );
-
-//  std::cout << __FILE__ << ":" << __LINE__ << " " << std::endl;
-
-//  std::cout << __FILE__ << ":" << __LINE__ << " " << g_list_length( &accountList ) << std::endl;
-
-//  std::cout << __FILE__ << ":" << __LINE__ << " " << std::endl;
-
-//  accountList.next;
-
-  gnc_engine_shutdown();
-
-}
+} // endvoid test_gnucash()
 
 
 void
 GCW::Gui::MainWidget::
 test()
 {
-
   test_gnucash();
 
 } // endtest()

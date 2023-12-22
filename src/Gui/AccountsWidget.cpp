@@ -460,11 +460,13 @@ load( Wt::WStandardItem * _treeItem, GCW::Dbo::Accounts::Item::Ptr _parentAccoun
     auto accountName = std::make_unique< Wt::WStandardItem >( _accountItem-> name() );
     accountName-> setToolTip( _accountItem-> guid() );
 
+#ifdef NEVER
     if( _accountItem-> hasColor() )
     {
       auto accountColor = _accountItem-> color();
       std::cout << __FILE__ << ":" << __LINE__ << " " << accountColor << std::endl;
     }
+#endif
 
     /*
     ** set the 'model->data::User' element to contain the guid of the account, so

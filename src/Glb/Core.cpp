@@ -161,3 +161,67 @@ toJson( Wt::WTreeView * _view )
 
 }
 
+
+std::string Wtx::Core::hexDump( const std::string & string, int start, int end )
+{
+  std::stringstream rv;
+
+  char buffer[100];
+  for( unsigned int i=0; i<string.length(); i += 16 )
+  {
+    std::string adrLine;
+    std::string hexLine;
+    std::string ascLine;
+
+    sprintf( buffer, "%04x: ", i );
+    adrLine = std::string(buffer);
+
+    for( int j=0; j<16; j++ )
+    {
+      if( i+j < string.length() )
+      {
+        sprintf( buffer, "%02x ", (string.at(i+j) & 0xff) );
+        hexLine += std::string(buffer);
+
+        if( std::isprint( string.at(i+j) ) )
+        {
+          sprintf( buffer, "%c", string.at(i+j) );
+          ascLine += std::string(buffer);
+        }
+        else
+        {
+          ascLine += ".";
+        }
+      }
+      else
+      {
+        hexLine += "xx ";
+        ascLine += ".";
+      }
+
+    } // endfor( int j=0; j<16; j++ )
+
+    bool showline = false;
+    if( start == -1 && end == -1 )
+      showline = true;
+
+    else
+      if( (start > -1 && i >= start)
+      &&  (end   > -1 && i <= end)
+        )
+        showline = true;
+
+    if( showline )
+      rv
+        << adrLine
+        << hexLine
+        << ascLine
+        << std::endl
+        ;
+
+  } // endfor( int i=0; i<string.length(); i += 16 )
+
+  return rv.str();
+
+} // endstd::string Wtx::hexDump( const std::string & string )
+

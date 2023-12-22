@@ -8,6 +8,7 @@
 
 #include "Accounts.h"
 #include "Customers.h"
+#include "Gnucash.h"
 #include "Slots.h"
 #include "Splits.h"
 #include "Transactions.h"
@@ -63,7 +64,6 @@ open( const std::string & _path )
 
     init();
 
-    return isOpen();
   }
 
   /*
@@ -75,11 +75,15 @@ open( const std::string & _path )
     std::cout << __FILE__ << ":" << __LINE__ << " " << e.what() << std::endl;
   }
 
-
+  /*
+  ** Open the gnucash engine.
+  **
+  */
+//  openGnucash();
 
   return isOpen();
 
-} // endbool GCW::Dbo::Session::open_gnucash( const std::string & _path )
+} // endopen( const std::string & _path )
 
 void
 GCW::Dbo::GnuCash::Session::

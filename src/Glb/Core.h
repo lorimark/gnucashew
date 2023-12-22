@@ -35,6 +35,8 @@ std::string tolower( const std::string & s );
 
 Wt::Json::Object toJson( Wt::WTreeView * _view );
 
+std::string hexDump( const std::string & data, int start = -1, int end = -1 );
+
   } // endnamespace Core
 } // endnamespace Wtx
 

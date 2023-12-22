@@ -65,7 +65,7 @@ GCW::App::App( const Wt::WEnvironment & env )
 
   gnucash_session().open( g_dbName );
 
-  showEnvironment();
+//  showEnvironment();
 
   /*
   ** Utilize the bootstrap theme.

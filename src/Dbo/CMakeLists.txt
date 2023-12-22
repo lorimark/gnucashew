@@ -4,6 +4,7 @@ set( GCW_FILES ${GCW_FILES}
   ${CMAKE_CURRENT_SOURCE_DIR}/Accounts.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/Customer.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/Customers.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/Gnucash.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/Prefrences.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/Session.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/Slot.cpp

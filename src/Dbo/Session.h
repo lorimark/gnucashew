@@ -308,6 +308,8 @@ class Session
     */
     bool open( const std::string & _path );
 
+    const std::string & path() const { return m_path; }
+
     bool isOpen() const { return m_isOpen; }
 
   protected:
@@ -363,11 +365,13 @@ class Session
     */
     bool addGnuCashewExtensions();
 
+    void openGnucash();
+
   private:
 
     void init();
 
-};
+}; // endclass Session
 
 } // endnamespace GnuCash {
 
@@ -401,7 +405,7 @@ class Session
 
     void init();
 
-};
+}; // endclass Session
 
 } // endnamespace GnuCashew {
 
