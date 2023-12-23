@@ -421,9 +421,9 @@ refreshFromDisk()
         */
         case 0:
         {
-          account = _addColumn( columns, TR("gcw.RegisterWidget.account.imbalanceUSD") ); // account
+          account = _addColumn( columns, TR("gcw.AccountRegister.account.imbalanceUSD") ); // account
           account-> setStyleClass( "errval" );
-          account-> setToolTip( TR("gcw.RegisterWidget.account.imbalanceUSD.toolTip") );
+          account-> setToolTip( TR("gcw.AccountRegister.account.imbalanceUSD.toolTip") );
           break;
         }
 
@@ -457,13 +457,13 @@ refreshFromDisk()
             **  happen.
             **
             */
-            account = _addColumn( columns, TR("gcw.RegisterWidget.account.imbalanceUSD") );
+            account = _addColumn( columns, TR("gcw.AccountRegister.account.imbalanceUSD") );
             account-> setStyleClass( "errval" );
 
             auto toolTip =
               Wt::WString("target guid:{1}\n{2}")
               .arg( txSplitItem-> account_guid() )
-              .arg( TR("gcw.RegisterWidget.account.invalidTarget.toolTip") )
+              .arg( TR("gcw.AccountRegister.account.invalidTarget.toolTip") )
               .toUTF8()
               ;
 
@@ -485,7 +485,7 @@ refreshFromDisk()
         */
         default:
         {
-          account = _addColumn( columns, TR("gcw.RegisterWidget.account.multisplit") ); // account
+          account = _addColumn( columns, TR("gcw.AccountRegister.account.multisplit") ); // account
         }
 
       } // endswitch( transactionSplits.size() )
@@ -862,14 +862,14 @@ refreshFromDisk()
     accountDef = registerAccountItem-> accountDef();
 
   int col = 0;
-  setHeaderData( col++, TR( "gcw.RegisterWidget.column.date"                     ) );
-  setHeaderData( col++, TR( "gcw.RegisterWidget.column.num"                      ) );
-  setHeaderData( col++, TR( "gcw.RegisterWidget.column.memo"                     ) );
-  setHeaderData( col++, TR( "gcw.RegisterWidget.column." + accountDef.colAccount ) );
-  setHeaderData( col++, TR( "gcw.RegisterWidget.column.reconcile"                ) );
-  setHeaderData( col++, TR( "gcw.RegisterWidget.column." + accountDef.colDr      ) );
-  setHeaderData( col++, TR( "gcw.RegisterWidget.column." + accountDef.colCr      ) );
-  setHeaderData( col++, TR( "gcw.RegisterWidget.column.balance"                  ) );
+  setHeaderData( col++, TR( "gcw.AccountRegister.column.date"                     ) );
+  setHeaderData( col++, TR( "gcw.AccountRegister.column.num"                      ) );
+  setHeaderData( col++, TR( "gcw.AccountRegister.column.memo"                     ) );
+  setHeaderData( col++, TR( "gcw.AccountRegister.column." + accountDef.colAccount ) );
+  setHeaderData( col++, TR( "gcw.AccountRegister.column.reconcile"                ) );
+  setHeaderData( col++, TR( "gcw.AccountRegister.column." + accountDef.colDr      ) );
+  setHeaderData( col++, TR( "gcw.AccountRegister.column." + accountDef.colCr      ) );
+  setHeaderData( col++, TR( "gcw.AccountRegister.column.balance"                  ) );
 
 } // endGCW::Eng::AccountRegisterModel::refreshFromDisk()
 

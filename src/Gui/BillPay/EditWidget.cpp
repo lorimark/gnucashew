@@ -166,7 +166,7 @@ EditWidget( const std::string & _accountGuid )
     **  to set the widget height.
     **
     */
-    auto tab = m_tabWidget-> addTab( std::make_unique< GCW::Gui::RegisterWidget >( _accountGuid ), TR("gcw.billPay.tabName.history") );
+    auto tab = m_tabWidget-> addTab( std::make_unique< GCW::Gui::AccountRegister >( _accountGuid ), TR("gcw.billPay.tabName.history") );
     tab-> contents()-> setMaximumSize( Wt::WLength::Auto, "300px" );
 
   } // endWt::WTemplate * templtHistory;

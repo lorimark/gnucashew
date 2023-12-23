@@ -1,4 +1,4 @@
-#line 2 "src/Gui/RegisterWidget.cpp"
+#line 2 "src/Gui/AccountRegister.cpp"
 
 #include <Wt/WDateEdit.h>
 #include <Wt/WItemDelegate.h>
@@ -11,7 +11,7 @@
 
 #include "../define.h"
 #include "../App.h"
-#include "RegisterWidget.h"
+#include "AccountRegister.h"
 #include "../Dbo/Accounts.h"
 #include "../Dbo/Splits.h"
 #include "../Dbo/Transactions.h"
@@ -451,7 +451,7 @@ createEditor
   auto popup = retVal-> addChild( std::make_unique< Wt::WSuggestionPopup >( popupOptions ) );
   popup-> forEdit( lineEdit );
 
-  auto model = dynamic_cast< const GCW::Gui::RegisterWidget::Model* >(_index.model() );
+  auto model = dynamic_cast< const GCW::Gui::AccountRegister::Model* >(_index.model() );
 
   for( auto item : model-> suggestionsFromColumn( _index.column() ) )
   {
@@ -510,7 +510,7 @@ createEditor
   popup-> setAttributeValue( "style", "height:400px;overflow:scroll" );
 //  popup-> setJavaScriptMember( "wtNoReparent", "true" );
 
-  auto model = dynamic_cast< const GCW::Gui::RegisterWidget::Model* >( _index.model() );
+  auto model = dynamic_cast< const GCW::Gui::AccountRegister::Model* >( _index.model() );
 
   std::set< std::string > items;
   Wt::Dbo::Transaction t( GCW::app()-> gnucashew_session() );
@@ -529,7 +529,7 @@ createEditor
 
 } // endnamespace {
 
-GCW::Gui::RegisterWidget::StatusBar::
+GCW::Gui::AccountRegister::StatusBar::
 StatusBar()
 {
   addStyleClass( "StatusBar" );
@@ -540,7 +540,7 @@ StatusBar()
 
   auto _addWidget = [&]( const std::string & _key, int _spacing = 0 )
   {
-    lw-> addWidget( std::make_unique< Wt::WText >( TR("gcw.RegisterWidget.StatusBar." + _key ) + ":" ) );
+    lw-> addWidget( std::make_unique< Wt::WText >( TR("gcw.AccountRegister.StatusBar." + _key ) + ":" ) );
     auto retVal = lw-> addWidget( std::make_unique< Wt::WText >(), _spacing );
     retVal-> setAttributeValue( "style", "margin-right:10px" );
     return retVal;
@@ -554,22 +554,22 @@ StatusBar()
 
 } // endStatusBar()
 
-void GCW::Gui::RegisterWidget::StatusBar:: setPresent    ( GCW_NUMERIC _value ) { setText_( m_present    , _value ); }
-void GCW::Gui::RegisterWidget::StatusBar:: setFuture     ( GCW_NUMERIC _value ) { setText_( m_future     , _value ); }
-void GCW::Gui::RegisterWidget::StatusBar:: setCleared    ( GCW_NUMERIC _value ) { setText_( m_cleared    , _value ); }
-void GCW::Gui::RegisterWidget::StatusBar:: setReconciled ( GCW_NUMERIC _value ) { setText_( m_reconciled , _value ); }
-void GCW::Gui::RegisterWidget::StatusBar:: setProjected  ( GCW_NUMERIC _value ) { setText_( m_projected  , _value ); }
+void GCW::Gui::AccountRegister::StatusBar:: setPresent    ( GCW_NUMERIC _value ) { setText_( m_present    , _value ); }
+void GCW::Gui::AccountRegister::StatusBar:: setFuture     ( GCW_NUMERIC _value ) { setText_( m_future     , _value ); }
+void GCW::Gui::AccountRegister::StatusBar:: setCleared    ( GCW_NUMERIC _value ) { setText_( m_cleared    , _value ); }
+void GCW::Gui::AccountRegister::StatusBar:: setReconciled ( GCW_NUMERIC _value ) { setText_( m_reconciled , _value ); }
+void GCW::Gui::AccountRegister::StatusBar:: setProjected  ( GCW_NUMERIC _value ) { setText_( m_projected  , _value ); }
 
 
-GCW::Gui::RegisterWidget::
-RegisterWidget( const std::string & _accountGuid )
+GCW::Gui::AccountRegister::
+AccountRegister( const std::string & _accountGuid )
 : m_accountGuid( _accountGuid )
 {
   /*
   ** Look in gcw.css for styling.
   **
   */
-  addStyleClass( "RegisterWidget" );
+  addStyleClass( "AccountRegister" );
 
   /*
   ** use a layout manager to install the table view into, so
@@ -775,10 +775,10 @@ RegisterWidget( const std::string & _accountGuid )
 
   loadData();
 
-} // endGCW::RegisterWidget::RegisterWidget( const std::string & _accountGuid )
+} // endGCW::AccountRegister::AccountRegister( const std::string & _accountGuid )
 
 void
-GCW::Gui::RegisterWidget::
+GCW::Gui::AccountRegister::
 loadData()
 {
   m_model = std::make_shared< Model >( m_accountGuid );
@@ -834,10 +834,10 @@ loadData()
   statusBar()-> setFuture     ( model()-> future     () );
   statusBar()-> setCleared    ( model()-> cleared    () );
 
-} // endvoid GCW::Gui::RegisterWidget::loadData()
+} // endvoid GCW::Gui::AccountRegister::loadData()
 
 Wt::Json::Object
-GCW::Gui::RegisterWidget::
+GCW::Gui::AccountRegister::
 toJson() const
 {
   Wt::Json::Object jobj;
@@ -846,7 +846,7 @@ toJson() const
 }
 
 bool
-GCW::Gui::RegisterWidget::
+GCW::Gui::AccountRegister::
 fromJson( const Wt::Json::Object & _jobj )
 {
   return true;
@@ -855,7 +855,7 @@ fromJson( const Wt::Json::Object & _jobj )
 
 
 void
-GCW::Gui::RegisterWidget::
+GCW::Gui::AccountRegister::
 test()
 {
   std::cout << __FILE__ << ":" << __LINE__ << " ::test::" << std::endl;
@@ -872,7 +872,7 @@ test()
   }
 
 
-} // endvoid GCW::Gui::RegisterWidget::test()
+} // endvoid GCW::Gui::AccountRegister::test()
 
 
 

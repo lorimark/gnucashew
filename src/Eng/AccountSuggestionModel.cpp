@@ -8,6 +8,6 @@ AccountSuggestionModel( const std::string & _accountGuid )
   m_accountGuid( _accountGuid )
 {
 
-} // endGCW::RegisterWidget::Model::Model( const std::string & _accountGuid )
+} // endAccountSuggestionModel( const std::string & _accountGuid )
 
 

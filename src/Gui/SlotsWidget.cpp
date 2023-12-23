@@ -47,7 +47,7 @@ SlotsWidget()
 
   loadData();
 
-} // endGCW::RegisterWidget::RegisterWidget( const std::string & _accountGuid )
+} // endSlotsWidget()
 
 void
 GCW::Gui::SlotsWidget::

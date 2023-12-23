@@ -3,7 +3,7 @@
 ** Background and big fat line on the
 **  bottom border of the header
 */
-.RegisterWidget
+.AccountRegister
  .Wt-header
 {
   background-color: #96b183;
@@ -14,7 +14,7 @@
 ** Negative values are red
 **
 */
-.RegisterWidget
+.AccountRegister
  .negval
 {
   color:red;
@@ -24,7 +24,7 @@
 ** Error values are super-red
 **
 */
-.RegisterWidget
+.AccountRegister
  div.errval
 {
   color:#0713ce;
@@ -32,16 +32,16 @@
   border-radius:5px;
 }
 
-.RegisterWidget input
+.AccountRegister input
 {
   padding:7px;
 }
 
 /* Account elipsis '...' on the left */
-.RegisterWidget
+.AccountRegister
  .Wt-header
   .Wt-tv-c4,
-.RegisterWidget
+.AccountRegister
  .Wt-tv-contents
   .Wt-tv-c4
 {
@@ -49,7 +49,7 @@
 }
 
 /* read-only selected row */
-.RegisterWidget
+.AccountRegister
  .Wt-tableview
   .Wt-tv-contents.Wt-striped
    div.Wt-tv-c.active
@@ -60,7 +60,7 @@
 }
 
 /* Alternating Row Colors */
-.RegisterWidget
+.AccountRegister
  .Wt-tableview
   .Wt-tv-contents.Wt-striped
    div.Wt-tv-c:nth-child(2n)
@@ -68,7 +68,7 @@
   background-color:#ffcb0024;
 }
 
-.RegisterWidget
+.AccountRegister
  .Wt-tableview
   .Wt-tv-contents.Wt-striped
    div.Wt-tv-c:nth-child(2n+1)
@@ -77,7 +77,7 @@
 }
 
 /* Thin black line underneath each row */
-.RegisterWidget
+.AccountRegister
  .Wt-tableview
   .Wt-tv-contents
    .Wt-tv-c
@@ -86,7 +86,7 @@
 }
 
 /* Thin black line on the left */
-.RegisterWidget
+.AccountRegister
  .Wt-tableview
   .Wt-tv-contents
    .Wt-tv-c1
@@ -95,7 +95,7 @@
 }
 
 /* Selected Editor Widget background highlight */
-.RegisterWidget
+.AccountRegister
  .Wt-tableview
   .Wt-tv-contents
    div.Wt-tv-c.selectable

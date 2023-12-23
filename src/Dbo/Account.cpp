@@ -25,7 +25,6 @@ const std::vector< GCW::Dbo::Account::AccountDef_t > GCW::Dbo::Account::s_accoun
   { GCW::Dbo::Account::DrCr::DEBIT  ,  GCW::Dbo::Account::Type::SAVINGS    , "SAVINGS"    , "account"  , "debit"    , "credit"      },
   { GCW::Dbo::Account::DrCr::DEBIT  ,  GCW::Dbo::Account::Type::MONEYMRKT  , "MONEYMRKT"  , "account"  , "debit"    , "credit"      },
   { GCW::Dbo::Account::DrCr::CREDIT ,  GCW::Dbo::Account::Type::CREDITLINE , "CREDITLINE" , "account"  , "debit"    , "credit"      },
-
 };
 
 const Wt::WFormModel::Field GCW::Dbo::Account::Field::guid             = "guid"           ; // text(32) PRIMARY KEY NOT NULL

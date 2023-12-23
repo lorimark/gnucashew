@@ -124,7 +124,7 @@ rootGnc()
 {
   GCW::Dbo::Accounts::Item::Ptr retVal;
 
-  if( GCW::app()-> gnucashew_session().isOpen() )
+  if( GCW::app()-> gnucash_session().isOpen() )
   {
     auto s           = gnc_get_current_session();
     auto book        = qof_session_get_book( s );

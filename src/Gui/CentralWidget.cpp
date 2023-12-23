@@ -109,14 +109,14 @@ open_AccountRegister( const std::string & _accountGuid )
   if( tabIndex( accountItem-> name() ) == -1 )
   {
     /*
-    ** Open a new RegisterWidget tab that is connected to the account
+    ** Open a new AccountRegister tab that is connected to the account
     **
     */
     auto tab =
       tabWidget()->
         insertTab
         ( 1,
-          std::make_unique< GCW::Gui::RegisterWidget >( _accountGuid ),
+          std::make_unique< GCW::Gui::AccountRegister >( _accountGuid ),
           accountItem-> name()
         );
 
@@ -321,7 +321,7 @@ open_SlotsWidget()
 void GCW::Gui::CentralWidget::
 test()
 {
-  if( auto registerWidget = dynamic_cast< GCW::Gui::RegisterWidget* >( tabWidget()-> widget( tabWidget()-> currentIndex() ) ) )
+  if( auto registerWidget = dynamic_cast< GCW::Gui::AccountRegister* >( tabWidget()-> widget( tabWidget()-> currentIndex() ) ) )
   {
     registerWidget-> test();
   }

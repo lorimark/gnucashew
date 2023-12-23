@@ -8,7 +8,7 @@
 
 #include "AccountsWidget.h"
 #include "CustomersWidget.h"
-#include "RegisterWidget.h"
+#include "AccountRegister.h"
 
 namespace GCW {
   namespace Gui {

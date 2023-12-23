@@ -312,6 +312,8 @@ class AbstractSession
 
     bool isOpen() const { return m_isOpen; }
 
+//    virtual Wt::Dbo::Transaction startTransaction() const;
+
   protected:
 
     std::string m_path;
