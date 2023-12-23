@@ -1,12 +1,9 @@
-#line 2 "src/Dbo/Session.h"
+#line 2 "src/Dbo/AbstractSession.h"
 
 #ifndef __SESSION_H___
 #define __SESSION_H___
 
 #include <Wt/Dbo/Session.h>
-
-namespace GCW {
-  namespace Dbo {
 
 /*
 
@@ -295,12 +292,15 @@ CREATE TABLE vendors
 
 */
 
-class Session
+namespace GCW {
+  namespace Dbo {
+
+class AbstractSession
 : public Wt::Dbo::Session
 {
   public:
 
-    Session() {}
+    AbstractSession() {}
 
     /*!
     ** \brief Open a database
@@ -320,95 +320,6 @@ class Session
   private:
 
 }; // endclass Session
-
-namespace GnuCash {
-
-/*!
-** \brief GnuCash Native Session
-**
-** This session controller is designed to interface to a back-end
-**  gnucash data structure, without modification.
-**
-*/
-class Session
-: public GCW::Dbo::Session
-{
-  public:
-
-    Session() {}
-
-    /*!
-    ** \brief Open a database
-    **
-    */
-    bool open( const std::string & _path );
-
-    /*!
-    ** \brief Check GnuCashew Extensions
-    **
-    ** This examines the database tables to determine if the necessary
-    **  modifications have been made to the database to support the
-    **  GnuCashew Extensions.
-    **
-    */
-    bool hasGnuCashewExtensions();
-
-    /*!
-    ** \brief Add GnuCashew Extensions
-    **
-    ** This makes the necessary modifications to the database to include
-    **  the extensions necessary to support the GnuCashew attributes.
-    **
-    ** This function can be called repeatedly, as it will check for the
-    **  presense of each attribute before it is added.
-    **
-    */
-    bool addGnuCashewExtensions();
-
-    void openGnucash();
-
-  private:
-
-    void init();
-
-}; // endclass Session
-
-} // endnamespace GnuCash {
-
-namespace GnuCashew {
-
-/*!
-** \brief GnuCashew Native Session
-**
-** This session controller is designed to interface to a back-end
-**  gnucashew data structure, with possible modification.  The
-**  gnucashew project requires a little bit more data than is
-**  available in a gnucash database.  Therefore, this session
-**  controller uses slightly modified Dbo classes for managing
-**  interface to the gnucash backend data.
-**
-*/
-class Session
-: public GCW::Dbo::Session
-{
-  public:
-
-    Session() {}
-
-    /*!
-    ** \brief Open a database
-    **
-    */
-    bool open( const std::string & _path );
-
-  private:
-
-    void init();
-
-}; // endclass Session
-
-} // endnamespace GnuCashew {
-
 
   } // endnamespace Dbo {
 } // endnamespace GCW {

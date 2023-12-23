@@ -49,19 +49,19 @@ GCW::Eng::CustomersModel::
 refreshFromDisk()
 {
 
-  if( GCW::app()-> gnucash_session().isOpen() )
+  if( GCW::app()-> gnucashew_session().isOpen() )
   {
-    Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
+    Wt::Dbo::Transaction t( GCW::app()-> gnucashew_session() );
 
     auto results =
-      GCW::app()-> gnucash_session().find< GCW::Dbo::Customers::Item >()
+      GCW::app()-> gnucashew_session().find< GCW::Dbo::Customers::Item >()
       ;
 
     setQuery( results );
 
     std::cout << __FILE__ << ":" << __LINE__ << " " << rowCount() << std::endl;
 
-  } // endif( GCW::app()-> gnucash_session().isOpen() )
+  } // endif( GCW::app()-> gnucashew_session().isOpen() )
 
   if( m_fields.size() > 0 )
   {

@@ -1,5 +1,8 @@
 #line 2 "src/Dbo/Accounts.cpp"
 
+#include <gnucash/gnc-session.h>
+#include <gnucash/Account.h>
+
 #include "../App.h"
 #include "../Glb/Core.h"
 #include "Account.h"
@@ -33,7 +36,7 @@ void sort( GCW::Dbo::Accounts::Item::Vector & _accountItems )
        auto fullName2 = GCW::Dbo::Accounts::fullName( item2-> guid() );
 
        /*
-       ** return .bool. if the .trans1. date is .less than. the .trans2. date
+       ** return .bool. if the .fullName1. is .less than. the .fullName2. date
        **
        */
        return fullName1
@@ -86,13 +89,13 @@ accountType() const
   return GCW::Dbo::Account::Type::NONE;
 }
 
+static
 GCW::Dbo::Accounts::Item::Ptr
-GCW::Dbo::Accounts::
-root()
+rootSql()
 {
   GCW::Dbo::Accounts::Item::Ptr retVal;
 
-  Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
+  Wt::Dbo::Transaction t( GCW::app()-> gnucashew_session() );
 
   /*
   ** Get a handle on the root account.  The root account is the only
@@ -101,7 +104,7 @@ root()
   **
   */
   auto results =
-    GCW::app()-> gnucash_session().find< GCW::Dbo::Accounts::Item >()
+    GCW::app()-> gnucashew_session().find< GCW::Dbo::Accounts::Item >()
     .where( "(parent_guid = '' OR parent_guid IS NULL) AND name = 'Root Account'" )
     .resultList()
     ;
@@ -112,6 +115,40 @@ root()
   }
 
   return retVal;
+
+}
+
+static
+GCW::Dbo::Accounts::Item::Ptr
+rootGnc()
+{
+  GCW::Dbo::Accounts::Item::Ptr retVal;
+
+  if( GCW::app()-> gnucashew_session().isOpen() )
+  {
+    auto s           = gnc_get_current_session();
+    auto book        = qof_session_get_book( s );
+    auto rootAccount = gnc_book_get_root_account( book );
+    auto guid        = guid_to_string( xaccAccountGetGUID( rootAccount ) );
+
+    retVal.reset( std::make_unique< GCW::Dbo::Accounts::Item >( guid ) );
+  }
+  else
+  {
+    std::cout << __FILE__ << ":" << __LINE__ << " NOT open session" << std::endl;
+
+  }
+
+  return retVal;
+
+}
+
+GCW::Dbo::Accounts::Item::Ptr
+GCW::Dbo::Accounts::
+root()
+{
+  return rootSql();
+//  return rootGnc();
 
 } // endGCW::Dbo::Accounts::Item::Ptr GCW::Dbo::Accounts::root()
 
@@ -124,12 +161,12 @@ load( const std::string & _guid )
   if( _guid != "" )
   {
 
-    Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
+    Wt::Dbo::Transaction t( GCW::app()-> gnucashew_session() );
 
     try
     {
       retVal =
-        GCW::app()-> gnucash_session().load< GCW::Dbo::Accounts::Item >( _guid )
+        GCW::app()-> gnucashew_session().load< GCW::Dbo::Accounts::Item >( _guid )
         ;
     }
     catch( std::exception & e )
@@ -157,7 +194,7 @@ byChildName( const std::string & _parentGuid, const std::string & _childName )
   GCW::Dbo::Accounts::Item::Ptr retVal;
 
   retVal =
-    GCW::app()-> gnucash_session().find< GCW::Dbo::Accounts::Item >()
+    GCW::app()-> gnucashew_session().find< GCW::Dbo::Accounts::Item >()
     .where( "parent_guid = ? AND name = ?" )
     .bind( _parentGuid )
     .bind( _childName )
@@ -204,7 +241,7 @@ allAccounts()
   GCW::Dbo::Accounts::Item::Vector retVal;
 
   auto results =
-    GCW::app()-> gnucash_session().find< GCW::Dbo::Accounts::Item >()
+    GCW::app()-> gnucashew_session().find< GCW::Dbo::Accounts::Item >()
     .resultList()
     ;
 
@@ -225,7 +262,7 @@ activeAccounts()
   GCW::Dbo::Accounts::Item::Vector retVal;
 
   auto results =
-    GCW::app()-> gnucash_session().find< GCW::Dbo::Accounts::Item >()
+    GCW::app()-> gnucashew_session().find< GCW::Dbo::Accounts::Item >()
     .resultList()
     ;
 

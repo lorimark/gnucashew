@@ -63,7 +63,8 @@ GCW::App::App( const Wt::WEnvironment & env )
 {
   root()-> addStyleClass( "GnuCashew" );
 
-  gnucash_session().open( g_dbName );
+//  gnucash_session()  .open( g_dbName );
+  gnucashew_session().open( g_dbName );
 
 //  showEnvironment();
 
@@ -128,9 +129,9 @@ GCW::App::App( const Wt::WEnvironment & env )
   ** If we have the gnucashew extensions, then record that we logged on.
   **
   */
-  if( gnucash_session().hasGnuCashewExtensions() )
+  if( gnucashew_session().hasGnuCashewExtensions() )
   {
-    Wt::Dbo::Transaction t( gnucash_session() );
+    Wt::Dbo::Transaction t( gnucashew_session() );
     auto item = GCW::Dbo::Vars::get( "logon","sys" );
     item.modify()-> setVar( "logonOn", Wt::WDateTime::currentDateTime().toString( ISO_DATE_FORMAT ) );
     item.modify()-> setVar( "logonBy", "dev(0)" );

@@ -7,7 +7,6 @@
 #include <Wt/Dbo/QueryModel.h>
 
 #include "../GnuCashew.h"
-#include "../Dbo/Session.h"
 #include "../Dbo/Slots.h"
 #include "TableView.h"
 

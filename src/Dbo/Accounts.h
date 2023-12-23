@@ -82,6 +82,9 @@ class Item
 {
   public:
 
+    Item(){}
+    Item( const std::string & _guid ): m_guid( _guid ){}
+
     const GCW::Dbo::Account::AccountDef_t & accountDef() const;
 
     GCW::Dbo::Account::DrCr         accountDrCr() const;

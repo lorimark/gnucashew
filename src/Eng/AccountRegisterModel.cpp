@@ -96,7 +96,7 @@ saveToDisk( const Wt::WModelIndex & _index, const Wt::cpp17::any & _value, Wt::I
     << "\n  "  << txItem
     << std::endl;
 
-  Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
+  Wt::Dbo::Transaction t( GCW::app()-> gnucashew_session() );
 
   switch( _index.column() )
   {
@@ -269,6 +269,7 @@ void
 GCW::Eng::AccountRegisterModel::
 refreshFromDisk()
 {
+
   /*!
   ** \par Model Columns
   ** \code

@@ -22,16 +22,16 @@ load( const std::string & _txGuid )
   ** If the session isn't open then there's nothing to load.
   **
   */
-  if( GCW::app()-> gnucash_session().isOpen() )
+  if( GCW::app()-> gnucashew_session().isOpen() )
   {
 
-    Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
+    Wt::Dbo::Transaction t( GCW::app()-> gnucashew_session() );
 
     retVal =
-      GCW::app()-> gnucash_session().load< GCW::Dbo::Transactions::Item >( _txGuid )
+      GCW::app()-> gnucashew_session().load< GCW::Dbo::Transactions::Item >( _txGuid )
       ;
 
-  } // endif( GCW::app()-> gnucash_session().isOpen() )
+  } // endif( GCW::app()-> gnucashew_session().isOpen() )
 
 
   return retVal;
@@ -56,10 +56,10 @@ byAccount( const std::string & _accountGuid )
   ** If the session isn't open then there's nothing to load.
   **
   */
-  if( GCW::app()-> gnucash_session().isOpen() )
+  if( GCW::app()-> gnucashew_session().isOpen() )
   {
 
-    Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
+    Wt::Dbo::Transaction t( GCW::app()-> gnucashew_session() );
 
     /*
     ** Pull all transactions that have a split that matches this
@@ -68,7 +68,7 @@ byAccount( const std::string & _accountGuid )
     **
     */
     auto results =
-      GCW::app()-> gnucash_session().find< GCW::Dbo::Transactions::Item >()
+      GCW::app()-> gnucashew_session().find< GCW::Dbo::Transactions::Item >()
       .where( "guid in (select tx_guid from splits where account_guid = ?)" )
       .bind( _accountGuid )
       .orderBy( "post_date" )
@@ -78,7 +78,7 @@ byAccount( const std::string & _accountGuid )
     for( auto result : results )
       retVal.push_back( result );
 
-  } // endif( GCW::app()-> gnucash_session().isOpen() )
+  } // endif( GCW::app()-> gnucashew_session().isOpen() )
 
   return retVal;
 

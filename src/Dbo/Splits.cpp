@@ -63,10 +63,10 @@ load( const std::string & _splitGuid )
 
   if( _splitGuid != "" )
   {
-    Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
+    Wt::Dbo::Transaction t( GCW::app()-> gnucashew_session() );
 
     retVal =
-      GCW::app()-> gnucash_session().load< GCW::Dbo::Splits::Item >( _splitGuid )
+      GCW::app()-> gnucashew_session().load< GCW::Dbo::Splits::Item >( _splitGuid )
       ;
   }
 
@@ -82,13 +82,13 @@ byAccount( const std::string & _accountGuid )
 
   if( _accountGuid != "" )
   {
-    Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
+    Wt::Dbo::Transaction t( GCW::app()-> gnucashew_session() );
 
     /*
     ** grab the raw data items out of the storage
     */
     auto results =
-      GCW::app()-> gnucash_session().find< GCW::Dbo::Splits::Item >()
+      GCW::app()-> gnucashew_session().find< GCW::Dbo::Splits::Item >()
       .where( "account_guid = ?" )
       .bind( _accountGuid )
       .resultList()
@@ -124,10 +124,10 @@ bySplit( const std::string & _splitGuid )
   */
   if( splitItem )
   {
-    Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
+    Wt::Dbo::Transaction t( GCW::app()-> gnucashew_session() );
 
     auto results =
-      GCW::app()-> gnucash_session().find< GCW::Dbo::Splits::Item >()
+      GCW::app()-> gnucashew_session().find< GCW::Dbo::Splits::Item >()
       .where( "tx_guid = ?" )
       .bind( splitItem-> tx_guid() )
       .resultList()
@@ -149,7 +149,7 @@ bySplit( const std::string & _splitGuid )
     */
     sort( retVal );
 
-  } // endif( GCW::app()-> gnucash_session().isOpen() )
+  } // endif( GCW::app()-> gnucashew_session().isOpen() )
 
   return retVal;
 
@@ -165,10 +165,10 @@ byTransaction( const std::string & _txGuid )
 {
   GCW::Dbo::Splits::Item::Vector retVal;
 
-  Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
+  Wt::Dbo::Transaction t( GCW::app()-> gnucashew_session() );
 
   auto results =
-    GCW::app()-> gnucash_session().find< GCW::Dbo::Splits::Item >()
+    GCW::app()-> gnucashew_session().find< GCW::Dbo::Splits::Item >()
     .where( "tx_guid = ?" )
     .bind( _txGuid )
     .resultList()

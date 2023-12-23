@@ -104,7 +104,7 @@ MainWidget()
     popActions-> addItem( TR( "gcw.MainWidget.mu.actions.scheduled"     ) )-> setDisabled( true );
     popActions-> addItem( TR( "gcw.MainWidget.mu.actions.budget"        ) )-> setDisabled( true );
 
-    if( GCW::app()-> gnucash_session().hasGnuCashewExtensions() )
+    if( GCW::app()-> gnucashew_session().hasGnuCashewExtensions() )
       popActions-> addItem( TR( "gcw.MainWidget.mu.actions.billpay"       ), centralWidget(), &GCW::Gui::CentralWidget::open_BillPayWidget );
 
     popActions-> addItem( "slots", centralWidget(), &GCW::Gui::CentralWidget::open_SlotsWidget );
@@ -212,11 +212,6 @@ editSelectedAccount()
 
 void test_gnucash()
 {
-  std::cout << __FILE__ << ":" << __LINE__ << " " << std::endl;
-
-  GCW::app()-> gnucash_session().openGnucash();
-
-  std::cout << __FILE__ << ":" << __LINE__ << " " << std::endl;
 
 } // endvoid test_gnucash()
 

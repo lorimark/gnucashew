@@ -20,7 +20,7 @@ get()
   **
   */
   auto resultList =
-    GCW::app()-> gnucash_session().find< GCW::Dbo::Slots::Item >()
+    GCW::app()-> gnucashew_session().find< GCW::Dbo::Slots::Item >()
       .resultList()
       ;
 
@@ -63,7 +63,7 @@ get( const std::string & _guid, const std::string & _name )
   **
   */
   retVal =
-    GCW::app()-> gnucash_session().find< GCW::Dbo::Slots::Item >()
+    GCW::app()-> gnucashew_session().find< GCW::Dbo::Slots::Item >()
       .where( where )
       .resultValue()
       ;

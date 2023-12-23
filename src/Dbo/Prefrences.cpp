@@ -18,6 +18,8 @@ GCW::Dbo::Prefrences::Item
 GCW::Dbo::Prefrences::
 get()
 {
+  Wt::Dbo::Transaction t( GCW::app()-> gnucashew_session() );
+
   GCW::Dbo::Prefrences::Item retVal( GCW::Dbo::Vars::get( "prefrences", "system" ) );
 
   return retVal;

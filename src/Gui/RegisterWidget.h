@@ -10,7 +10,7 @@
 #include <Wt/WStandardItemModel.h>
 
 #include "../GnuCashew.h"
-#include "../Dbo/Session.h"
+//#include "../Dbo/Session.h"
 #include "../Dbo/Accounts.h"
 #include "../Eng/AccountRegisterModel.h"
 #include "TableView.h"

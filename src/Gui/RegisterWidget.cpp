@@ -513,7 +513,7 @@ createEditor
   auto model = dynamic_cast< const GCW::Gui::RegisterWidget::Model* >( _index.model() );
 
   std::set< std::string > items;
-  Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
+  Wt::Dbo::Transaction t( GCW::app()-> gnucashew_session() );
   for( auto accountItem : GCW::Dbo::Accounts::activeAccounts() )
     items.insert( GCW::Dbo::Accounts::fullName( accountItem-> guid() ) );
 

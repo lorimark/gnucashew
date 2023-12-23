@@ -1,4 +1,4 @@
-#line 2 "src/Dbo/Session.cpp"
+#line 2 "src/Dbo/SessionGnuCashew.cpp"
 
 #include <iostream>
 
@@ -8,47 +8,21 @@
 
 #include "Accounts.h"
 #include "Customers.h"
-#include "Gnucash.h"
 #include "Slots.h"
 #include "Splits.h"
 #include "Transactions.h"
 #include "Vars.h"
-#include "Session.h"
+#include "SessionGnuCashew.h"
 
 bool
-GCW::Dbo::Session::
-open( const std::string & _path )
-{
-  /*
-  ** Clear this so that if we don't get opened, then we don't
-  **  accidently indicate that we are open.
-  **
-  */
-  m_isOpen = false;
-
-  /*
-  ** Remember the path
-  **
-  */
-  m_path = _path;
-
-  /*
-  ** This never opens true
-  **
-  */
-  return false;
-
-} // endbool GCW::Dbo::Session::open( const std::string & _path )
-
-bool
-GCW::Dbo::GnuCash::Session::
+GCW::Dbo::GnuCashew::Session::
 open( const std::string & _path )
 {
   /*
   ** Call the base class.
   **
   */
-  GCW::Dbo::Session::open( _path );
+  GCW::Dbo::AbstractSession::open( _path );
 
   /*
   ** Try to get the sqlite3 file open
@@ -62,8 +36,6 @@ open( const std::string & _path )
 
     setConnection( std::move( connection ) );
 
-    init();
-
   }
 
   /*
@@ -75,33 +47,14 @@ open( const std::string & _path )
     std::cout << __FILE__ << ":" << __LINE__ << " " << e.what() << std::endl;
   }
 
-  /*
-  ** Open the gnucash engine.
-  **
-  */
-//  openGnucash();
+  m_isOpen = true;
 
   return isOpen();
 
 } // endopen( const std::string & _path )
 
-void
-GCW::Dbo::GnuCash::Session::
-init()
-{
-  mapClass< GCW::Dbo:: Accounts     ::Item >( GCW::Dbo:: Accounts     ::s_tableName );
-  mapClass< GCW::Dbo:: Customers    ::Item >( GCW::Dbo:: Customers    ::s_tableName );
-  mapClass< GCW::Dbo:: Transactions ::Item >( GCW::Dbo:: Transactions ::s_tableName );
-  mapClass< GCW::Dbo:: Slots        ::Item >( GCW::Dbo:: Slots        ::s_tableName );
-  mapClass< GCW::Dbo:: Splits       ::Item >( GCW::Dbo:: Splits       ::s_tableName );
-  mapClass< GCW::Dbo:: Vars         ::Item >( GCW::Dbo:: Vars         ::s_tableName );
-
-  m_isOpen = true;
-
-} // endvoid GCW::Dbo::Session::GnuCash::init()
-
 bool
-GCW::Dbo::GnuCash::Session::
+GCW::Dbo::GnuCashew::Session::
 hasGnuCashewExtensions()
 {
   /*
@@ -163,7 +116,7 @@ hasGnuCashewExtensions()
 } // endhasGnuCashewExtensions() const
 
 bool
-GCW::Dbo::GnuCash::Session::
+GCW::Dbo::GnuCashew::Session::
 addGnuCashewExtensions()
 {
   if( hasGnuCashewExtensions() )
@@ -195,15 +148,6 @@ addGnuCashewExtensions()
   return true;
 
 } // endaddGnuCashewExtensions()
-
-bool
-GCW::Dbo::GnuCashew::Session::
-open( const std::string & _path )
-{
-
-  return false;
-
-} // endbool GCW::Dbo::GnuCashew::Session::open( const std::string & _path )
 
 
 

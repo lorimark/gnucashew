@@ -143,9 +143,9 @@ configItem()
 {
   GCW::Dbo::Vars::Item::Ptr retVal;
 
-  if( GCW::app()-> gnucash_session().hasGnuCashewExtensions() )
+  if( GCW::app()-> gnucashew_session().hasGnuCashewExtensions() )
   {
-    Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
+    Wt::Dbo::Transaction t( GCW::app()-> gnucashew_session() );
 
     retVal = GCW::Dbo::Vars::get( "config", "AccountsWidget" );
   }
@@ -159,10 +159,10 @@ void
 GCW::Gui::AccountsWidget::
 saveConfig()
 {
-  if( !GCW::app()-> gnucash_session().hasGnuCashewExtensions() )
+  if( !GCW::app()-> gnucashew_session().hasGnuCashewExtensions() )
     return;
 
-  Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
+  Wt::Dbo::Transaction t( GCW::app()-> gnucashew_session() );
   configItem().modify()-> setVarField( Wt::Json::serialize( toJson() ) );
 
 } // endsaveConfig()
@@ -171,7 +171,7 @@ void
 GCW::Gui::AccountsWidget::
 loadConfig()
 {
-  if( !GCW::app()-> gnucash_session().hasGnuCashewExtensions() )
+  if( !GCW::app()-> gnucashew_session().hasGnuCashewExtensions() )
     return;
 
   Wt::Json::Object jobj;
@@ -273,7 +273,7 @@ expandNode( const std::string & _accountGuid, Wt::WModelIndex _parent )
   ** Loop through all the children in this node
   **
   */
-//  Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
+//  Wt::Dbo::Transaction t( GCW::app()-> gnucashew_session() );
   for( int row=0; row< view()-> model()-> rowCount( _parent ); row++ )
   {
     /*
@@ -423,27 +423,32 @@ load()
   ** If the session isn't open then there's nothing to load.
   **
   */
-  if( !GCW::app()-> gnucash_session().isOpen() )
+  if( !GCW::app()-> gnucashew_session().isOpen() )
     return;
 
   /*
   ** load the data in to the model
   **
   */
-  load( invisibleRootItem(), GCW::Dbo::Accounts::root() );
+  auto rootAccount = GCW::Dbo::Accounts::root();
+  if( rootAccount-> guid() != "" )
+  {
+    load( invisibleRootItem(), rootAccount );
 
-  /*
-  ** define all the columns
-  **
-  */
-  int col = 0;
-  setHeaderData( col++, TR( "gcw.AccountsWidget.column.accountname"      ) );
-  setHeaderData( col++, TR( "gcw.AccountsWidget.column.accountcode"      ) );
-  setHeaderData( col++, TR( "gcw.AccountsWidget.column.description"      ) );
-  setHeaderData( col++, TR( "gcw.AccountsWidget.column.taxinfo"          ) );
-  setHeaderData( col++, TR( "gcw.AccountsWidget.column.notes"            ) );
-  setHeaderData( col++, TR( "gcw.AccountsWidget.column.futureminimumusd" ) );
-  setHeaderData( col++, TR( "gcw.AccountsWidget.column.total"            ) );
+    /*
+    ** define all the columns
+    **
+    */
+    int col = 0;
+    setHeaderData( col++, TR( "gcw.AccountsWidget.column.accountname"      ) );
+    setHeaderData( col++, TR( "gcw.AccountsWidget.column.accountcode"      ) );
+    setHeaderData( col++, TR( "gcw.AccountsWidget.column.description"      ) );
+    setHeaderData( col++, TR( "gcw.AccountsWidget.column.taxinfo"          ) );
+    setHeaderData( col++, TR( "gcw.AccountsWidget.column.notes"            ) );
+    setHeaderData( col++, TR( "gcw.AccountsWidget.column.futureminimumusd" ) );
+    setHeaderData( col++, TR( "gcw.AccountsWidget.column.total"            ) );
+
+  } // endif( rootAccount-> guid() != "" )
 
 } // endvoid GCW::Gui::AccountsWidget::Model::load()
 
@@ -451,7 +456,7 @@ void
 GCW::Gui::AccountsWidget::Model::
 load( Wt::WStandardItem * _treeItem, GCW::Dbo::Accounts::Item::Ptr _parentAccount )
 {
-  Wt::Dbo::Transaction t( GCW::app()-> gnucash_session() );
+  Wt::Dbo::Transaction t( GCW::app()-> gnucashew_session() );
 
   auto _append = [=]( Wt::WStandardItem * _item, GCW::Dbo::Accounts::Item::Ptr _accountItem )
   {
@@ -488,7 +493,7 @@ load( Wt::WStandardItem * _treeItem, GCW::Dbo::Accounts::Item::Ptr _parentAccoun
   };
 
   auto accounts =
-    GCW::app()-> gnucash_session().find< GCW::Dbo::Accounts::Item >()
+    GCW::app()-> gnucashew_session().find< GCW::Dbo::Accounts::Item >()
     .where( "parent_guid = ?" )
     .bind( _parentAccount-> guid() )
     .resultList()

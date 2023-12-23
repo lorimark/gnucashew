@@ -20,7 +20,7 @@ FilePropertiesWidget()
   auto lw = setLayout( std::make_unique< Wt::WVBoxLayout >() );
   lw-> setSpacing( 0 );
 
-  if( GCW::app()-> gnucash_session().hasGnuCashewExtensions() )
+  if( GCW::app()-> gnucashew_session().hasGnuCashewExtensions() )
   {
     lw-> addWidget( std::make_unique< Wt::WText >( "has gnucashew extensions" ) );
   }
@@ -39,7 +39,7 @@ void
 GCW::Gui::FilePropertiesWidget::
 do_applyGnuCashewExtensions()
 {
-  GCW::app()-> gnucash_session().addGnuCashewExtensions();
+  GCW::app()-> gnucashew_session().addGnuCashewExtensions();
 
 } // enddo_applyGnuCashewExtensions()
 

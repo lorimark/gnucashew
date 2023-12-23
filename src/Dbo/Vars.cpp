@@ -40,7 +40,7 @@ get( const std::string & _keyValue, const std::string & _cfyValue )
   **
   */
   retVal =
-    GCW::app()-> gnucash_session().find< GCW::Dbo::Vars::Item >()
+    GCW::app()-> gnucashew_session().find< GCW::Dbo::Vars::Item >()
       .where( where )
       .resultValue()
       ;
@@ -53,7 +53,7 @@ get( const std::string & _keyValue, const std::string & _cfyValue )
   if( !retVal )
   {
     retVal =
-      GCW::app()-> gnucash_session().addNew< GCW::Dbo::Vars::Item >()
+      GCW::app()-> gnucashew_session().addNew< GCW::Dbo::Vars::Item >()
         ;
 
     retVal.modify()-> setKeyField( _keyValue );

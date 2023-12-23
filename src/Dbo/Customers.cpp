@@ -12,7 +12,7 @@ byGuid( const std::string & _guid )
   GCW::Dbo::Customers::Item::Ptr retVal;
 
   retVal =
-    GCW::app()-> gnucash_session().load< GCW::Dbo::Customers::Item >( _guid )
+    GCW::app()-> gnucashew_session().load< GCW::Dbo::Customers::Item >( _guid )
     ;
 
   return retVal;

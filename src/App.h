@@ -7,7 +7,8 @@
 #include <Wt/WEnvironment.h>
 #include <Wt/WTimer.h>
 
-#include "Dbo/Session.h"
+#include "Dbo/SessionGnuCash.h"
+#include "Dbo/SessionGnuCashew.h"
 #include "Config.h"
 #include "Gui/MainWidget.h"
 
@@ -22,6 +23,7 @@ class App
 
     App( const Wt::WEnvironment & env );
 
+    Dbo::AbstractSession    & session           ();
     Dbo::GnuCash::Session   & gnucash_session   () { return m_gnucash_session;    }
     Dbo::GnuCashew::Session & gnucashew_session () { return m_gnucashew_session;  }
     GCW::Gui::MainWidget    * mainWidget        () { return m_mainWidget;         }
