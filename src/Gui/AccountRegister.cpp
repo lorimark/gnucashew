@@ -77,6 +77,11 @@ class DateDelegate
 {
   public:
 
+    ~DateDelegate()
+    {
+      std::cout << __FILE__ << ":" << __LINE__ << " " << std::endl;
+    }
+
     std::unique_ptr< Wt::WWidget > createEditor
     (
      const Wt::WModelIndex & _index,
@@ -91,7 +96,8 @@ class DateDelegate
     void doTabAction( Wt::WKeyEvent _keyEvent ) const;
 
     mutable Wt::WDateEdit * m_dateEdit = nullptr;
-};
+
+}; // endclass DateDelegate
 
 std::unique_ptr< Wt::WWidget >
 DateDelegate::
@@ -101,7 +107,7 @@ createEditor
   Wt::WFlags< Wt::ViewItemRenderFlag > _flags
 ) const
 {
-#ifdef NEVER
+#ifndef NEVER
   std::cout << __FILE__ << ":" << __LINE__
     << " DateDelegate::createEditor()"
     << " r:" << _index.row()
@@ -115,6 +121,7 @@ createEditor
   **
   */
   auto retVal = std::make_unique< Wt::WContainerWidget >();
+#ifndef NEVER
   retVal-> setSelectable( true );
 
   /*
@@ -149,6 +156,9 @@ createEditor
   retVal-> setLayout( std::make_unique< Wt::WHBoxLayout >() );
   retVal-> layout()-> setContentsMargins( 1,1,1,1 );
   retVal-> layout()-> addWidget( std::move( dateEdit ) );
+#endif
+
+  std::cout << __FILE__ << ":" << __LINE__ << " " << std::endl;
 
   return retVal;
 
@@ -158,17 +168,11 @@ void
 DateDelegate::
 doCloseEditor( Wt::WDateEdit * _dateEdit, bool save ) const
 {
-#ifdef NEVER
+#ifndef NEVER
   std::cout << __FILE__ << ":" << __LINE__ << " DateDelegate::doCloseEditor()" << std::endl;
 #endif
 
   closeEditor().emit( _dateEdit, save );
-
-#ifdef NEVER
-  m_editorClosed.emit( m_row, m_col );
-  m_row = -1;
-  m_col = -1;
-#endif
 
 } // endvoid DateDelegate::doCloseEditor( Wt::WDateEdit * _dateEdit, bool save ) const
 
@@ -176,7 +180,7 @@ void
 DateDelegate::
 doTabAction( Wt::WKeyEvent _keyEvent ) const
 {
-#ifdef NEVER
+#ifndef NEVER
   std::cout << __FILE__ << ":" << __LINE__ << " DateDelegate::doTabAction()" << std::endl;
 #endif
 
@@ -190,7 +194,7 @@ editState( Wt::WWidget * _editor, const Wt::WModelIndex & _index ) const
 
   auto de = dynamic_cast< Wt::WDateEdit* >( cw-> children().at(0) );
 
-#ifdef NEVER
+#ifndef NEVER
   std::cout << __FILE__ << ":" << __LINE__
     << " Wt::cpp17::any DateDelegate::editState()"
     << " r:" << _index.row()
@@ -216,12 +220,15 @@ DateDelegate::
 setEditState( Wt::WWidget * _editor, const Wt::WModelIndex & _index, const Wt::cpp17::any & _value ) const
 {
 //  the '_editor' and 'm_dateEdit' are not the same widget
-#ifdef NEVER
-  std::cout << __FILE__ << ":" << __LINE__ << " " << _editor    << " " << typeid( _editor ).name()    << std::endl;
-  std::cout << __FILE__ << ":" << __LINE__ << " " << m_dateEdit << " " << typeid( m_dateEdit ).name() << std::endl;
+#ifndef NEVER
+  std::cout << __FILE__ << ":" << __LINE__
+    << " setEditState()"
+    << " " << _editor    << " " << typeid( _editor ).name()
+    << " " << m_dateEdit << " " << typeid( m_dateEdit ).name()
+    << std::endl;
 #endif
 
-  Wt::WItemDelegate::setEditState( _editor, _index, _value );
+//  Wt::WItemDelegate::setEditState( _editor, _index, _value );
 
 } // endvoid DateDelegate::setEditState( Wt::WWidget * _editor, const Wt::WModelIndex & _index, const Wt::cpp17::any & _value ) const
 
@@ -229,7 +236,7 @@ void
 DateDelegate::
 setModelData( const Wt::cpp17::any & _editState, Wt::WAbstractItemModel * _model, const Wt::WModelIndex & _index ) const
 {
-#ifdef NEVER
+#ifndef NEVER
   std::cout << __FILE__ << ":" << __LINE__
     << " setModelData()"
     << " " << _index.row()
@@ -361,7 +368,7 @@ editState( Wt::WWidget * _editor, const Wt::WModelIndex & _index ) const
 
 #ifdef NEVER
   std::cout << __FILE__ << ":" << __LINE__
-    << " Wt::cpp17::any DateDelegate::editState()"
+    << " Wt::cpp17::any ReconcileDelegate::editState()"
     << " r:" << _index.row()
     << " c:" << _index.column()
     << " i:" << cw-> id()
@@ -376,7 +383,7 @@ editState( Wt::WWidget * _editor, const Wt::WModelIndex & _index ) const
 //  return "";
   return ed-> text();
 
-} // endWt::cpp17::any DateDelegate::editState( Wt::WWidget * _editor, const Wt::WModelIndex & _index ) const
+} // endWt::cpp17::any ReconcileDelegate::editState( Wt::WWidget * _editor, const Wt::WModelIndex & _index ) const
 
 void
 ReconcileDelegate::
@@ -433,6 +440,14 @@ createEditor
   Wt::WFlags< Wt::ViewItemRenderFlag > _flags
 ) const
 {
+#ifndef NEVER
+  std::cout << __FILE__ << ":" << __LINE__
+    << " SuggestionDelegate::createEditor()"
+    << " r:" << _index.row()
+    << " c:" << _index.column()
+    << std::endl;
+#endif
+
   auto retVal = Wt::WItemDelegate::createEditor( _index, _flags );
   auto cw = dynamic_cast< Wt::WContainerWidget* >( retVal.get() );
   auto lineEdit = dynamic_cast< Wt::WLineEdit* >( cw-> widget(0) );
@@ -604,12 +619,12 @@ AccountRegister( const std::string & _accountGuid )
     auto dateDelegate = std::make_shared< DateDelegate >();
     tableView()-> setItemDelegateForColumn( 0, dateDelegate  );
 
-    dateDelegate->
-      closeEditor().connect( [&]( Wt::WWidget* _widget, bool _save )
-      {
-        std::cout << __FILE__ << ":" << __LINE__ << " " << std::endl;
-
-      });
+//    dateDelegate->
+//      closeEditor().connect( [&]( Wt::WWidget* _widget, bool _save )
+//      {
+//        std::cout << __FILE__ << ":" << __LINE__ << " " << std::endl;
+//
+//      });
 
 
 #ifdef NEVER

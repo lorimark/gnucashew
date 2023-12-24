@@ -1,4 +1,4 @@
-#line 2 "src/Gui/AccountsWidget.cpp"
+#line 2 "src/Gui/AccountsTreeView.cpp"
 
 #include <any>
 
@@ -12,13 +12,13 @@
 #include "../define.h"
 #include "../GnuCashew.h"
 #include "AccountEditor.h"
-#include "AccountsWidget.h"
+#include "AccountsTreeView.h"
 
 
-GCW::Gui::AccountsWidget::
-AccountsWidget()
+GCW::Gui::AccountsTreeView::
+AccountsTreeView()
 {
-  addStyleClass( "AccountsWidget" );
+  addStyleClass( "AccountsTreeView" );
 
   auto lw = setLayout( std::make_unique< Wt::WVBoxLayout >() );
   lw-> setSpacing( 0 );
@@ -30,52 +30,52 @@ AccountsWidget()
   view()-> setSelectionBehavior( Wt::SelectionBehavior::Rows );
   view()-> setSelectionMode(     Wt::SelectionMode::Single   );
   view()-> setAlternatingRowColors( true );
-  view()-> doubleClicked().connect( this, &AccountsWidget::doubleClicked );
+  view()-> doubleClicked().connect( this, &AccountsTreeView::doubleClicked );
 
-  m_columns.push_back( TR8( "gcw.AccountsWidget.column.accountcode"       ) );
-  m_columns.push_back( TR8( "gcw.AccountsWidget.column.accountcolor"      ) );
-  m_columns.push_back( TR8( "gcw.AccountsWidget.column.accountname"       ) );
-  m_columns.push_back( TR8( "gcw.AccountsWidget.column.balance"           ) );
-  m_columns.push_back( TR8( "gcw.AccountsWidget.column.balancelimit"      ) );
-  m_columns.push_back( TR8( "gcw.AccountsWidget.column.balanceperiod"     ) );
-  m_columns.push_back( TR8( "gcw.AccountsWidget.column.balanceusd"        ) );
-  m_columns.push_back( TR8( "gcw.AccountsWidget.column.cleared"           ) );
-  m_columns.push_back( TR8( "gcw.AccountsWidget.column.clearedusd"        ) );
-  m_columns.push_back( TR8( "gcw.AccountsWidget.column.commodity"         ) );
-  m_columns.push_back( TR8( "gcw.AccountsWidget.column.description"       ) );
-  m_columns.push_back( TR8( "gcw.AccountsWidget.column.futureminimum"     ) );
-  m_columns.push_back( TR8( "gcw.AccountsWidget.column.futureminimumusd"  ) );
-  m_columns.push_back( TR8( "gcw.AccountsWidget.column.hidden"            ) );
-  m_columns.push_back( TR8( "gcw.AccountsWidget.column.lastnum"           ) );
-  m_columns.push_back( TR8( "gcw.AccountsWidget.column.lastreconciledate" ) );
-  m_columns.push_back( TR8( "gcw.AccountsWidget.column.notes"             ) );
-  m_columns.push_back( TR8( "gcw.AccountsWidget.column.openingbalance"    ) );
-  m_columns.push_back( TR8( "gcw.AccountsWidget.column.placeholder"       ) );
-  m_columns.push_back( TR8( "gcw.AccountsWidget.column.present"           ) );
-  m_columns.push_back( TR8( "gcw.AccountsWidget.column.presentusd"        ) );
-  m_columns.push_back( TR8( "gcw.AccountsWidget.column.reconciled"        ) );
-  m_columns.push_back( TR8( "gcw.AccountsWidget.column.reconciledusd"     ) );
-  m_columns.push_back( TR8( "gcw.AccountsWidget.column.taxinfo"           ) );
-  m_columns.push_back( TR8( "gcw.AccountsWidget.column.total"             ) );
-  m_columns.push_back( TR8( "gcw.AccountsWidget.column.totalperiod"       ) );
-  m_columns.push_back( TR8( "gcw.AccountsWidget.column.totalusd"          ) );
-  m_columns.push_back( TR8( "gcw.AccountsWidget.column.type"              ) );
+  m_columns.push_back( TR8( "gcw.AccountsTreeView.column.accountcode"       ) );
+  m_columns.push_back( TR8( "gcw.AccountsTreeView.column.accountcolor"      ) );
+  m_columns.push_back( TR8( "gcw.AccountsTreeView.column.accountname"       ) );
+  m_columns.push_back( TR8( "gcw.AccountsTreeView.column.balance"           ) );
+  m_columns.push_back( TR8( "gcw.AccountsTreeView.column.balancelimit"      ) );
+  m_columns.push_back( TR8( "gcw.AccountsTreeView.column.balanceperiod"     ) );
+  m_columns.push_back( TR8( "gcw.AccountsTreeView.column.balanceusd"        ) );
+  m_columns.push_back( TR8( "gcw.AccountsTreeView.column.cleared"           ) );
+  m_columns.push_back( TR8( "gcw.AccountsTreeView.column.clearedusd"        ) );
+  m_columns.push_back( TR8( "gcw.AccountsTreeView.column.commodity"         ) );
+  m_columns.push_back( TR8( "gcw.AccountsTreeView.column.description"       ) );
+  m_columns.push_back( TR8( "gcw.AccountsTreeView.column.futureminimum"     ) );
+  m_columns.push_back( TR8( "gcw.AccountsTreeView.column.futureminimumusd"  ) );
+  m_columns.push_back( TR8( "gcw.AccountsTreeView.column.hidden"            ) );
+  m_columns.push_back( TR8( "gcw.AccountsTreeView.column.lastnum"           ) );
+  m_columns.push_back( TR8( "gcw.AccountsTreeView.column.lastreconciledate" ) );
+  m_columns.push_back( TR8( "gcw.AccountsTreeView.column.notes"             ) );
+  m_columns.push_back( TR8( "gcw.AccountsTreeView.column.openingbalance"    ) );
+  m_columns.push_back( TR8( "gcw.AccountsTreeView.column.placeholder"       ) );
+  m_columns.push_back( TR8( "gcw.AccountsTreeView.column.present"           ) );
+  m_columns.push_back( TR8( "gcw.AccountsTreeView.column.presentusd"        ) );
+  m_columns.push_back( TR8( "gcw.AccountsTreeView.column.reconciled"        ) );
+  m_columns.push_back( TR8( "gcw.AccountsTreeView.column.reconciledusd"     ) );
+  m_columns.push_back( TR8( "gcw.AccountsTreeView.column.taxinfo"           ) );
+  m_columns.push_back( TR8( "gcw.AccountsTreeView.column.total"             ) );
+  m_columns.push_back( TR8( "gcw.AccountsTreeView.column.totalperiod"       ) );
+  m_columns.push_back( TR8( "gcw.AccountsTreeView.column.totalusd"          ) );
+  m_columns.push_back( TR8( "gcw.AccountsTreeView.column.type"              ) );
 
   setModel();
 
   loadConfig();
 
-  view()-> collapsed        ().connect( this, &AccountsWidget::saveConfig    );
-  view()-> expanded         ().connect( this, &AccountsWidget::saveConfig    );
-  view()-> selectionChanged ().connect( this, &AccountsWidget::saveConfig    );
+  view()-> collapsed        ().connect( this, &AccountsTreeView::saveConfig    );
+  view()-> expanded         ().connect( this, &AccountsTreeView::saveConfig    );
+  view()-> selectionChanged ().connect( this, &AccountsTreeView::saveConfig    );
 
-} // endGCW::Gui::AccountsWidget::AccountsWidget()
+} // endGCW::Gui::AccountsTreeView::AccountsTreeView()
 
 /*!
 ** \return GUID String
 */
 std::string
-GCW::Gui::AccountsWidget::
+GCW::Gui::AccountsTreeView::
 selectedAccount() const
 {
   std::string retVal;
@@ -98,10 +98,10 @@ selectedAccount() const
 
   return retVal;
 
-} // endstd::string GCW::Gui::AccountsWidget::selectedAccount()
+} // endstd::string GCW::Gui::AccountsTreeView::selectedAccount()
 
 void
-GCW::Gui::AccountsWidget::
+GCW::Gui::AccountsTreeView::
 editAccount( const std::string & _accountGuid )
 {
   if( _accountGuid == "" )
@@ -111,20 +111,20 @@ editAccount( const std::string & _accountGuid )
 
   dialog.exec();
 
-} // endvoid GCW::Gui::AccountsWidget::editAccount( const std::string & _accountGuid )
+} // endvoid GCW::Gui::AccountsTreeView::editAccount( const std::string & _accountGuid )
 
 
 void
-GCW::Gui::AccountsWidget::
+GCW::Gui::AccountsTreeView::
 editSelectedAccount()
 {
   editAccount( selectedAccount() );
 
-} // endvoid GCW::Gui::AccountsWidget::editAccount( const std::string & _accountGuid )
+} // endvoid GCW::Gui::AccountsTreeView::editAccount( const std::string & _accountGuid )
 
 
 void
-GCW::Gui::AccountsWidget::
+GCW::Gui::AccountsTreeView::
 setModel()
 {
   m_model = std::make_shared< Model >();
@@ -135,10 +135,10 @@ setModel()
 
   view()-> sortByColumn( 0, Wt::SortOrder::Ascending );
 
-} // endvoid GCW::Gui::AccountsWidget::setModel()
+} // endvoid GCW::Gui::AccountsTreeView::setModel()
 
 GCW::Dbo::Vars::Item::Ptr
-GCW::Gui::AccountsWidget::
+GCW::Gui::AccountsTreeView::
 configItem()
 {
   GCW::Dbo::Vars::Item::Ptr retVal;
@@ -147,7 +147,7 @@ configItem()
   {
     Wt::Dbo::Transaction t( GCW::app()-> gnucashew_session() );
 
-    retVal = GCW::Dbo::Vars::get( "config", "AccountsWidget" );
+    retVal = GCW::Dbo::Vars::get( "config", "AccountsTreeView" );
   }
 
   return retVal;
@@ -156,7 +156,7 @@ configItem()
 
 
 void
-GCW::Gui::AccountsWidget::
+GCW::Gui::AccountsTreeView::
 saveConfig()
 {
   if( !GCW::app()-> gnucashew_session().hasGnuCashewExtensions() )
@@ -168,7 +168,7 @@ saveConfig()
 } // endsaveConfig()
 
 void
-GCW::Gui::AccountsWidget::
+GCW::Gui::AccountsTreeView::
 loadConfig()
 {
   if( !GCW::app()-> gnucashew_session().hasGnuCashewExtensions() )
@@ -194,7 +194,7 @@ loadConfig()
 **
 */
 bool
-GCW::Gui::AccountsWidget::
+GCW::Gui::AccountsTreeView::
 iterate( Wt::Json::Array & _jary, Wt::WModelIndex _parent ) const
 {
   /*
@@ -245,7 +245,7 @@ iterate( Wt::Json::Array & _jary, Wt::WModelIndex _parent ) const
 
 
 Wt::Json::Object
-GCW::Gui::AccountsWidget::
+GCW::Gui::AccountsTreeView::
 toJson() const
 {
   Wt::Json::Object jobj;
@@ -264,7 +264,7 @@ toJson() const
 }
 
 bool
-GCW::Gui::AccountsWidget::
+GCW::Gui::AccountsTreeView::
 expandNode( const std::string & _accountGuid, Wt::WModelIndex _parent )
 {
   bool retVal = false;
@@ -323,7 +323,7 @@ expandNode( const std::string & _accountGuid, Wt::WModelIndex _parent )
 } // endexpandNode( const std::string & _accountGuid, Wt::WModelIndex _parent )
 
 bool
-GCW::Gui::AccountsWidget::
+GCW::Gui::AccountsTreeView::
 expandTreeNodes( Wt::Json::Object & _jobj )
 {
   auto jary = _jobj.get("expanded").orIfNull( Wt::Json::Array() );
@@ -343,7 +343,7 @@ expandTreeNodes( Wt::Json::Object & _jobj )
 **
 */
 Wt::WModelIndex
-GCW::Gui::AccountsWidget::
+GCW::Gui::AccountsTreeView::
 findIndex( const std::string & _accountGuid, Wt::WModelIndex _parentIndex )
 {
   /*
@@ -381,7 +381,7 @@ findIndex( const std::string & _accountGuid, Wt::WModelIndex _parentIndex )
 } // endfindIndex( const std::string & _accountGuid, Wt::WModelIndex _parentIndex )
 
 bool
-GCW::Gui::AccountsWidget::
+GCW::Gui::AccountsTreeView::
 setSelected( const std::string & _accountGuid )
 {
   auto index = findIndex( _accountGuid );
@@ -394,7 +394,7 @@ setSelected( const std::string & _accountGuid )
 } // endexpandNodes()
 
 bool
-GCW::Gui::AccountsWidget::
+GCW::Gui::AccountsTreeView::
 fromJson( Wt::Json::Object & _jobj )
 {
   expandTreeNodes( _jobj );
@@ -406,17 +406,17 @@ fromJson( Wt::Json::Object & _jobj )
 } // endfromJson( const Wt::Json::Object & _jobj )
 
 void
-GCW::Gui::AccountsWidget::
+GCW::Gui::AccountsTreeView::
 test()
 {
   std::cout << __FILE__ << ":" << __LINE__ << " " << std::endl;
 
   std::cout << __FILE__ << ":" << __LINE__ << " " << Wt::Json::serialize( toJson() ) << std::endl;
 
-} // endvoid GCW::Gui::AccountsWidget::test()
+} // endvoid GCW::Gui::AccountsTreeView::test()
 
 void
-GCW::Gui::AccountsWidget::Model::
+GCW::Gui::AccountsTreeView::Model::
 load()
 {
   /*
@@ -440,20 +440,20 @@ load()
     **
     */
     int col = 0;
-    setHeaderData( col++, TR( "gcw.AccountsWidget.column.accountname"      ) );
-    setHeaderData( col++, TR( "gcw.AccountsWidget.column.accountcode"      ) );
-    setHeaderData( col++, TR( "gcw.AccountsWidget.column.description"      ) );
-    setHeaderData( col++, TR( "gcw.AccountsWidget.column.taxinfo"          ) );
-    setHeaderData( col++, TR( "gcw.AccountsWidget.column.notes"            ) );
-    setHeaderData( col++, TR( "gcw.AccountsWidget.column.futureminimumusd" ) );
-    setHeaderData( col++, TR( "gcw.AccountsWidget.column.total"            ) );
+    setHeaderData( col++, TR( "gcw.AccountsTreeView.column.accountname"      ) );
+    setHeaderData( col++, TR( "gcw.AccountsTreeView.column.accountcode"      ) );
+    setHeaderData( col++, TR( "gcw.AccountsTreeView.column.description"      ) );
+    setHeaderData( col++, TR( "gcw.AccountsTreeView.column.taxinfo"          ) );
+    setHeaderData( col++, TR( "gcw.AccountsTreeView.column.notes"            ) );
+    setHeaderData( col++, TR( "gcw.AccountsTreeView.column.futureminimumusd" ) );
+    setHeaderData( col++, TR( "gcw.AccountsTreeView.column.total"            ) );
 
   } // endif( rootAccount-> guid() != "" )
 
-} // endvoid GCW::Gui::AccountsWidget::Model::load()
+} // endvoid GCW::Gui::AccountsTreeView::Model::load()
 
 void
-GCW::Gui::AccountsWidget::Model::
+GCW::Gui::AccountsTreeView::Model::
 load( Wt::WStandardItem * _treeItem, GCW::Dbo::Accounts::Item::Ptr _parentAccount )
 {
   Wt::Dbo::Transaction t( GCW::app()-> gnucashew_session() );
@@ -508,7 +508,7 @@ load( Wt::WStandardItem * _treeItem, GCW::Dbo::Accounts::Item::Ptr _parentAccoun
 } // endvoid load( Wt::WStandardItem * _treeItem, Account::Ptr _parentAccount )
 
 void
-GCW::Gui::AccountsWidget::
+GCW::Gui::AccountsTreeView::
 doubleClicked( const Wt::WModelIndex & index, const Wt::WMouseEvent & event )
 {
 #ifdef NEVER
@@ -526,6 +526,6 @@ doubleClicked( const Wt::WModelIndex & index, const Wt::WMouseEvent & event )
   */
   m_doubleClicked.emit( Wt::asString( m_model-> data( index, Wt::ItemDataRole::User ) ).toUTF8() );
 
-} // endvoid GCW::Gui::AccountsWidget::doubleClicked( const Wt::WModelIndex & index, const Wt::WMouseEvent & event )
+} // endvoid GCW::Gui::AccountsTreeView::doubleClicked( const Wt::WModelIndex & index, const Wt::WMouseEvent & event )
 
 

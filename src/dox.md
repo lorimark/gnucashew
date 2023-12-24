@@ -4,8 +4,9 @@
 
 First off... I love <a href="https://www.gnucash.org" target="_blank">GnuCash!</a>
 
-Secondly... this is ~not~ GnuCash.  At present, no GnuCash code is in use
- here.
+Secondly... this is ~not~ GnuCash.  At present, GnuCash code is slightly in use
+ here, as I work to connect this to the libgnucash engine library.  So far, it
+ is predominantly using direct-sql calls to reach the gnucash database.
 
 This is an attempt to produce a web-based interface for the GnuCash program.
  Knowing that there have been several other attempts, this is based on my
@@ -14,10 +15,8 @@ This is an attempt to produce a web-based interface for the GnuCash program.
 
 At this point, all of the code in this project has been developed from
  scratch.  The system can (so far) only operate on a sqlite data file.  No code was
- used from the gnucash original source codes, though it is my desire to use
- the gnucash library engine for accessing the underlying database.  At this
- time, all of the database access and manipulation is happening natively
- within this application.
+ used from the gnucash original source codes, although I am working to use
+ the gnucash library engine for accessing the underlying database.
 
 If you are interested in an active demo, you can find it here;
 

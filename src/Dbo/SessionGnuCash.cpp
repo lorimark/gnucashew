@@ -23,7 +23,8 @@
 GCW::Dbo::GnuCash::Session::
 ~Session()
 {
-  closeGnuCash();
+  if( isOpen() )
+    closeGnuCash();
 }
 
 bool

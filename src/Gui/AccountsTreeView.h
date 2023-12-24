@@ -1,7 +1,7 @@
-#line 2 "src/Gui/AccountsWidget.h"
+#line 2 "src/Gui/AccountsTreeView.h"
 
-#ifndef __GUI_ACCOUNTSWIDGET_H___
-#define __GUI_ACCOUNTSWIDGET_H___
+#ifndef __GUI_ACCOUNTSTREEVIEW_H___
+#define __GUI_ACCOUNTSTREEVIEW_H___
 
 #include <Wt/Json/Object.h>
 #include <Wt/WContainerWidget.h>
@@ -18,9 +18,9 @@ namespace GCW {
   namespace Gui {
 
 /*!
-** \brief AccountsWidget
+** \brief AccountsTreeView
 **
-** The AccountsWidget is a widget that displays all of the accounts
+** The AccountsTreeView is a widget that displays all of the accounts
 **  within the system.  It displays the accounts in a tree-like format
 **  with multiple columns representing other field values such as;
 **  'notes', 'tax info', 'balance remaining' and so on.  The view is
@@ -28,7 +28,7 @@ namespace GCW {
 **  individual account registers.
 **
 */
-class AccountsWidget
+class AccountsTreeView
 : public Wt::WContainerWidget
 {
   public:
@@ -53,7 +53,7 @@ class AccountsWidget
       void load( Wt::WStandardItem * _treeItem, GCW::Dbo::Accounts::Item::Ptr _parentAccount );
   };
 
-    AccountsWidget();
+    AccountsTreeView();
 
     std::shared_ptr< Model >   model () const { return m_model; }
     Wt::WTreeView            * view  () const { return m_view;  }
@@ -97,11 +97,11 @@ class AccountsWidget
     std::vector< std::string > m_columns;
     Wt::Signal< std::string >  m_doubleClicked;
 
-};  // endclass AccountsWidget
+};  // endclass AccountsTreeView
 
   } // endnamespace Gui {
 } // endnamespace GCW {
 
-#endif // end __GUI_ACCOUNTSWIDGET_H___
+#endif // end __GUI_ACCOUNTSTREEVIEW_H___
 
 

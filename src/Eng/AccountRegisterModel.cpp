@@ -64,6 +64,8 @@ std::string
 GCW::Eng::AccountRegisterModel::
 splitGuid( const Wt::WModelIndex & _index )
 {
+  std::cout << __FILE__ << ":" << __LINE__ << " " << std::endl;
+
   return Wt::asString( index( _index.row(), 0 ).data( Wt::ItemDataRole::User ) ).toUTF8();
 }
 
@@ -71,6 +73,8 @@ void
 GCW::Eng::AccountRegisterModel::
 saveToDisk( const Wt::WModelIndex & _index, const Wt::cpp17::any & _value, Wt::ItemDataRole _role )
 {
+  return;
+
   /*
   ** column definitions:
   **
@@ -84,8 +88,14 @@ saveToDisk( const Wt::WModelIndex & _index, const Wt::cpp17::any & _value, Wt::I
   ** 1,2 - notes       : split       -> memo
   **
   */
+  std::cout << __FILE__ << ":" << __LINE__ << " " << std::endl;
+
   auto splitItem   = GCW::Dbo:: Splits       ::load( splitGuid( _index )        );
+  std::cout << __FILE__ << ":" << __LINE__ << " " << splitItem << std::endl;
+
   auto accountItem = GCW::Dbo:: Accounts     ::load( splitItem-> account_guid() );
+  std::cout << __FILE__ << ":" << __LINE__ << " " << std::endl;
+
   auto txItem      = GCW::Dbo:: Transactions ::load( splitItem-> tx_guid()      );
 
   std::cout << HEADER
@@ -237,10 +247,18 @@ setData( const Wt::WModelIndex & _index, const Wt::cpp17::any & _value, Wt::Item
 
     retVal = Wt::WStandardItemModel::setData( _index, _value, _role );
 
+    std::cout << __FILE__ << ":" << __LINE__ << " " << std::endl;
+
     saveToDisk( _index, _value, _role );
 
+    std::cout << __FILE__ << ":" << __LINE__ << " " << std::endl;
+
     m_dirtyRows.insert( _index.row() );
+    std::cout << __FILE__ << ":" << __LINE__ << " " << std::endl;
+
     m_goneDirty.emit( _index );
+
+    std::cout << __FILE__ << ":" << __LINE__ << " " << std::endl;
 
     std::cout << BREAKFOOTER
       << std::endl;

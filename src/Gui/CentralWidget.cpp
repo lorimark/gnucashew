@@ -62,9 +62,9 @@ CentralWidget()
   **
   */
   {
-    auto widget = std::make_unique< GCW::Gui::AccountsWidget >();
+    auto widget = std::make_unique< GCW::Gui::AccountsTreeView >();
     m_accountsWidget = widget.get();
-    tabWidget()-> addTab( std::move( widget ), TR( "gcw.AccountsWidget.tabName" ) );
+    tabWidget()-> addTab( std::move( widget ), TR( "gcw.AccountsTreeView.tabName" ) );
 
     accountsWidget()-> doubleClicked().connect( this, &GCW::Gui::CentralWidget::open_AccountRegister );
   }
