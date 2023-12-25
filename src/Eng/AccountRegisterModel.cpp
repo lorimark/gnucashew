@@ -906,8 +906,11 @@ std::set< std::string >
 GCW::Eng::AccountRegisterModel::
 suggestionsFromColumn( int _column ) const
 {
+  /*
+  ** First, make a set of unique values.
+  **
+  */
   std::set< std::string > retVal;
-
   for( int row=0; row< rowCount(); row++ )
     retVal.insert( Wt::asString( item( row, _column )-> text() ).toUTF8() );
 

@@ -452,25 +452,26 @@ createEditor
   auto cw = dynamic_cast< Wt::WContainerWidget* >( retVal.get() );
   auto lineEdit = dynamic_cast< Wt::WLineEdit* >( cw-> widget(0) );
 
-  // options for email address suggestions
-  Wt::WSuggestionPopup::Options popupOptions =
+  if( lineEdit )
   {
-    "<b>",         // highlightBeginTag
-    "</b>",        // highlightEndTag
-    ',',           // listSeparator      (for multiple addresses)
-    " \n",         // whitespace
-    ":-., \"@\n;", // wordSeparators     (within an address)
-    ""             // appendReplacedText (prepare next email address)
-   };
+    // options for email address suggestions
+    Wt::WSuggestionPopup::Options popupOptions =
+    {
+      "<b>",         // highlightBeginTag
+      "</b>",        // highlightEndTag
+      ',',           // listSeparator      (for multiple addresses)
+      " \n",         // whitespace
+      "()[]{}-., \"@\n;:", // wordSeparators     (within an address)
+      ""             // appendReplacedText (prepare next email address)
+     };
 
-  auto popup = retVal-> addChild( std::make_unique< Wt::WSuggestionPopup >( popupOptions ) );
-  popup-> forEdit( lineEdit );
+    auto popup = retVal-> addChild( std::make_unique< Wt::WSuggestionPopup >( popupOptions ) );
+    popup-> forEdit( lineEdit );
 
-  auto model = dynamic_cast< const GCW::Gui::AccountRegister::Model* >(_index.model() );
+    auto model = dynamic_cast< const GCW::Gui::AccountRegister::Model* >(_index.model() );
 
-  for( auto item : model-> suggestionsFromColumn( _index.column() ) )
-  {
-    popup-> addSuggestion( item, item );
+    for( auto item : model-> suggestionsFromColumn( _index.column() ) )
+      popup-> addSuggestion( item, item );
   }
 
   return retVal;
@@ -516,7 +517,8 @@ createEditor
     "</b>",        // highlightEndTag
     ',',           // listSeparator      (for multiple addresses)
     " \n",         // whitespace
-    "-., \"@\n;",  // wordSeparators     (within an address)
+      "()[]{}-., \"@\n;:", // wordSeparators     (within an address)
+//    "-., \"@\n;:", // wordSeparators     (within an address)
     ""             // appendReplacedText (prepare next email address)
    };
 
