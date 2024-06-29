@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<messages xmlns:if="Wt.WTemplate.conditions">
+
+  <message id="gcw_gui.doxygen_link">/dox/html/index.html</message>
+
+  <message id="gcw_gui.accounteditor.form.tab1">
+    <div> Identification </div>
+    <table>
+      <tr>
+        <td>
+          <label for="${id:name}">
+            ${name-label}
+          </label>
+        </td>
+        <td>
+          ${name}
+          ${name-info}
+        </td>
+      </tr>
+    </table>
+  </message>
+
+  <message id="gcw_gui.accounteditor.form.tab2">
+    more properties editor
+  </message>
+
+  <message id="gcw_sql.create_vars">
+    <![CDATA[
+      create table "{1}" (
+      "id"        integer     primary key autoincrement,
+      "version"   integer     not null,
+      "keyField"  varchar(32) not null,
+      "cfyField"  varchar(32) not null,
+      "varField"  text        not null
+      );
+    ]]>
+  </message>
+
+  <message id="gcw_gui.billpay.editwidget.form.main">
+    <div style="width:100%">
+      ${save} ${cancel}
+    </div>
+    <div class="billpayedit">
+      <table class="t1">
+        <tr><td> Key         </td><td> Due Day   </td><td> Minimum    </td><td> Budget    </td></tr>
+        <tr><td> ${key}      </td><td> ${dueDay} </td><td> ${minimum} </td><td> ${budget} </td></tr>
+
+        <tr><td> Nickname    </td><td> Group     </td><td> Limit      </td><td> Actual    </td></tr>
+        <tr><td> ${nickname} </td><td> ${group}  </td><td> ${limit}   </td><td> ${actual} </td></tr>
+      </table>
+      <table class="t2">
+        <tr><td> ${ap}        </td></tr>
+        <tr><td> ${isActive}  </td></tr>
+        <tr><td> ${isVisible} </td></tr>
+        <tr><td> ${autoPay}   </td></tr>
+        <tr><td> ${payNow}    </td></tr>
+      </table>
+    </div>
+  </message>
+
+  <message id="gcw_gui.billpayeditor.form.tab1">
+    <table width="100%" border="1">
+      <tr>
+        <td>
+          <table width="100%">
+            <tr><td>${cb01}</td><td>${cb02}</td><td>${cb03}</td><td>${cb04}</td><td>${cb05}</td><td>${cb06}</td></tr>
+            <tr><td>${cb07}</td><td>${cb08}</td><td>${cb09}</td><td>${cb10}</td><td>${cb11}</td><td>${cb12}</td></tr>
+            <tr>
+              <td colspan="6">
+                <table>
+                  <tr><td>   last4  </td>                     </tr>
+                  <tr><td> ${last4} </td> <td> ${clear} </td> </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+        <td rowspan="4">
+          ${image}
+        </td>
+      </tr>
+      <tr> <td> Note </td> </tr>
+      <tr> <td colspan="2"> ${note} </td> </tr>
+    </table>
+  </message>
+
+  <message id="gcw_gui.billpayeditor.form.tab2">
+    ${accountRegister}
+  </message>
+
+</messages>
+

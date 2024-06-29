@@ -1,0 +1,19 @@
+
+set( GCW_FILES ${GCW_FILES}
+  ${CMAKE_CURRENT_SOURCE_DIR}/AbstractSession.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/Account.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/Accounts.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/Customer.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/Customers.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/Prefrences.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/SessionGnuCash.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/SessionGnuCashew.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/Slot.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/Slots.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/Splits.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/Transactions.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/Var.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/Vars.cpp
+  PARENT_SCOPE
+)
+
